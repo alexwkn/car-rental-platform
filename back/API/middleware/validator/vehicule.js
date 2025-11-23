@@ -1,10 +1,16 @@
-import vine from 'vine';
+import vine from "vine";
 
-//to do
-export const createOrderSchema = vine.object({
-    
+// Validation pour vehicule
+export const createVehiculeSchema = vine.object({
+  model: vine.string().trim().min(1).max(100).required(),
+  licence_plate: vine.string().trim().min(1).max(20).required(),
+  description: vine.string().optional(),
+  owner_id: vine.number().integer().positive().required(),
 });
 
-export const updateOrderSchema = vine.object({
-
+export const updateVehiculeSchema = vine.object({
+  model: vine.string().trim().min(1).max(100).optional(),
+  licence_plate: vine.string().trim().min(1).max(20).optional(),
+  description: vine.string().optional(),
+  owner_id: vine.number().integer().positive().optional(),
 });

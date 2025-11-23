@@ -1,8 +1,12 @@
-import vine from 'vine';
-// to do
-export const createProfileSchema = vine.object({
+import vine from "vine";
 
+// Validation pour favorite
+export const createFavoriteSchema = vine.object({
+  profile_id: vine.number().integer().positive().required(),
+  vehicule_id: vine.number().integer().positive().required(),
 });
-export const updateProfileSchema = vine.object({
 
+export const updateFavoriteSchema = vine.object({
+  profile_id: vine.number().integer().positive().optional(),
+  vehicule_id: vine.number().integer().positive().optional(),
 });
