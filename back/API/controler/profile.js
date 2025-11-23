@@ -15,7 +15,7 @@ export const getProfileById = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.sendStatus(500).send("Server error");
+    res.status(500).send("Server error");
   }
 };
 export const getAllProfiles = async (req, res) => {
