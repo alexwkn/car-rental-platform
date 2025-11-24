@@ -1,6 +1,35 @@
 import prisma from "../../database/databaseORM.js";
 //import { createReviewSchema, updateReviewSchema } from "../middleware/validator/review.js";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Review:
+ *       type: object
+ *       properties:
+ *         review_id:
+ *           type: integer
+ *         rating:
+ *           type: integer
+ *         comment:
+ *           type: string
+ *         review_date:
+ *           type: string
+ *           format: date
+ *         customer_id:
+ *           type: integer
+ *         renter_id:
+ *           type: integer
+ *         order_id:
+ *           type: integer
+ *         profile_review_customer:
+ *           $ref: '#/components/schemas/Profile'
+ *         profile_review_renter:
+ *           $ref: '#/components/schemas/Profile'
+ *         order:
+ *           $ref: '#/components/schemas/Order'
+ */
 export const getReviewById = async (req, res) => {
     try {
         const review = await prisma.review.findUnique({

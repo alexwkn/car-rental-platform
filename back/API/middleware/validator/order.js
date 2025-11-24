@@ -1,6 +1,30 @@
 import vine from "vine";
 
-// Validation pour order
+/**
+* @swagger
+* components:
+*   schemas:
+*     CreateOrderSchema:
+*       type: object
+*       properties:
+*         order_id:
+*           type: integer
+*         order_date:
+*           type: string
+*           format: date-time
+*         date_of_return:
+*           type: string
+*           format: date-time
+*         fuel_level_return:
+*           type: number
+*           format: float
+*         payment_status:
+*           type: string
+*         offer_id:
+*           type: integer
+*         customer_id:
+*           type: integer
+*/
 export const createOrderSchema = vine
   .object({
     order_date: vine.date().optional(),
@@ -29,6 +53,30 @@ export const createOrderSchema = vine
     }
   });
 
+
+/**
+* @swagger
+* components:
+*   schemas:
+*     UpdateOrderSchema:
+*       type: object
+*       properties:
+*         order_date:
+*           type: string
+*           format: date-time
+*         date_of_return:
+*           type: string
+*           format: date-time
+*         fuel_level_return:
+*           type: number
+*           format: float
+*         payment_status:
+*           type: string
+*         offer_id:
+*           type: integer
+*         customer_id:
+*           type: integer
+*/
 export const updateOrderSchema = vine
   .object({
     order_date: vine.date().optional(),

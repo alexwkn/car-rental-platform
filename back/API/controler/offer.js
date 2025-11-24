@@ -1,6 +1,40 @@
 import prisma from "../../database/databaseORM.js";
 //import { createOfferSchema,updateOfferSchema } from "../middleware/validator/offer.js";    
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Offer:
+ *       type: object
+ *       properties:
+ *         offer_id:
+ *           type: integer
+ *         start_date:
+ *           type: string
+ *           format: date
+ *         end_date:
+ *           type: string
+ *           format: date
+ *         fuel_level:
+ *           type: number
+ *           format: float
+ *         adress:
+ *           type: string
+ *         price:
+ *           type: number
+ *           format: float
+ *         description:
+ *           type: string
+ *         vehicule_id:
+ *           type: integer
+ *         vehicule:
+ *           $ref: '#/components/schemas/Vehicule'
+ *         order:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Order'
+ */
 export const getOfferById = async (req, res) => {
     try {
         const offer = await prisma.offer.findUnique({

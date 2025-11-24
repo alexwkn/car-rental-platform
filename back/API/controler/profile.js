@@ -1,6 +1,31 @@
 import prisma from "../../database/databaseORM.js";
 //import { createProfileSchema, updateProfileSchema } from "../middleware/validator/profile.js";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Profile:
+ *       type: object
+ *       properties:
+ *         profile_id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *         adress:
+ *           type: string
+ *         bank_account:
+ *           type: string
+ *         is_renter:
+ *           type: boolean
+ *         profile_picture:
+ *           type: string
+ */
+
 export const getProfileById = async (req, res) => {
   try {
     const profile = await prisma.profile.findUnique({

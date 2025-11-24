@@ -1,6 +1,39 @@
 import prisma from "../../database/databaseORM.js";
 //import { createOrderSchema,updateOrderSchema } from "../middleware/validator/order.js";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Order:
+ *       type: object
+ *       properties:
+ *         order_id:
+ *           type: integer
+ *         order_date:
+ *           type: string
+ *           format: date-time
+ *         date_of_return:
+ *           type: string
+ *           format: date
+ *         fuel_level_return:
+ *           type: number
+ *           format: float
+ *         payment_status:
+ *           type: string
+ *         offer_id:
+ *           type: integer
+ *         customer_id:
+ *           type: integer
+ *         profile:
+ *           $ref: '#/components/schemas/Profile'
+ *         offer:
+ *           $ref: '#/components/schemas/Offer'
+ *         review:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Review'
+ */
 export const getOrderById = async (req, res) => {
     try {
         const order = await prisma.order.findUnique({

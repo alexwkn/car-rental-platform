@@ -1,5 +1,34 @@
 import vine from "vine";
 
+/**
+* @swagger
+* components:
+*   schemas:
+*     CreateOfferSchema:
+*       type: object
+*       properties:
+*         offer_id:
+*           type: integer
+*         start_date:
+*           type: string
+*           format: date-time
+*         end_date:
+*           type: string
+*           format: date-time
+*         fuel_level:
+*           type: number
+*           format: float
+*         adress:
+*           type: string
+*         price:
+*           type: number
+*           format: float
+*         description:
+*           type: string
+*         vehicule_id:
+*           type: integer
+*           description: ID du véhicule lié
+*/
 export const createOfferSchema = vine
   .object({
     start_date: vine.date().required(),
@@ -27,6 +56,34 @@ export const createOfferSchema = vine
     }
   });
 
+
+  /**
+* @swagger
+* components:
+*   schemas:
+*     UpdateOfferSchema:
+*       type: object
+*       properties:
+*         start_date:
+*           type: string
+*           format: date-time
+*         end_date:
+*           type: string
+*           format: date-time
+*         fuel_level:
+*           type: number
+*           format: float
+*         adress:
+*           type: string
+*         price:
+*           type: number
+*           format: float
+*         description:
+*           type: string
+*         vehicule_id:
+*           type: integer
+*           description: ID du véhicule lié
+*/
 export const updateOfferSchema = vine
   .object({
     start_date: vine.date().optional(),

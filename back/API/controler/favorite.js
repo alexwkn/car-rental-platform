@@ -1,6 +1,24 @@
 import prisma from "../../database/databaseORM";
 //import { createFavoriteSchema,updateFavoriteSchema } from "../middleware/validator/favorite.js";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Favorite:
+ *       type: object
+ *       properties:
+ *         favorite_id:
+ *           type: integer
+ *         profile_id:
+ *           type: integer
+ *         vehicule_id:
+ *           type: integer
+ *         profile:
+ *           $ref: '#/components/schemas/Profile'
+ *         vehicule:
+ *           $ref: '#/components/schemas/Vehicule'
+ */
 export const getFavoriteById = async (req, res) => {
     try {
         const favorite = await prisma.favorite.findUnique({
