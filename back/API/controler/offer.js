@@ -1,5 +1,5 @@
 import prisma from "../../database/databaseORM.js";
-//import { createOfferSchema,updateOfferSchema } from "../middleware/validator/offer.js";    
+import { OfferValidator } from "../middleware/validator/offer.js";    
 
 /**
  * @swagger
@@ -72,6 +72,87 @@ export const getAllOffers = async (req, res) => {
     }
 };
 
-export const createOffer = async (req, res) => {};
-export const updateOffer = async (req, res) => {};
-export const deleteOffer = async (req, res) => {};
+export const createOffer = async (req, res) => {
+    try {
+        const validatedData = await OfferValidator.validate(req.body);
+        const payload = {
+            start_date: validatedData.start_date.toISOString(),
+            end_date: validatedData.end_date.toISOString(),
+            fuel_level: validatedData.fuel_level,
+            adress: validatedData.adress,
+            price: validatedData.price,
+            description: validatedData.description,
+            vehicule_id: validatedData.vehicule_id,
+        };
+        const newOffer = await prisma.offer.create({
+            data: payload,
+        });
+        res.status(201).json({
+            message: 'Offer created successfully',
+            data: newOffer,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};
+
+export const updateOffer = async (req, res) => {
+    try {
+        const existingOffer =  await prisma.offer.findUnique({
+            where: {
+                offer_id: parseInt(req.params.id)
+            }
+        });
+        if (!existingOffer) {
+            return res.status(404).send('Offer not found');
+        }
+        const bodyToValidate = {
+            start_date: req.body.start_date || existingOffer.start_date.toISOString(),
+            end_date: req.body.end_date || existingOffer.end_date.toISOString(),
+            fuel_level: req.body.fuel_level || existingOffer.fuel_level,
+            adress: req.body.adress || existingOffer.adress,
+            price: req.body.price || existingOffer.price,
+            description: req.body.description || existingOffer.description,
+            vehicule_id: req.body.vehicule_id || existingOffer.vehicule_id,
+        };
+        const validatedData = await OfferValidator.validate(bodyToValidate);
+        const updatedOffer = await prisma.offer.update({
+            where: {
+                offer_id: parseInt(req.params.id)
+            },
+            data: validatedData,
+        });
+        res.status(200).json({
+            message: 'Offer updated successfully',
+            data: updatedOffer,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};
+
+export const deleteOffer = async (req, res) => {
+    try {
+        const existingOffer = await prisma.offer.findUnique({
+            where: {
+                offer_id: parseInt(req.params.id)
+            }
+        });
+        if (!existingOffer) {
+            return res.status(404).send('Offer not found');
+        }
+        await prisma.offer.delete({
+            where: {
+                offer_id: parseInt(req.params.id)
+            }
+        });
+        res.status(200).json({
+            message: 'Offer deleted successfully',
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};

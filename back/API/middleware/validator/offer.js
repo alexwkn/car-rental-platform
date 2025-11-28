@@ -1,4 +1,4 @@
-import vine from "vine";
+import vine from "@vinejs/vine"
 
 /**
 * @swagger
@@ -29,89 +29,32 @@ import vine from "vine";
 *           type: integer
 *           description: ID du véhicule lié
 */
-export const createOfferSchema = vine
-  .object({
-    start_date: vine.date().required(),
-    end_date: vine.date().required(),
-
-    fuel_level: vine.number().decimal([2]).min(0).max(999.99).optional(),
-    adress: vine.string().optional(),
-    price: vine.number().decimal([2]).min(0).max(99999999.99).required(),
-    description: vine.string().optional(),
-    vehicule_id: vine.number().integer().positive().required(),
+const OfferSchema = vine
+.object({
+  start_date: vine
+    .date({
+    formats: ['iso8601']
   })
-  .refine((data, field) => {
-    const start = new Date(data.start_date);
-    const end = new Date(data.end_date);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (start < today) {
-      field.report("start_date cannot be before today", "start_date_in_past");
-    }
-
-    if (start >= end) {
-      field.report("start_date must be before end_date", "invalid_date_range");
-    }
-  });
-
-
-  /**
-* @swagger
-* components:
-*   schemas:
-*     UpdateOfferSchema:
-*       type: object
-*       properties:
-*         start_date:
-*           type: string
-*           format: date-time
-*         end_date:
-*           type: string
-*           format: date-time
-*         fuel_level:
-*           type: number
-*           format: float
-*         adress:
-*           type: string
-*         price:
-*           type: number
-*           format: float
-*         description:
-*           type: string
-*         vehicule_id:
-*           type: integer
-*           description: ID du véhicule lié
-*/
-export const updateOfferSchema = vine
-  .object({
-    start_date: vine.date().optional(),
-    end_date: vine.date().optional(),
-
-    fuel_level: vine.number().decimal([2]).min(0).max(999.99).optional(),
-    adress: vine.string().optional(),
-    price: vine.number().decimal([2]).min(0).max(99999999.99).required(),
-    description: vine.string().optional(),
-    vehicule_id: vine.number().integer().positive().optional(),
+    .afterOrEqual('today'), // start_date >= today
+  end_date: vine
+    .date({
+    formats: ['iso8601']
   })
-  .refine((data, field) => {
-    if (data.start_date && data.end_date) {
-      const start = new Date(data.start_date);
-      const end = new Date(data.end_date);
+    .afterField('start_date'), // end_date > start_date
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+  fuel_level: vine
+    .number()
+    .decimal([0,2])
+    .min(0)
+    .max(100),
+  adress: vine.string().maxLength(255),
+  price: vine
+    .number()
+    .decimal([0,2])
+    .positive(),
+  description: vine.string().maxLength(1000).optional(),
+  vehicule_id: vine.number().withoutDecimals().positive(), // entier positif (obligatoire)
+});
 
-      if (start < today) {
-        field.report("start_date cannot be before today", "start_date_in_past");
-      }
+export const OfferValidator = vine.compile(OfferSchema);
 
-      if (start >= end) {
-        field.report(
-          "start_date must be before end_date",
-          "invalid_date_range"
-        );
-      }
-    }
-  });

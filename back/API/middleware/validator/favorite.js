@@ -1,4 +1,4 @@
-import vine from "vine";
+import vine from '@vinejs/vine'
 
 /**
  * @swagger
@@ -16,26 +16,10 @@ import vine from "vine";
  *           type: integer
  *           description: ID du véhicule
  */
-export const createFavoriteSchema = vine.object({
-  profile_id: vine.number().integer().positive().required(),
-  vehicule_id: vine.number().integer().positive().required(),
-});
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateFavoriteSchema:
- *       type: object
- *       properties:
- *         profile_id:
- *           type: integer
- *           description: ID du profil
- *         vehicule_id:
- *           type: integer
- *           description: ID du véhicule
- */
-export const updateFavoriteSchema = vine.object({
-  profile_id: vine.number().integer().positive().optional(),
-  vehicule_id: vine.number().integer().positive().optional(),
-});
+const FavoriteSchema = vine.object({
+  profile_id: vine.number().withoutDecimals().positive(), // entier positif (obligatoire)
+  vehicule_id: vine.number().withoutDecimals().positive(), // entier positif (obligatoire)
+}); 
+
+export const FavoriteValidator = vine.compile(FavoriteSchema);

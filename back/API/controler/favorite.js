@@ -1,5 +1,5 @@
-import prisma from "../../database/databaseORM";
-//import { createFavoriteSchema,updateFavoriteSchema } from "../middleware/validator/favorite.js";
+import prisma from "../../database/databaseORM.js";
+import { FavoriteValidator } from "../middleware/validator/favorite.js";
 
 /**
  * @swagger
@@ -56,6 +56,96 @@ export const getAllFavorites = async (req, res) => {
     }
 };
 
-export const createFavorite = async (req, res) => {};
-export const updateFavorite = async (req, res) => {};
-export const deleteFavorite = async (req, res) => {};
+export const createFavorite = async (req, res) => {
+    try {
+        const validatedData = await FavoriteValidator.validate(req.body);
+        const newFavorite = await prisma.favorite.create({
+            data: validatedData
+        });
+        res.status(201).json({
+            message: 'Favorite created successfully',
+            data: newFavorite,
+        });
+    } catch (err) {
+    if (err.messages) {
+        return res.status(422).json({
+            message: 'Validation error',
+            errors: err.messages,
+        });
+    }
+    return res.status(500).json({
+      message: 'Server error',
+      error: err.message || err,
+    });
+    }
+};
+
+export const updateFavorite = async (req, res) => {
+    try {
+        const existingFavorite =  await  prisma.favorite.findUnique({
+            where: {
+                favorite_id: parseInt(req.params.id)
+            }
+        });
+        if (!existingFavorite) {
+            return res.status(404).json({
+                message: 'Favorite not found',
+            });
+        }
+        const bodyToValidate = {
+            profile_id: req.body.profile_id || existingFavorite.profile_id,
+            vehicule_id: req.body.vehicule_id || existingFavorite.vehicule_id,
+        };
+        const validatedData = await FavoriteValidator.validate(bodyToValidate);
+
+        const updatedFavorite = await prisma.favorite.update({
+            where: {
+                favorite_id: parseInt(req.params.id)
+            },
+            data: validatedData,
+        });
+        res.status(200).json({
+            message: 'Favorite updated successfully',
+            data: updatedFavorite,
+        });
+    } catch (err) {
+        if (err.messages) {
+            return res.status(422).json({
+                message: 'Validation error',
+                errors: err.messages,
+            });
+        }
+        return res.status(500).json({
+            message: 'Server error',
+            error: err.message || err,
+        });
+    }
+};
+
+export const deleteFavorite = async (req, res) => {
+    try {
+        const existingFavorite = await prisma.favorite.findUnique({
+            where: {
+                favorite_id: parseInt(req.params.id)
+            }
+        });
+        if (!existingFavorite) {
+            return res.status(404).json({
+                message: 'Favorite not found',
+            });
+        }
+        await prisma.favorite.delete({
+            where: {
+                favorite_id: parseInt(req.params.id)
+            }
+        });
+        res.status(200).json({
+            message: 'Favorite deleted successfully',
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: 'Server error',
+            error: err.message || err,
+        });
+    }
+};

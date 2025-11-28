@@ -1,4 +1,4 @@
-import vine from "vine";
+import vine from '@vinejs/vine'
 
 /**
  * @swagger
@@ -34,50 +34,18 @@ import vine from "vine";
  *           type: integer
  *           example: 12
  */
-export const createReviewSchema = vine.object({
-  rating: vine.number().integer().min(1).max(5).optional(),
-  comment: vine.string().max(250).optional(),
-  review_date: vine.date().optional(),
-  customer_id: vine.number().integer().positive().required(),
-  renter_id: vine.number().integer().positive().required(),
-  order_id: vine.number().integer().positive().required(),
+
+const ReviewSchema = vine.object({
+  rating: vine.number().withoutDecimals().min(1).max(5),
+  comment: vine.string().maxLength(1000).optional().nullable(),
+  review_date: vine
+    .date({
+      formats: ['iso8601']
+    }).afterOrEqual('today').
+    optional(),
+  customer_id: vine.number().withoutDecimals().positive(),
+  renter_id: vine.number().withoutDecimals().positive(),
+  order_id: vine.number().withoutDecimals().positive(),
 });
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateReviewSchema:
- *       type: object
- *       properties:
- *         rating:
- *           type: integer
- *           nullable: true
- *           example: 5
- *         comment:
- *           type: string
- *           nullable: true
- *           example: "Service impeccable, je recommande."
- *         review_date:
- *           type: string
- *           format: date
- *           nullable: true
- *           example: "2025-02-01"
- *         customer_id:
- *           type: integer
- *           example: 3
- *         renter_id:
- *           type: integer
- *           example: 7
- *         order_id:
- *           type: integer
- *           example: 12
- */
-export const updateReviewSchema = vine.object({
-  rating: vine.number().integer().min(1).max(5).optional(),
-  comment: vine.string().max(250).optional(),
-  review_date: vine.date().optional(),
-  customer_id: vine.number().integer().positive().optional(),
-  renter_id: vine.number().integer().positive().optional(),
-  order_id: vine.number().integer().positive().optional(),
-});
+export const ReviewValidator = vine.compile(ReviewSchema);

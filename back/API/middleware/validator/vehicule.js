@@ -1,4 +1,4 @@
-import vine from "vine";
+import vine from '@vinejs/vine'
 
 /**
  * @swagger
@@ -25,37 +25,12 @@ import vine from "vine";
  *           type: integer
  *           example: 4
  */
-export const createVehiculeSchema = vine.object({
-  model: vine.string().trim().min(1).max(100).required(),
-  licence_plate: vine.string().trim().min(1).max(20).required(),
-  description: vine.string().optional(),
-  owner_id: vine.number().integer().positive().required(),
+
+const VehiculeSchema = vine.object({
+  model: vine.string().minLength(1).maxLength(100),
+  licence_plate: vine.string().minLength(1).maxLength(20),
+  description: vine.string().maxLength(500).optional().nullable(),
+  owner_id: vine.number().withoutDecimals().positive(),
 });
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateVehiculeSchema:
- *       type: object
- *       properties:
- *         model:
- *           type: string
- *           example: "Renault Megane"
- *         licence_plate:
- *           type: string
- *           example: "XY-987-ZZ"
- *         description:
- *           type: string
- *           nullable: true
- *           example: "Version sport"
- *         owner_id:
- *           type: integer
- *           example: 2
- */
-export const updateVehiculeSchema = vine.object({
-  model: vine.string().trim().min(1).max(100).optional(),
-  licence_plate: vine.string().trim().min(1).max(20).optional(),
-  description: vine.string().optional(),
-  owner_id: vine.number().integer().positive().optional(),
-});
+export const VehiculeValidator = vine.compile(VehiculeSchema);
