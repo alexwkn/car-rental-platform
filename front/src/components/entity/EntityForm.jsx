@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import "../../styles/modal.css";
-import React from "react";
+import { useState, useEffect } from "react";
 
 function EntityForm({
   isOpen,
@@ -10,14 +10,13 @@ function EntityForm({
   initialData,
   onSubmit,
 }) {
-  const [formData, setFormData] = React.useState({});
+  const [formData, setFormData] = useState({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       const base = fields.reduce((acc, field) => {
         let value = initialData?.[field.name] ?? "";
 
-        // formatage minimal pour les dates
         if (field.type === "date" && value) {
           value = String(value).substring(0, 10);
         }
@@ -37,10 +36,8 @@ function EntityForm({
   const handleChange = (e, field) => {
     const { name, value, checked, type } = e.target;
 
-    let finalValue = value;
-    if (field.type === "checkbox" || type === "checkbox") {
-      finalValue = checked;
-    }
+    const finalValue =
+      field.type === "checkbox" || type === "checkbox" ? checked : value;
 
     setFormData((prev) => ({
       ...prev,
@@ -61,6 +58,7 @@ function EntityForm({
           {fields.map((field) => (
             <div key={field.name} className="form-group">
               <label htmlFor={field.name}>{field.label}</label>
+
               {field.type === "checkbox" ? (
                 <input
                   id={field.name}
@@ -76,7 +74,7 @@ function EntityForm({
                   type={field.type || "text"}
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(e, field)}
-                  required={field.required !== false}
+                  required={field.required ?? true}
                 />
               )}
             </div>

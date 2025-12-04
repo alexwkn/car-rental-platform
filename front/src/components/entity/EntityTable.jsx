@@ -1,4 +1,4 @@
-// src/components/entity/EntityTable.jsx
+import { useState } from "react";
 import PropTypes from "prop-types";
 import SearchBar from "../SearchBar";
 import TableData from "../DataTable";
@@ -22,12 +22,11 @@ function EntityTable({ title, fields, columns, hook, idField }) {
     error,
   } = hook;
 
-  const [isFormOpen, setIsFormOpen] = React.useState(false);
-  const [editingItem, setEditingItem] = React.useState(null);
-  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
-  const [deleteId, setDeleteId] = React.useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
-  // on adapte les données pour TableData (clé "id" générique)
   const rows = data.map((item) => ({
     ...item,
     id: item[idField],
@@ -39,7 +38,6 @@ function EntityTable({ title, fields, columns, hook, idField }) {
   };
 
   const handleEdit = (row) => {
-    // on renvoie l'item complet (avec ses vrais champs, pas seulement id)
     const original = data.find((item) => item[idField] === row.id) || null;
     setEditingItem(original);
     setIsFormOpen(true);
