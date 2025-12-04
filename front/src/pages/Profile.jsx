@@ -1,11 +1,14 @@
-
+import ProfileTable from "../components/ProfileTable";
+import BackOfficeLayout from "../layout/BackOfficeLayout";
 
 const Profile = () => {
-    return (
-        <div>
-            <h1>Profils utilisateurs</h1>
-        </div>
-    );
-}
+  return (
+    <>
+      <BackOfficeLayout>
+        <ProfileTable />
+      </BackOfficeLayout>
+    </>
+  );
+};
 
 export default Profile;

@@ -1,16 +1,17 @@
-import PropTypes from 'prop-types'; 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import '../styles/searchbar.css';
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/searchbar.css";
+
 import { ROUTES } from "../routes/routesPath";
 
-import searchIcon from '../assets/searchIcon.svg';
-import backIcon from '../assets/leftArrow.svg';
-import forwardIcon from '../assets/rightArrow.svg';
-import clearIcon from '../assets/cancel_black.svg';
+import searchIcon from "../assets/searchIcon.svg";
+import backIcon from "../assets/leftArrow.svg";
+import forwardIcon from "../assets/rightArrow.svg";
+import clearIcon from "../assets/cancel_black.svg";
 
-function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
-    const [query, setQuery] = useState('');
+export default function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
+    const [query, setQuery] = useState("");
     const [history, setHistory] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const navigate = useNavigate();
@@ -18,11 +19,11 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
     useEffect(() => {
         if (!isGlobal && debounce > 0) {
             const timer = setTimeout(() => {
-                if (onSearch) onSearch(query);
+                onSearch?.(query);
             }, debounce);
             return () => clearTimeout(timer);
-        } else if (!isGlobal && onSearch) {
-            onSearch(query);
+        } else if (!isGlobal) {
+            onSearch?.(query);
         }
     }, [query, debounce, isGlobal, onSearch]);
 
@@ -33,6 +34,7 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
             setCurrentIndex(newHistory.length - 1);
 
             const normalized = query.trim().toLowerCase();
+
             const routes = {
                 vehicule: ROUTES.VEHICULE_ROUTE,
                 profile: ROUTES.PROFILE_ROUTE,
@@ -40,7 +42,7 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
                 favorite: ROUTES.FAVORITE_ROUTE,
                 offer: ROUTES.OFFER_ROUTE,
                 review: ROUTES.REVIEW_ROUTE,
-                home: ROUTES.HOME_ROUTE
+                home: ROUTES.HOME_ROUTE,
             };
 
             if (routes[normalized]) {
@@ -51,7 +53,8 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
         }
     };
 
-    const handleClear = () => setQuery('');
+    const handleClear = () => setQuery("");
+
     const handleBack = () => {
         if (currentIndex > 0) {
             const prevQuery = history[currentIndex - 1];
@@ -59,6 +62,7 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
             setCurrentIndex(currentIndex - 1);
         }
     };
+
     const handleForward = () => {
         if (currentIndex < history.length - 1) {
             const nextQuery = history[currentIndex + 1];
@@ -68,7 +72,7 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
     };
 
     return (
-        <div className={`search-wrapper ${isGlobal ? 'global' : 'local'}`}>
+        <div className={`search-wrapper ${isGlobal ? "global" : "local"}`}>
             {isGlobal && (
                 <div className="search-controls">
                     <img src={backIcon} alt="Back" className="search-icon" onClick={handleBack} />
@@ -77,16 +81,15 @@ function SearchBar({ placeholder, onSearch, isGlobal = false, debounce = 0 }) {
                 </div>
             )}
 
-            <div className={`search-bar ${isGlobal ? 'global' : 'local'}`}>
+            <div className={`search-bar ${isGlobal ? "global" : "local"}`}>
                 <input
                     type="text"
                     placeholder={placeholder}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 />
-
-                <img src={searchIcon} alt="Search" className="search-icon" onClick={handleSubmit}/>
+                <img src={searchIcon} alt="Search" className="search-icon" onClick={handleSubmit} />
             </div>
         </div>
     );
@@ -98,5 +101,3 @@ SearchBar.propTypes = {
     isGlobal: PropTypes.bool,
     debounce: PropTypes.number,
 };
-
-export default SearchBar;

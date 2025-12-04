@@ -1,11 +1,14 @@
-
+import FavoriteTable from "../components/FavoriteTable";
+import BackOfficeLayout from "../layout/BackOfficeLayout";
 
 const Favorite = () => {
-    return (
-        <div>
-            <h1>Les favoris</h1>
-        </div>
-    );
-}
+  return (
+    <>
+      <BackOfficeLayout>
+        <FavoriteTable />
+      </BackOfficeLayout>
+    </>
+  );
+};
 
 export default Favorite;

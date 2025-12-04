@@ -1,11 +1,14 @@
-
+import OrderTable from "../components/OrderTable";
+import BackOfficeLayout from "../layout/BackOfficeLayout";
 
 const Order = () => {
-    return (
-        <div>
-            <h1>Les commandes</h1>
-        </div>
-    );
-}
+  return (
+    <>
+      <BackOfficeLayout>
+        <OrderTable />
+      </BackOfficeLayout>
+    </>
+  );
+};
 
 export default Order;

@@ -1,11 +1,9 @@
+import BackOfficeLayout from "../layout/BackOfficeLayout";
 
-
-const Home = () => {
+export default function Home() {
   return (
-    <div>
-        <h1>Bienvenue dans le web monitoring</h1>
-    </div>
+    <BackOfficeLayout>
+      <h1>Bienvenue dans le monitoring de Key2Go</h1>
+    </BackOfficeLayout>
   );
-}   
-
-export default Home;
+}

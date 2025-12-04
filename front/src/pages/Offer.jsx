@@ -1,11 +1,14 @@
-
+import OfferTable from "../components/OfferTable";
+import BackOfficeLayout from "../layout/BackOfficeLayout";
 
 const Offer = () => {
-    return (
-        <div>
-            <h1>Offres de voiture disponibles</h1>
-        </div>
-    );
-}
+  return (
+    <>
+      <BackOfficeLayout>
+        <OfferTable />
+      </BackOfficeLayout>
+    </>
+  );
+};
 
 export default Offer;
