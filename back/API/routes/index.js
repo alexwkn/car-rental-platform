@@ -1,4 +1,4 @@
-import Router from 'express';
+import {Router} from 'express';
 
 import{default as orderRouter} from './order.js';
 import{default as profileRouter} from './profile.js';
