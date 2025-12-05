@@ -112,6 +112,10 @@ INSERT INTO review (rating, comment, customer_id, renter_id, order_id)
 VALUES 
 (5, 'Super expérience, voiture nickel !', 2, 1, 1);
 
+INSERT INTO favorite (profile_id, vehicule_id)
+VALUES
+(2, 1);
+
 -- 6️⃣ Manager du système
 INSERT INTO manager (name, email, password)
 VALUES 

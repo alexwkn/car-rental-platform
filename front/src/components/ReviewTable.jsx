@@ -1,6 +1,18 @@
 import EntityTable from "./entity/EntityTable";
 import useEntity from "../hooks/useEntity";
-import * as ReviewController from "../API/controller/reviews";
+import {
+  getAllReviews,
+  addReview,
+  updateReview,
+  deleteReview,
+} from "../API/controller/reviews";
+
+const ReviewController = {
+  getAll: getAllReviews,
+  add: addReview,
+  update: updateReview,
+  remove: deleteReview,
+};
 
 function ReviewTable() {
   const fields = [

@@ -1,6 +1,18 @@
 import EntityTable from "./entity/EntityTable";
 import useEntity from "../hooks/useEntity";
-import * as VehiculeController from "../API/controller/vehicules";
+import {
+  getAllVehicules,
+  addVehicule,
+  updateVehicule,
+  deleteVehicule,
+} from "../API/controller/vehicules";
+
+const VehiculeController = {
+  getAll: getAllVehicules,
+  add: addVehicule,
+  update: updateVehicule,
+  remove: deleteVehicule,
+};
 
 function VehiculeTable() {
   const fields = [

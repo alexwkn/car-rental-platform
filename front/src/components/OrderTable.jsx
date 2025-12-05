@@ -1,6 +1,17 @@
 import EntityTable from "./entity/EntityTable";
 import useEntity from "../hooks/useEntity";
-import * as OrderController from "../API/controller/orders";
+import {
+  getAllOrders,
+  addOrder,
+  updateOrder,
+  deleteOrder,
+} from "../API/controller/orders";
+const OrderController = {
+  getAll: getAllOrders,
+  add: addOrder,
+  update: updateOrder,
+  remove: deleteOrder,
+};
 
 function OrderTable() {
   const fields = [
