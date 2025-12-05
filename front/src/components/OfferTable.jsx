@@ -18,11 +18,11 @@ function OfferTable() {
   const fields = [
     { name: "start_date", label: "Start Date", type: "date" },
     { name: "end_date", label: "End Date", type: "date" },
-    { name: "fuel_level", label: "Fuel Level", type: "number" },
-    { name: "adress", label: "Adress", type: "text" },
-    { name: "price", label: "Price", type: "number" },
-    { name: "description", label: "Description", type: "text" },
-    { name: "vehicule_id", label: "Vehicule ID", type: "number" },
+    { name: "fuel_level", label: "Fuel Level", type: "number", min: 0, max: 100, step: 0.01 },
+    { name: "adress", label: "Adress", type: "text", maxLength: 255 },
+    { name: "price", label: "Price", type: "number", min: 0.01, step: 0.01 },
+    { name: "description", label: "Description", type: "text", required: false, maxLength: 1000 },
+    { name: "vehicule_id", label: "Vehicule ID", type: "number", min: 1, step: 1 },
   ];
 
   const columns = [

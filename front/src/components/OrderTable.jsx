@@ -15,12 +15,17 @@ const OrderController = {
 
 function OrderTable() {
   const fields = [
-    { name: "order_date", label: "Order Date", type: "date" },
+    { name: "order_date", label: "Order Date", type: "date", required: false },
     { name: "date_of_return", label: "Date of Return", type: "date" },
-    { name: "fuel_level_return", label: "Fuel Level Return", type: "number" },
-    { name: "payment_status", label: "Payment Status", type: "text" },
-    { name: "offer_id", label: "Offer ID", type: "number" },
-    { name: "customer_id", label: "Customer ID", type: "number" },
+    { name: "fuel_level_return", label: "Fuel Level Return", type: "number", min: 0, max: 999.99, step: 0.01 },
+    { name: "payment_status", label: "Payment Status", type: "select",
+  options: [
+    { value: "pending", label: "Pending" },
+    { value: "completed", label: "Completed" },
+    { value: "failed", label: "Failed" },
+  ] },
+    { name: "offer_id", label: "Offer ID", type: "number", min: 1, step: 1 },
+    { name: "customer_id", label: "Customer ID", type: "number", min: 1, step: 1 },
   ];
 
   const columns = [

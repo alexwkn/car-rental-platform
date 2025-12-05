@@ -16,12 +16,12 @@ const ReviewController = {
 
 function ReviewTable() {
   const fields = [
-    { name: "rating", label: "Rating", type: "number" },
-    { name: "comment", label: "Comment", type: "text" },
-    { name: "review_date", label: "Review Date", type: "date" },
-    { name: "customer_id", label: "Customer ID", type: "number" },
-    { name: "renter_id", label: "Renter ID", type: "number" },
-    { name: "order_id", label: "Order ID", type: "number" },
+    { name: "rating", label: "Rating", type: "number", min: 1, max: 5, step: 1 },
+    { name: "comment", label: "Comment", type: "text", required: false, maxLength: 1000 },
+    { name: "review_date", label: "Review Date", type: "date", required: false },
+    { name: "customer_id", label: "Customer ID", type: "number", min: 1, step: 1 },
+    { name: "renter_id", label: "Renter ID", type: "number", min: 1, step: 1 },
+    { name: "order_id", label: "Order ID", type: "number", min: 1, step: 1 },
   ];
 
   const columns = [

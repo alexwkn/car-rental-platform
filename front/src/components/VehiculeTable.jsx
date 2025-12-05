@@ -16,10 +16,10 @@ const VehiculeController = {
 
 function VehiculeTable() {
   const fields = [
-    { name: "model", label: "Model", type: "text" },
-    { name: "licence_plate", label: "Licence Plate", type: "text" },
-    { name: "description", label: "Description", type: "text" },
-    { name: "owner_id", label: "Owner ID", type: "number" },
+    { name: "model", label: "Model", type: "text", minLength: 1, maxLength: 100 },
+    { name: "licence_plate", label: "Licence Plate", type: "text", minLength: 1, maxLength: 20 },
+    { name: "description", label: "Description", type: "text", required: false, maxLength: 500 },
+    { name: "owner_id", label: "Owner ID", type: "number", min: 1, step: 1 },
   ];
 
   const columns = [

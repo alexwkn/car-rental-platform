@@ -15,13 +15,13 @@ const ProfileController = {
 };
 function ProfileTable() {
   const fields = [
-    { name: "name", label: "Name", type: "text" },
-    { name: "email", label: "Email", type: "email" },
-    { name: "password", label: "Password", type: "password" },
-    { name: "adress", label: "Adress", type: "text" },
-    { name: "bank_account", label: "Bank Account", type: "text" },
+    { name: "name", label: "Name", type: "text", maxLength: 100 },
+    { name: "email", label: "Email", type: "email", maxLength: 255 },
+    { name: "password", label: "Password", type: "password", minLength: 8, maxLength: 255 },
+    { name: "adress", label: "Adress", type: "text", required: false , maxLength: 255 },
+    { name: "bank_account", label: "Bank Account", type: "text", required: false, maxLength: 50 },
     { name: "is_renter", label: "Is Renter", type: "checkbox" },
-    { name: "profile_picture", label: "Profile Picture URL", type: "text" },
+    { name: "profile_picture", label: "Profile Picture URL", type: "url", required: false, maxLength: 500 },
   ];
 
   const columns = [

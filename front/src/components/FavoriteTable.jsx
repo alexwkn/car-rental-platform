@@ -11,8 +11,8 @@ const FavoriteController = {
 
 function FavoriteTable() {
   const fields = [
-    { name: "profile_id", label: "Profile ID", type: "number" },
-    { name: "vehicule_id", label: "Vehicule ID", type: "number" },
+    { name: "profile_id", label: "Profile ID", type: "number", min: 1, step: 1 },
+    { name: "vehicule_id", label: "Vehicule ID", type: "number", min: 1, step: 1 },
   ];
 
   const columns = [
