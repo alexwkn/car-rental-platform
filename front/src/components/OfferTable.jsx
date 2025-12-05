@@ -1,6 +1,18 @@
 import EntityTable from "./entity/EntityTable";
 import useEntity from "../hooks/useEntity";
-import * as OfferController from "../API/controller/offers";
+import {
+  getAllOffers,
+  addOffer,
+  updateOffer,
+  deleteOfferById,
+} from "../API/controller/offers";
+
+const OfferController = {
+  getAll: getAllOffers,
+  add: addOffer,
+  update: updateOffer,
+  remove: deleteOfferById,
+};
 
 function OfferTable() {
   const fields = [

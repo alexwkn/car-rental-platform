@@ -58,7 +58,6 @@ function EntityForm({
           {fields.map((field) => (
             <div key={field.name} className="form-group">
               <label htmlFor={field.name}>{field.label}</label>
-
               {field.type === "checkbox" ? (
                 <input
                   id={field.name}

@@ -50,7 +50,7 @@ const Home = () => {
   } 
   return (
     <BackOfficeLayout>
-      <h1>Bienvenue, {user.email}!</h1>
+      <h1>Bienvenue, {user.email} dans le back office!</h1>
       <button onClick={logout}>Se déconnecter</button>
     </BackOfficeLayout>
   );
