@@ -26,6 +26,7 @@ import { ProfileValidator } from "../middleware/validator/profile.js";
  *           type: string
  */
 
+
 export const getProfileById = async (req, res) => {
   try {
     const profile = await prisma.profile.findUnique({

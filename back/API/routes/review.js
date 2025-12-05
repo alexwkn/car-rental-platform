@@ -3,12 +3,17 @@ import { getAllReviews, getReviewById, createReview, updateReview, deleteReview 
 import { manager } from '../middleware/auth/mustBe.js';
 
 const router = Router();
-
 /**
  * @swagger
- * /review:
+ * tags:
+ *   name: Review
+ *   description: Endpoints for managing reviews (manager only)
+ */
+/**
+ * @swagger
+ * /reviews:
  *   get:
- *     summary: Get all reviews
+ *     summary: Get all reviews (manager only)
  *     tags: [Review]
  *     security:
  *       - bearerAuth: []
@@ -23,13 +28,20 @@ const router = Router();
  *                 $ref: '#/components/schemas/Review'
  *       404:
  *         description: No reviews found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
+
 router.get('/', manager, getAllReviews);
 /**
  * @swagger
- * /review/{id}:
+ * /reviews/{id}:
  *   get:
- *     summary: Get a review by ID
+ *     summary: Get a review by ID (manager only)
  *     tags: [Review]
  *     security:
  *       - bearerAuth: []
@@ -37,6 +49,7 @@ router.get('/', manager, getAllReviews);
  *       - name: id
  *         in: path
  *         required: true
+ *         description: Review ID
  *         schema:
  *           type: integer
  *     responses:
@@ -48,13 +61,21 @@ router.get('/', manager, getAllReviews);
  *               $ref: '#/components/schemas/Review'
  *       404:
  *         description: Review not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.get('/:id', manager, getReviewById);
 /**
  * @swagger
- * /review:
+ * /reviews:
  *   post:
- *     summary: Create a new review
+ *     summary: Create a new review (manager only)
  *     tags: [Review]
  *     security:
  *       - bearerAuth: []
@@ -67,15 +88,30 @@ router.get('/:id', manager, getReviewById);
  *     responses:
  *       201:
  *         description: Review created successfully
- *       400:
- *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Review'
+ *       422:
+ *         description: Validation error (VineJS)
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.post('/', manager, createReview); 
 /**
  * @swagger
- * /review/{id}:
+ * /reviews/{id}:
  *   patch:
- *     summary: Update a review
+ *     summary: Update a review (manager only)
  *     tags: [Review]
  *     security:
  *       - bearerAuth: []
@@ -83,6 +119,7 @@ router.post('/', manager, createReview);
  *       - name: id
  *         in: path
  *         required: true
+ *         description: Review ID
  *         schema:
  *           type: integer
  *     requestBody:
@@ -94,15 +131,35 @@ router.post('/', manager, createReview);
  *     responses:
  *       200:
  *         description: Review updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Review'
  *       404:
  *         description: Review not found
+ *       422:
+ *         description: Validation error (VineJS)
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
+
 router.patch('/:id', manager, updateReview);
 /**
  * @swagger
- * /review/{id}:
+ * /reviews/{id}:
  *   delete:
- *     summary: Delete a review
+ *     summary: Delete a review (manager only)
  *     tags: [Review]
  *     security:
  *       - bearerAuth: []
@@ -110,6 +167,7 @@ router.patch('/:id', manager, updateReview);
  *       - name: id
  *         in: path
  *         required: true
+ *         description: Review ID
  *         schema:
  *           type: integer
  *     responses:
@@ -117,6 +175,14 @@ router.patch('/:id', manager, updateReview);
  *         description: Review deleted successfully
  *       404:
  *         description: Review not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.delete('/:id', manager, deleteReview);
 

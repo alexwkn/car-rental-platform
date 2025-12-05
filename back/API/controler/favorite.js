@@ -14,11 +14,8 @@ import { FavoriteValidator } from "../middleware/validator/favorite.js";
  *           type: integer
  *         vehicule_id:
  *           type: integer
- *         profile:
- *           $ref: '#/components/schemas/Profile'
- *         vehicule:
- *           $ref: '#/components/schemas/Vehicule'
  */
+
 export const getFavoriteById = async (req, res) => {
     try {
         const favorite = await prisma.favorite.findUnique({

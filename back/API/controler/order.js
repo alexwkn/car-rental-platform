@@ -21,22 +21,15 @@ import utc from 'dayjs/plugin/utc.js';
  *           format: date
  *         fuel_level_return:
  *           type: number
- *           format: float
  *         payment_status:
  *           type: string
+ *           enum: [pending, completed, failed]
  *         offer_id:
  *           type: integer
  *         customer_id:
  *           type: integer
- *         profile:
- *           $ref: '#/components/schemas/Profile'
- *         offer:
- *           $ref: '#/components/schemas/Offer'
- *         review:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Review'
  */
+
 
 
 

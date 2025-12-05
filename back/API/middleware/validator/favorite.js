@@ -6,16 +6,33 @@ import vine from '@vinejs/vine'
  *   schemas:
  *     CreateFavoriteSchema:
  *       type: object
+ *       required:
+ *         - profile_id
+ *         - vehicule_id
  *       properties:
- *         favorite_id:
- *           type: integer
  *         profile_id:
  *           type: integer
- *           description: ID du profil
+ *           example: 3
  *         vehicule_id:
  *           type: integer
- *           description: ID du véhicule
+ *           example: 12
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateFavoriteSchema:
+ *       type: object
+ *       properties:
+ *         profile_id:
+ *           type: integer
+ *           example: 5
+ *         vehicule_id:
+ *           type: integer
+ *           example: 8
+ */
+
 
 const FavoriteSchema = vine.object({
   profile_id: vine.number().withoutDecimals().positive(), // entier positif (obligatoire)

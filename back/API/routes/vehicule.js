@@ -6,64 +6,108 @@ const router = Router();
 
 /**
  * @swagger
- * /vehicule:
+ * tags:
+ *   name: Vehicule
+ *   description: Endpoints for managing vehicles (manager only)
+ */
+
+/**
+ * @swagger
+ * /vehicules:
  *   get:
+ *     summary: Get all vehicles (manager only)
+ *     tags: [Vehicule]
  *     security:
  *       - bearerAuth: []
- *     tags:
- *       - Vehicule
- *     summary: Get all vehicules
  *     responses:
  *       200:
- *         description: List of vehicules
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Must be manager
+ *         description: List of all vehicles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Vehicule'
  *       404:
- *         description: No vehicules found
+ *         description: No vehicles found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */
+
+/**
+ * @swagger
+ * /vehicules:
+ *   get:
+ *     summary: Get all vehicles (manager only)
+ *     tags: [Vehicule]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all vehicles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Vehicule'
+ *       404:
+ *         description: No vehicles found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
+ */
+
 router.get('/', manager, getAllVehicules);
 /**
  * @swagger
- * /vehicule/{id}:
+ * /vehicules/{id}:
  *   get:
+ *     summary: Get a vehicle by ID (manager only)
+ *     tags: [Vehicule]
  *     security:
  *       - bearerAuth: []
- *     tags:
- *       - Vehicule
- *     summary: Get vehicule by ID
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
+ *         description: Vehicule ID
  *         schema:
  *           type: integer
- *         description: Vehicule ID
  *     responses:
  *       200:
- *         description: Vehicule found
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Must be manager
+ *         description: Vehicle found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Vehicule'
  *       404:
- *         description: Vehicule not found
+ *         description: Vehicle not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */
 router.get('/:id', manager, getVehiculeById);
 /**
  * @swagger
- * /vehicule:
+ * /vehicules:
  *   post:
+ *     summary: Create a new vehicle (manager only)
+ *     tags: [Vehicule]
  *     security:
  *       - bearerAuth: []
- *     tags:
- *       - Vehicule
- *     summary: Create a new vehicule
  *     requestBody:
  *       required: true
  *       content:
@@ -72,30 +116,39 @@ router.get('/:id', manager, getVehiculeById);
  *             $ref: '#/components/schemas/CreateVehiculeSchema'
  *     responses:
  *       201:
- *         description: Vehicule created
- *       400:
+ *         description: Vehicle created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Vehicule'
+ *       422:
  *         description: Validation error
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized — missing or invalid JWT
  *       403:
- *         description: Must be manager
+ *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */
 router.post('/', manager, createVehicule);
 /**
  * @swagger
- * /vehicule/{id}:
+ * /vehicules/{id}:
  *   patch:
+ *     summary: Update a vehicle (manager only)
+ *     tags: [Vehicule]
  *     security:
  *       - bearerAuth: []
- *     tags:
- *       - Vehicule
- *     summary: Update vehicule
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
+ *         description: Vehicule ID
  *         schema:
  *           type: integer
  *     requestBody:
@@ -106,43 +159,57 @@ router.post('/', manager, createVehicule);
  *             $ref: '#/components/schemas/UpdateVehiculeSchema'
  *     responses:
  *       200:
- *         description: Vehicule updated
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Must be manager
+ *         description: Vehicle updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Vehicule'
  *       404:
- *         description: Vehicule not found
+ *         description: Vehicle not found
+ *       422:
+ *         description: Validation error
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */
+
 router.patch('/:id', manager, updateVehicule);
 /**
  * @swagger
- * /vehicule/{id}:
+ * /vehicules/{id}:
  *   delete:
+ *     summary: Delete a vehicle (manager only)
+ *     tags: [Vehicule]
  *     security:
  *       - bearerAuth: []
- *     tags:
- *       - Vehicule
- *     summary: Delete vehicule
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
+ *         description: Vehicule ID
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Vehicule deleted
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Must be manager
+ *         description: Vehicle deleted successfully
  *       404:
- *         description: Vehicule not found
+ *         description: Vehicle not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */

@@ -2,30 +2,73 @@ import vine from '@vinejs/vine'
 
 
 /**
-* @swagger
-* components:
-*   schemas:
-*     OrderSchema:
-*       type: object
-*       properties:
-*         order_id:
-*           type: integer
-*         order_date:
-*           type: string
-*           format: date-time
-*         date_of_return:
-*           type: string
-*           format: date-time
-*         fuel_level_return:
-*           type: number
-*           format: float
-*         payment_status:
-*           type: string
-*         offer_id:
-*           type: integer
-*         customer_id:
-*           type: integer
-*/
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateOrderSchema:
+ *       type: object
+ *       required:
+ *         - date_of_return
+ *         - fuel_level_return
+ *         - payment_status
+ *         - offer_id
+ *         - customer_id
+ *       properties:
+ *         order_date:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-02-01T10:00:00Z"
+ *         date_of_return:
+ *           type: string
+ *           format: date
+ *           example: "2025-02-10"
+ *         fuel_level_return:
+ *           type: number
+ *           format: float
+ *           example: 95.5
+ *         payment_status:
+ *           type: string
+ *           enum: [pending, completed, failed]
+ *           example: "pending"
+ *         offer_id:
+ *           type: integer
+ *           example: 4
+ *         customer_id:
+ *           type: integer
+ *           example: 2
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateOrderSchema:
+ *       type: object
+ *       properties:
+ *         order_date:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-02-02T12:00:00Z"
+ *         date_of_return:
+ *           type: string
+ *           format: date
+ *           example: "2025-02-12"
+ *         fuel_level_return:
+ *           type: number
+ *           example: 88.0
+ *         payment_status:
+ *           type: string
+ *           enum: [pending, completed, failed]
+ *           example: "completed"
+ *         offer_id:
+ *           type: integer
+ *           example: 3
+ *         customer_id:
+ *           type: integer
+ *           example: 1
+ */
+
+
 const OrderSchema = vine
 .object({
  order_date: vine

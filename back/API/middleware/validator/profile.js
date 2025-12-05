@@ -6,24 +6,66 @@ import vine from '@vinejs/vine'
  *   schemas:
  *     CreateProfileSchema:
  *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *         - is_renter
  *       properties:
- *         profile_id:
- *           type: integer
  *         name:
  *           type: string
+ *           example: "Antoine Nguyen"
  *         email:
  *           type: string
+ *           example: "antoine@mail.com"
  *         password:
  *           type: string
+ *           example: "SuperPass123"
  *         adress:
  *           type: string
+ *           example: "Rue des Fleurs 12, Namur"
  *         bank_account:
  *           type: string
+ *           example: "BE12 3456 7890 1234"
  *         is_renter:
  *           type: boolean
+ *           example: true
  *         profile_picture:
  *           type: string
+ *           format: url
+ *           example: "https://cdn.key2go.com/profiles/default.png"
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateProfileSchema:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Nouveau Nom"
+ *         email:
+ *           type: string
+ *           example: "nouvel-email@mail.com"
+ *         password:
+ *           type: string
+ *           example: "NewPass789"
+ *         adress:
+ *           type: string
+ *           example: "Nouvelle adresse"
+ *         bank_account:
+ *           type: string
+ *           example: "BE98 7654 3210 9876"
+ *         is_renter:
+ *           type: boolean
+ *           example: false
+ *         profile_picture:
+ *           type: string
+ *           example: "https://cdn.key2go.com/profiles/updated.png"
+ */
+
 
 const ProfileSchema = vine
   .object({

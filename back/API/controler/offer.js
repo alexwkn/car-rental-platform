@@ -28,13 +28,8 @@ import { OfferValidator } from "../middleware/validator/offer.js";
  *           type: string
  *         vehicule_id:
  *           type: integer
- *         vehicule:
- *           $ref: '#/components/schemas/Vehicule'
- *         order:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Order'
  */
+
 export const getOfferById = async (req, res) => {
     try {
         const offer = await prisma.offer.findUnique({

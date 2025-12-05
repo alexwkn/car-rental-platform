@@ -16,15 +16,38 @@ import vine from '@vinejs/vine'
  *           example: "Peugeot 208"
  *         licence_plate:
  *           type: string
- *           example: "AB-123-CD"
+ *           example: "1-ABC-234"
  *         description:
  *           type: string
  *           nullable: true
- *           example: "Véhicule en excellent état"
+ *           example: "Véhicule propre, entretien OK"
  *         owner_id:
  *           type: integer
- *           example: 4
+ *           example: 1
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateVehiculeSchema:
+ *       type: object
+ *       properties:
+ *         model:
+ *           type: string
+ *           example: "Renault Clio"
+ *         licence_plate:
+ *           type: string
+ *           example: "2-ZYX-987"
+ *         description:
+ *           type: string
+ *           nullable: true
+ *           example: "Mise à jour : nouveau contrôle technique"
+ *         owner_id:
+ *           type: integer
+ *           example: 3
+ */
+
 
 const VehiculeSchema = vine.object({
   model: vine.string().minLength(1).maxLength(100),

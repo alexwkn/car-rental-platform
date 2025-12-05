@@ -1,34 +1,79 @@
 import vine from "@vinejs/vine"
 
 /**
-* @swagger
-* components:
-*   schemas:
-*     CreateOfferSchema:
-*       type: object
-*       properties:
-*         offer_id:
-*           type: integer
-*         start_date:
-*           type: string
-*           format: date-time
-*         end_date:
-*           type: string
-*           format: date-time
-*         fuel_level:
-*           type: number
-*           format: float
-*         adress:
-*           type: string
-*         price:
-*           type: number
-*           format: float
-*         description:
-*           type: string
-*         vehicule_id:
-*           type: integer
-*           description: ID du véhicule lié
-*/
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateOfferSchema:
+ *       type: object
+ *       required:
+ *         - start_date
+ *         - end_date
+ *         - fuel_level
+ *         - adress
+ *         - price
+ *         - vehicule_id
+ *       properties:
+ *         start_date:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-10"
+ *         end_date:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-15"
+ *         fuel_level:
+ *           type: number
+ *           format: float
+ *           example: 75.5
+ *         adress:
+ *           type: string
+ *           example: "Rue du Centre 100, Namur"
+ *         price:
+ *           type: number
+ *           format: float
+ *           example: 120.00
+ *         description:
+ *           type: string
+ *           example: "Petite voiture économique"
+ *         vehicule_id:
+ *           type: integer
+ *           example: 1
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateOfferSchema:
+ *       type: object
+ *       properties:
+ *         start_date:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-12"
+ *         end_date:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-18"
+ *         fuel_level:
+ *           type: number
+ *           example: 80
+ *         adress:
+ *           type: string
+ *           example: "Nouvelle adresse de retrait"
+ *         price:
+ *           type: number
+ *           format: float
+ *           example: 150.00
+ *         description:
+ *           type: string
+ *           example: "Mise à jour : voiture nettoyée"
+ *         vehicule_id:
+ *           type: integer
+ *           example: 2
+ */
+
 const OfferSchema = vine
 .object({
   start_date: vine

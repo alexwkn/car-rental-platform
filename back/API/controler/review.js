@@ -12,6 +12,8 @@ import { ReviewValidator } from "../middleware/validator/review.js";
  *           type: integer
  *         rating:
  *           type: integer
+ *           minimum: 1
+ *           maximum: 5
  *         comment:
  *           type: string
  *         review_date:
@@ -23,13 +25,8 @@ import { ReviewValidator } from "../middleware/validator/review.js";
  *           type: integer
  *         order_id:
  *           type: integer
- *         profile_review_customer:
- *           $ref: '#/components/schemas/Profile'
- *         profile_review_renter:
- *           $ref: '#/components/schemas/Profile'
- *         order:
- *           $ref: '#/components/schemas/Order'
  */
+
 export const getReviewById = async (req, res) => {
     try {
         const review = await prisma.review.findUnique({

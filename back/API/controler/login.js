@@ -1,6 +1,33 @@
 import {readPerson} from "../model/person.js";
 import {sign} from "../../utils/jwt.js";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LoginRequest:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: "client@mail.com"
+ *         password:
+ *           type: string
+ *           example: "password123"
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LoginResponse:
+ *       type: string
+ *       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ */
+
 export const login = async (req, res) => {
  
     try {

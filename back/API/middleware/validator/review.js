@@ -7,32 +7,64 @@ import vine from '@vinejs/vine'
  *     CreateReviewSchema:
  *       type: object
  *       required:
+ *         - rating
  *         - customer_id
  *         - renter_id
  *         - order_id
  *       properties:
  *         rating:
  *           type: integer
- *           nullable: true
+ *           minimum: 1
+ *           maximum: 5
  *           example: 4
  *         comment:
  *           type: string
  *           nullable: true
- *           example: "Très bon service"
+ *           example: "Très bonne expérience"
  *         review_date:
  *           type: string
  *           format: date
- *           nullable: true
- *           example: "2025-01-15"
+ *           example: "2025-03-01"
  *         customer_id:
  *           type: integer
- *           example: 3
+ *           example: 2
  *         renter_id:
  *           type: integer
  *           example: 7
  *         order_id:
  *           type: integer
- *           example: 12
+ *           example: 10
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateReviewSchema:
+ *       type: object
+ *       properties:
+ *         rating:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 5
+ *           example: 5
+ *         comment:
+ *           type: string
+ *           nullable: true
+ *           example: "Mise à jour : service excellent"
+ *         review_date:
+ *           type: string
+ *           format: date
+ *           example: "2025-03-05"
+ *         customer_id:
+ *           type: integer
+ *           example: 2
+ *         renter_id:
+ *           type: integer
+ *           example: 1
+ *         order_id:
+ *           type: integer
+ *           example: 10
  */
 
 const ReviewSchema = vine.object({

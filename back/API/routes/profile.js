@@ -6,139 +6,182 @@ const router = Router();
 
 /**
  * @swagger
- * /profile:
- *  get:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Profile
- *      responses:
- *          200:
- *              description: List of all profiles
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          500:
- *              description: Server error
+ * tags:
+ *   name: Profile
+ *   description: Endpoints for managing user profiles (manager only)
+ */
+/**
+ * @swagger
+ * /profiles:
+ *   get:
+ *     summary: Get all profiles (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all profiles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Profile'
+ *       404:
+ *         description: No profiles found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.get('/', manager, getAllProfiles);
 /**
  * @swagger
- * /profile/{id}:
- *  get:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Profile
- *      parameters:
- *         - in: path
- *           name: id
- *           schema:
- *              type: integer
- *           required: true
- *           description: ID of the profile to retrieve
- *      responses:
- *          200:
- *              description: Profile data
- *          400:
- *              description: Invalid ID
- *          404:
- *              description: Profile not found
- *          500:
- *              description: Server error
+ * /profiles/{id}:
+ *   get:
+ *     summary: Get a profile by ID (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Profile ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Profile found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Profile'
+ *       404:
+ *         description: Profile not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.get('/:id', manager, getProfileById);
 /**
  * @swagger
- * /profile:
- *  post:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Profile
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                  schema:
- *                      $ref: '#/components/schemas/CreateProfileSchema'
- *      responses:
- *          201:
- *              description: Profile created
- *          400:
- *              description: Validation error
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          500:
- *              description: Server error
+ * /profiles:
+ *   post:
+ *     summary: Create a new profile (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateProfileSchema'
+ *     responses:
+ *       201:
+ *         description: Profile created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Profile'
+ *       422:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.post('/', manager, createProfile);
 /**
  * @swagger
- * /profile/{id}:
- *  patch:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Profile
- *      parameters:
- *         - in: path
- *           name: id
+ * /profiles/{id}:
+ *   patch:
+ *     summary: Update a profile (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Profile ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
  *           schema:
- *              type: integer
- *           required: true
- *           description: ID of the profile to update
- *      requestBody:
- *          content:
- *              application/json:
- *                  schema:
- *                      $ref: '#/components/schemas/UpdateProfileSchema'
- *      responses:
- *          204:
- *              description: Profile updated
- *          400:
- *              description: Validation error
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          404:
- *              description: Profile not found
- *          500:
- *              description: Server error
+ *             $ref: '#/components/schemas/UpdateProfileSchema'
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Profile'
+ *       404:
+ *         description: Profile not found
+ *       422:
+ *         description: Validation error
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.patch('/:id', manager, updateProfile);
 /**
  * @swagger
- * /profile/{id}:
- *  delete:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Profile
- *      parameters:
- *         - in: path
- *           name: id
- *           schema:
- *              type: integer
- *           required: true
- *           description: ID of the profile to delete
- *      responses:
- *          204:
- *              description: Profile deleted
- *          400:
- *              description: Invalid ID
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          404:
- *              description: Profile not found
- *          500:
- *              description: Server error
+ * /profiles/{id}:
+ *   delete:
+ *     summary: Delete a profile (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Profile ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Profile deleted successfully
+ *       404:
+ *         description: Profile not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.delete('/:id', manager, deleteProfile);
 

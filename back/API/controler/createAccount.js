@@ -3,6 +3,69 @@ import {hash} from "../../utils/hash.js";
 import {sign} from "../../utils/jwt.js";
 import prisma from "../../database/databaseORM.js";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateAccountSchema:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *         - is_renter
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Antoine Nguyen"
+ *         email:
+ *           type: string
+ *           example: "antoine@mail.com"
+ *         password:
+ *           type: string
+ *           example: "StrongPass123"
+ *         adress:
+ *           type: string
+ *           example: "Rue du Centre 12, Namur"
+ *         bank_account:
+ *           type: string
+ *           example: "BE12 3456 7890 1234"
+ *         is_renter:
+ *           type: boolean
+ *           example: true
+ *         profile_picture:
+ *           type: string
+ *           format: url
+ *           example: "https://cdn.key2go.com/profile/default.png"
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreatedAccountData:
+ *       type: object
+ *       properties:
+ *         profile:
+ *           $ref: '#/components/schemas/Profile'
+ *         token:
+ *           type: string
+ *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateAccountResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: "Account created successfully"
+ *         data:
+ *           $ref: '#/components/schemas/CreatedAccountData'
+ */
 
 export const createAccount = async (req, res) => {
     try {

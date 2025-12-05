@@ -6,139 +6,185 @@ const router = Router();
 
 /**
  * @swagger
- * /offer:
- *  get:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Offer
- *      responses:
- *          200:
- *              description: List of all offers
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          500:
- *              description: Server error
+ * tags:
+ *   name: Offer
+ *   description: Endpoints for managing rental offers
+ */
+
+/**
+ * @swagger
+ * /offers:
+ *   get:
+ *     summary: Get all offers (manager only)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all offers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Offer'
+ *       404:
+ *         description: No offers found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.get('/', manager, getAllOffers);
 /**
  * @swagger
- * /offer/{id}:
- *  get:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Offer
- *      parameters:
- *         - in: path
- *           name: id
- *           schema:
- *              type: integer
- *           required: true
- *           description: ID of the offer to retrieve
- *      responses:
- *          200:
- *              description: Offer data
- *          400:
- *              description: Invalid ID
- *          404:
- *              description: Offer not found
- *          500:
- *              description: Server error
+ * /offers/{id}:
+ *   get:
+ *     summary: Get an offer by ID (manager only)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Offer ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Offer retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Offer'
+ *       404:
+ *         description: Offer not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
+
 router.get('/:id', manager, getOfferById);
 /**
  * @swagger
- * /offer:
- *  post:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Offer
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                  schema:
- *                      $ref: '#/components/schemas/CreateOfferSchema'
- *      responses:
- *          201:
- *              description: Offer created
- *          400:
- *              description: Validation error
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          500:
- *              description: Server error
+ * /offers:
+ *   post:
+ *     summary: Create a new offer (manager only)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateOfferSchema'
+ *     responses:
+ *       201:
+ *         description: Offer created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Offer created successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Offer'
+ *       422:
+ *         description: Validation error
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.post('/', manager, createOffer);
 /**
  * @swagger
- * /offer/{id}:
- *  patch:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Offer
- *      parameters:
- *         - in: path
- *           name: id
+ * /offers/{id}:
+ *   patch:
+ *     summary: Update an offer (manager only)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Offer ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
  *           schema:
- *              type: integer
- *           required: true
- *           description: ID of the offer to update
- *      requestBody:
- *          content:
- *              application/json:
- *                  schema:
- *                      $ref: '#/components/schemas/UpdateOfferSchema'
- *      responses:
- *          204:
- *              description: Offer updated
- *          400:
- *              description: Validation error
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          404:
- *              description: Offer not found
- *          500:
- *              description: Server error
+ *             $ref: '#/components/schemas/UpdateOfferSchema'
+ *     responses:
+ *       200:
+ *         description: Offer updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Offer'
+ *       404:
+ *         description: Offer not found
+ *       400:
+ *         description: Invalid ID or validation error
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.patch('/:id', manager, updateOffer);
 /**
  * @swagger
- * /offer/{id}:
- *  delete:
- *      security:
- *          - bearerAuth: []
- *      tags:
- *          - Offer
- *      parameters:
- *         - in: path
- *           name: id
- *           schema:
- *              type: integer
- *           required: true
- *           description: ID of the offer to delete
- *      responses:
- *          204:
- *              description: Offer deleted
- *          400:
- *              description: Invalid ID
- *          401:
- *              description: Unauthorized
- *          403:
- *              description: Must be manager
- *          404:
- *              description: Offer not found
- *          500:
- *              description: Server error
+ * /offers/{id}:
+ *   delete:
+ *     summary: Delete an offer (manager only)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Offer ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Offer deleted successfully
+ *       404:
+ *         description: Offer not found
+ *       400:
+ *         description: Invalid ID
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
  */
 router.delete('/:id', manager, deleteOffer);
 

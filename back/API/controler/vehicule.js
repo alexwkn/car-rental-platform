@@ -18,17 +18,8 @@ import { VehiculeValidator} from "../middleware/validator/vehicule.js";
  *           type: string
  *         owner_id:
  *           type: integer
- *         favorite:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Favorite'
- *         offer:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Offer'
- *         profile:
- *           $ref: '#/components/schemas/Profile'
  */
+
 export const getVehiculeById = async (req, res) => {
     try {
         const vehicule = await prisma.vehicule.findUnique({
