@@ -3,7 +3,7 @@ const API_ROUTES = {
   LOGIN_ROUTE: "/login",
   VEHICLES_ROUTE: "/vehicles",
   REVIEWS_ROUTE: "/reviews",
-  PROFILE_ROUTE: "/profile",
+  PROFILE_ROUTE: "/profiles",
   ORDER_ROUTE: "/orders",
   OFFER_ROUTE: "/offers",
   FAVORITE_ROUTE: "/favorite",

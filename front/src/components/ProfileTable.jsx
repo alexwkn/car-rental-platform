@@ -1,7 +1,18 @@
 import EntityTable from "./entity/EntityTable";
 import useEntity from "../hooks/useEntity";
-import * as ProfileController from "../API/controller/profiles";
+import {
+  getAllProfiles,
+  updateProfile,
+  deleteProfile,
+  addProfile,
+} from "../API/controller/profiles";
 
+const ProfileController = {
+  getAll: getAllProfiles,
+  update: updateProfile,
+  remove: deleteProfile,
+  add: addProfile,
+};
 function ProfileTable() {
   const fields = [
     { name: "name", label: "Name", type: "text" },

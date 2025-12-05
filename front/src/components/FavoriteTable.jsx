@@ -1,6 +1,13 @@
 import EntityTable from "./entity/EntityTable";
 import useEntity from "../hooks/useEntity";
-import * as FavoriteController from "../API/controller/favorite";
+import {getAllFavorites,addFavorite,deleteFavorite,updateFavorite} from "../API/controller/favorite";
+
+const FavoriteController = {
+  getAll: getAllFavorites,
+  add: addFavorite,
+  remove: deleteFavorite,
+  update: updateFavorite,
+};
 
 function FavoriteTable() {
   const fields = [
