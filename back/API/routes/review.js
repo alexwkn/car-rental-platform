@@ -84,7 +84,7 @@ router.get('/:id', manager, getReviewById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateReviewSchema'
+ *             $ref: '#/components/schemas/ReviewSchema'
  *     responses:
  *       201:
  *         description: Review created successfully
@@ -127,7 +127,7 @@ router.post('/', manager, createReview);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateReviewSchema'
+ *             $ref: '#/components/schemas/ReviewSchema'
  *     responses:
  *       200:
  *         description: Review updated successfully

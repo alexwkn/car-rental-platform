@@ -83,7 +83,7 @@ router.get('/:id', manager, getOrderById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateOrderSchema'
+ *             $ref: '#/components/schemas/OrderSchema'
  *     responses:
  *       201:
  *         description: Order created successfully
@@ -129,7 +129,7 @@ router.post('/', manager, createOrder);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateOrderSchema'
+ *             $ref: '#/components/schemas/OrderSchema'
  *     responses:
  *       200:
  *         description: Order updated successfully

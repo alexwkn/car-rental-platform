@@ -4,7 +4,7 @@ import vine from "@vinejs/vine"
  * @swagger
  * components:
  *   schemas:
- *     CreateOfferSchema:
+ *     OfferSchema:
  *       type: object
  *       required:
  *         - start_date
@@ -41,38 +41,6 @@ import vine from "@vinejs/vine"
  *           example: 1
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateOfferSchema:
- *       type: object
- *       properties:
- *         start_date:
- *           type: string
- *           format: date
- *           example: "2025-01-12"
- *         end_date:
- *           type: string
- *           format: date
- *           example: "2025-01-18"
- *         fuel_level:
- *           type: number
- *           example: 80
- *         adress:
- *           type: string
- *           example: "Nouvelle adresse de retrait"
- *         price:
- *           type: number
- *           format: float
- *           example: 150.00
- *         description:
- *           type: string
- *           example: "Mise à jour : voiture nettoyée"
- *         vehicule_id:
- *           type: integer
- *           example: 2
- */
 
 const OfferSchema = vine
 .object({

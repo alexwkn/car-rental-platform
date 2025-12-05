@@ -4,7 +4,7 @@ import vine from '@vinejs/vine'
  * @swagger
  * components:
  *   schemas:
- *     CreateReviewSchema:
+ *     ReviewSchema:
  *       type: object
  *       required:
  *         - rating
@@ -36,36 +36,7 @@ import vine from '@vinejs/vine'
  *           example: 10
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateReviewSchema:
- *       type: object
- *       properties:
- *         rating:
- *           type: integer
- *           minimum: 1
- *           maximum: 5
- *           example: 5
- *         comment:
- *           type: string
- *           nullable: true
- *           example: "Mise à jour : service excellent"
- *         review_date:
- *           type: string
- *           format: date
- *           example: "2025-03-05"
- *         customer_id:
- *           type: integer
- *           example: 2
- *         renter_id:
- *           type: integer
- *           example: 1
- *         order_id:
- *           type: integer
- *           example: 10
- */
+
 
 const ReviewSchema = vine.object({
   rating: vine.number().withoutDecimals().min(1).max(5),

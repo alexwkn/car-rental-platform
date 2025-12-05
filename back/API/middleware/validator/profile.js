@@ -4,7 +4,7 @@ import vine from '@vinejs/vine'
  * @swagger
  * components:
  *   schemas:
- *     CreateProfileSchema:
+ *     ProfileSchema:
  *       type: object
  *       required:
  *         - name
@@ -35,37 +35,6 @@ import vine from '@vinejs/vine'
  *           format: url
  *           example: "https://cdn.key2go.com/profiles/default.png"
  */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateProfileSchema:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           example: "Nouveau Nom"
- *         email:
- *           type: string
- *           example: "nouvel-email@mail.com"
- *         password:
- *           type: string
- *           example: "NewPass789"
- *         adress:
- *           type: string
- *           example: "Nouvelle adresse"
- *         bank_account:
- *           type: string
- *           example: "BE98 7654 3210 9876"
- *         is_renter:
- *           type: boolean
- *           example: false
- *         profile_picture:
- *           type: string
- *           example: "https://cdn.key2go.com/profiles/updated.png"
- */
-
 
 const ProfileSchema = vine
   .object({

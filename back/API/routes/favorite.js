@@ -84,7 +84,7 @@ router.get('/:id', manager, getFavoriteById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateFavoriteSchema'
+ *             $ref: '#/components/schemas/FavoriteSchema'
  *     responses:
  *       201:
  *         description: Favorite created successfully
@@ -127,7 +127,7 @@ router.post('/', manager, createFavorite);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateFavoriteSchema'
+ *             $ref: '#/components/schemas/FavoriteSchema'
  *     responses:
  *       200:
  *         description: Favorite updated successfully

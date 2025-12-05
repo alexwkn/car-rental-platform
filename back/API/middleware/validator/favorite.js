@@ -4,7 +4,7 @@ import vine from '@vinejs/vine'
  * @swagger
  * components:
  *   schemas:
- *     CreateFavoriteSchema:
+ *     FavoriteSchema:
  *       type: object
  *       required:
  *         - profile_id
@@ -18,20 +18,7 @@ import vine from '@vinejs/vine'
  *           example: 12
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateFavoriteSchema:
- *       type: object
- *       properties:
- *         profile_id:
- *           type: integer
- *           example: 5
- *         vehicule_id:
- *           type: integer
- *           example: 8
- */
+
 
 
 const FavoriteSchema = vine.object({
