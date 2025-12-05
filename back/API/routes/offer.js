@@ -86,7 +86,7 @@ router.get('/:id', manager, getOfferById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateOfferSchema'
+ *             $ref: '#/components/schemas/OfferSchema'
  *     responses:
  *       201:
  *         description: Offer created successfully
@@ -132,7 +132,7 @@ router.post('/', manager, createOffer);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateOfferSchema'
+ *             $ref: '#/components/schemas/OfferSchema'
  *     responses:
  *       200:
  *         description: Offer updated successfully

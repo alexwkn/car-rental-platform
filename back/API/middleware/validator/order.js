@@ -5,7 +5,7 @@ import vine from '@vinejs/vine'
  * @swagger
  * components:
  *   schemas:
- *     CreateOrderSchema:
+ *     OrderSchema:
  *       type: object
  *       required:
  *         - date_of_return
@@ -36,36 +36,6 @@ import vine from '@vinejs/vine'
  *         customer_id:
  *           type: integer
  *           example: 2
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateOrderSchema:
- *       type: object
- *       properties:
- *         order_date:
- *           type: string
- *           format: date-time
- *           example: "2025-02-02T12:00:00Z"
- *         date_of_return:
- *           type: string
- *           format: date
- *           example: "2025-02-12"
- *         fuel_level_return:
- *           type: number
- *           example: 88.0
- *         payment_status:
- *           type: string
- *           enum: [pending, completed, failed]
- *           example: "completed"
- *         offer_id:
- *           type: integer
- *           example: 3
- *         customer_id:
- *           type: integer
- *           example: 1
  */
 
 

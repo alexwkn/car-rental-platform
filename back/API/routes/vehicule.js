@@ -113,7 +113,7 @@ router.get('/:id', manager, getVehiculeById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateVehiculeSchema'
+ *             $ref: '#/components/schemas/VehiculeSchema'
  *     responses:
  *       201:
  *         description: Vehicle created successfully
@@ -156,7 +156,7 @@ router.post('/', manager, createVehicule);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateVehiculeSchema'
+ *             $ref: '#/components/schemas/VehiculeSchema'
  *     responses:
  *       200:
  *         description: Vehicle updated successfully

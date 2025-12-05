@@ -84,7 +84,7 @@ router.get('/:id', manager, getProfileById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateProfileSchema'
+ *             $ref: '#/components/schemas/ProfileSchema'
  *     responses:
  *       201:
  *         description: Profile created successfully
@@ -127,7 +127,7 @@ router.post('/', manager, createProfile);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateProfileSchema'
+ *             $ref: '#/components/schemas/ProfileSchema'
  *     responses:
  *       200:
  *         description: Profile updated successfully

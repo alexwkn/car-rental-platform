@@ -4,7 +4,7 @@ import vine from '@vinejs/vine'
  * @swagger
  * components:
  *   schemas:
- *     CreateVehiculeSchema:
+ *     VehiculeSchema:
  *       type: object
  *       required:
  *         - model
@@ -26,27 +26,6 @@ import vine from '@vinejs/vine'
  *           example: 1
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateVehiculeSchema:
- *       type: object
- *       properties:
- *         model:
- *           type: string
- *           example: "Renault Clio"
- *         licence_plate:
- *           type: string
- *           example: "2-ZYX-987"
- *         description:
- *           type: string
- *           nullable: true
- *           example: "Mise à jour : nouveau contrôle technique"
- *         owner_id:
- *           type: integer
- *           example: 3
- */
 
 
 const VehiculeSchema = vine.object({
