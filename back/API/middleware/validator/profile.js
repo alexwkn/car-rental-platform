@@ -1,4 +1,4 @@
-import vine from '@vinejs/vine'
+import vine from "@vinejs/vine";
 
 /**
  * @swagger
@@ -36,15 +36,14 @@ import vine from '@vinejs/vine'
  *           example: "https://cdn.key2go.com/profiles/default.png"
  */
 
-const ProfileSchema = vine
-  .object({
-    name: vine.string().maxLength(100),
-    email: vine.string().email().maxLength(255),
-    password: vine.string().minLength(8).maxLength(255),
-    adress: vine.string().maxLength(255).optional(),
-    bank_account: vine.string().maxLength(50).optional(),
-    is_renter: vine.boolean(),
-    profile_picture: vine.string().url().maxLength(500).optional(),
-  });
+const ProfileSchema = vine.object({
+  name: vine.string().maxLength(100),
+  email: vine.string().email().maxLength(255),
+  password: vine.string().minLength(8).maxLength(255),
+  adress: vine.string().maxLength(255).optional(),
+  bank_account: vine.string().maxLength(50).optional(),
+  is_renter: vine.boolean(),
+  profile_picture: vine.string().maxLength(500).optional(),
+});
 
 export const ProfileValidator = vine.compile(ProfileSchema);

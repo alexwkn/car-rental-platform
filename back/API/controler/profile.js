@@ -1,5 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { ProfileValidator } from "../middleware/validator/profile.js";
+import { saveImage, deleteImage } from "../../utils/imageManager.js";
+import * as uuid from "uuid";
 
 /**
  * @swagger
@@ -25,7 +27,6 @@ import { ProfileValidator } from "../middleware/validator/profile.js";
  *         profile_picture:
  *           type: string
  */
-
 
 export const getProfileById = async (req, res) => {
   try {
@@ -65,43 +66,49 @@ export const getAllProfiles = async (req, res) => {
 
 export const createProfile = async (req, res) => {
   try {
-      const { name, email, password, adress, bank_account, is_renter, profile_picture } = req.body;
-      const validatedData = await ProfileValidator.validate({
-          name,
-          email,
-          password,
-          adress,
-          bank_account,
-          is_renter,
-          profile_picture
-      });
+    const {
+      name,
+      email,
+      password,
+      adress,
+      bank_account,
+      is_renter,
+      profile_picture,
+    } = req.body;
+    const validatedData = await ProfileValidator.validate({
+      name,
+      email,
+      password,
+      adress,
+      bank_account,
+      is_renter,
+      profile_picture,
+    });
 
-      const hashedPassword = await hash(validatedData.password);
+    const hashedPassword = await hash(validatedData.password);
 
-      const newProfile = await prisma.profile.create({
-          data: {
-              ...validatedData,
-              password: hashedPassword
-          }
-      });
-      res.status(201).json({
-          message: "Profile created successfully",
-          data: newProfile,
-      });
+    const newProfile = await prisma.profile.create({
+      data: {
+        ...validatedData,
+        password: hashedPassword,
+      },
+    });
+    res.status(201).json({
+      message: "Profile created successfully",
+      data: newProfile,
+    });
   } catch (err) {
-      if (err.messages) {
-          return res.status(422).json({
-              message: "Validation error",
-              errors: err.messages,
-          });
-      }
-      return res.status(500).json({
-          message: "Server error",
-          error: err.message || err,
+    if (err.messages) {
+      return res.status(422).json({
+        message: "Validation error",
+        errors: err.messages,
       });
+    }
+    return res.status(500).json({
+      message: "Server error",
+      error: err.message || err,
+    });
   }
-
-
 };
 export const updateProfile = async (req, res) => {
   try {
@@ -112,7 +119,7 @@ export const updateProfile = async (req, res) => {
       },
       data: validatedData,
     });
-    res.status(200).json({  
+    res.status(200).json({
       message: "Profile updated successfully",
       data: updatedProfile,
     });
@@ -136,5 +143,56 @@ export const deleteProfile = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
+  }
+};
+
+export const uploadProfileImage = async (req, res) => {
+  try {
+    const profileId = parseInt(req.params.id);
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Aucune image fournie" });
+    }
+
+    const existingProfile = await prisma.profile.findUnique({
+      where: { profile_id: profileId },
+      select: { profile_picture: true },
+    });
+
+    if (!existingProfile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    const imageName = uuid.v4();
+    const imagePath = `profiles/${imageName}.jpeg`;
+    await saveImage(req.file.buffer, imageName, "upload/profiles");
+
+    if (existingProfile.profile_picture) {
+      try {
+        await deleteImage(existingProfile.profile_picture);
+      } catch (err) {
+        console.warn(
+          "Erreur lors de la suppression de l'ancienne image:",
+          err.message
+        );
+      }
+    }
+
+    const updatedProfile = await prisma.profile.update({
+      data: { profile_picture: imagePath },
+      where: { profile_id: profileId },
+      select: { profile_picture: true, profile_id: true },
+    });
+
+    res.status(200).json({
+      message: "Photo de profil mise à jour avec succès",
+      data: updatedProfile,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Une erreur est survenue lors de l'upload de l'image",
+      details: e.message,
+    });
   }
 };
