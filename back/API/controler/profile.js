@@ -144,7 +144,7 @@ export const deleteProfile = async (req, res) => {
         await deleteImage(profile.profile_picture);
       } catch (err) {
         console.warn(
-          "Erreur lors de la suppression de l'image du profil:",
+          "Error occurred while deleting the profile image:",
           err.message
         );
       }
@@ -171,7 +171,7 @@ export const uploadProfileImage = async (req, res) => {
     const profileId = parseInt(req.params.id);
 
     if (!req.file) {
-      return res.status(400).json({ message: "Aucune image fournie" });
+      return res.status(400).json({ message: "No image provided" });
     }
 
     const existingProfile = await prisma.profile.findUnique({
@@ -192,7 +192,7 @@ export const uploadProfileImage = async (req, res) => {
         await deleteImage(existingProfile.profile_picture);
       } catch (err) {
         console.warn(
-          "Erreur lors de la suppression de l'ancienne image:",
+          "Error occurred while deleting the old image:",
           err.message
         );
       }
@@ -205,13 +205,13 @@ export const uploadProfileImage = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Photo de profil mise à jour avec succès",
+      message: "Profile image updated successfully",
       data: updatedProfile,
     });
   } catch (e) {
     console.error(e);
     return res.status(500).json({
-      error: "Une erreur est survenue lors de l'upload de l'image",
+      error: "An error occurred while uploading the image",
       details: e.message,
     });
   }
@@ -232,7 +232,7 @@ export const deleteProfileImage = async (req, res) => {
 
     if (!profile.profile_picture) {
       return res.status(400).json({
-        message: "Aucune photo de profil à supprimer",
+        message: "No profile picture to delete",
       });
     }
 
@@ -240,7 +240,7 @@ export const deleteProfileImage = async (req, res) => {
       await deleteImage(profile.profile_picture);
     } catch (err) {
       console.warn(
-        "Erreur lors de la suppression de l'image du disque:",
+        "Error occurred while deleting the image from disk:",
         err.message
       );
     }
@@ -252,13 +252,13 @@ export const deleteProfileImage = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Photo de profil supprimée avec succès",
+      message: "Profile image deleted successfully",
       data: updatedProfile,
     });
   } catch (e) {
     console.error(e);
     return res.status(500).json({
-      error: "Une erreur est survenue lors de la suppression de l'image",
+      error: "An error occurred while deleting the image.",
       details: e.message,
     });
   }
