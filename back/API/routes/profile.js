@@ -1,6 +1,9 @@
 import Router from 'express';
-import { getAllProfiles, getProfileById, createProfile, updateProfile, deleteProfile } from '../controler/profile.js';
+import { getAllProfiles, getProfileById, createProfile, updateProfile, deleteProfile, uploadProfileImage, deleteProfileImage } from '../controler/profile.js';
 import { manager } from '../middleware/auth/mustBe.js';
+import { upload } from '../middleware/upload/multerConfig.js';
+
+
 
 const router = Router();
 
@@ -184,5 +187,96 @@ router.patch('/:id', manager, updateProfile);
  *         description: Server error
  */
 router.delete('/:id', manager, deleteProfile);
+
+router.post('/:id/upload-picture', manager, upload.single('profile_picture'), uploadProfileImage);
+
+/**
+ * @swagger
+ * /profiles/{id}/upload-picture:
+ *   post:
+ *     summary: Upload a profile picture (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Profile ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profile_picture:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile picture uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Profile'
+ *       400:
+ *         description: Invalid ID or no image provided
+ *       404:
+ *         description: Profile not found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /profiles/{id}/picture:
+ *   delete:
+ *     summary: Delete profile picture (manager only)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Profile ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Profile picture deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Profile'
+ *       400:
+ *         description: No profile picture to delete
+ *       404:
+ *         description: Profile not found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       403:
+ *         description: Forbidden — must be manager
+ *       500:
+ *         description: Server error
+ */
+router.delete('/:id/picture', manager, deleteProfileImage);
 
 export default router;
