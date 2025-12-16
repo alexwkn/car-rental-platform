@@ -24,15 +24,13 @@ function TableData({ columns, data, onEdit, onDelete }) {
                       <img src={editIcon} alt="Edit" />
                     </button>
                     <button onClick={() => onDelete(row.id)}>
-                      <img
-                        src={deleteIcon}
-                        alt="Delete"
-                        className="icon"
-                      />
+                      <img src={deleteIcon} alt="Delete" className="icon" />
                     </button>
                   </div>
+                ) : col.render ? (
+                  col.render(row[col.key], row)
                 ) : (
-                  row[col.key]
+                  String(row[col.key] ?? "")
                 )}
               </td>
             ))}

@@ -1,6 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { ProfileValidator } from "../middleware/validator/profile.js";
 import { saveImage, deleteImage } from "../../utils/imageManager.js";
+import { hash } from "../../utils/hash.js";
 import * as uuid from "uuid";
 
 /**

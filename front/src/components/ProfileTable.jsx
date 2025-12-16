@@ -5,7 +5,10 @@ import {
   updateProfile,
   deleteProfile,
   addProfile,
+  getProfilePictureUrl,
 } from "../API/controller/profiles";
+import ProfilePictureUpload from "./ProfilePictureUpload";
+import { useState } from "react";
 
 const ProfileController = {
   getAll: getAllProfiles,
@@ -14,6 +17,9 @@ const ProfileController = {
   add: addProfile,
 };
 function ProfileTable() {
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
   const fields = [
     { name: "name", label: "Name", type: "text", maxLength: 100 },
     { name: "email", label: "Email", type: "email", maxLength: 255 },
@@ -48,20 +54,93 @@ function ProfileTable() {
     { key: "adress", label: "Adress" },
     { key: "bank_account", label: "Bank Account" },
     { key: "is_renter", label: "Is Renter" },
-    { key: "profile_picture", label: "Profile Picture" },
+    {
+      key: "profile_picture",
+      label: "Profile Picture",
+      render: (value, row) => {
+        if (value) {
+          return (
+            <img
+              src={getProfilePictureUrl(value)}
+              alt={row.name}
+              style={{
+                width: "50px",
+                height: "50px",
+                objectFit: "cover",
+                borderRadius: "50%",
+                cursor: "pointer",
+              }}
+              onClick={() => handleOpenUploadModal(row)}
+              title="Click to change picture"
+            />
+          );
+        }
+        return (
+          <button
+            onClick={() => handleOpenUploadModal(row)}
+            style={{
+              padding: "5px 10px",
+              fontSize: "0.8rem",
+              cursor: "pointer",
+            }}
+          >
+            Upload
+          </button>
+        );
+      },
+    },
     { key: "edit", label: "Edit" },
   ];
 
   const hook = useEntity(ProfileController);
 
+  const handleOpenUploadModal = (profile) => {
+    setSelectedProfile(profile);
+    setIsUploadModalOpen(true);
+  };
+
+  const handleCloseUploadModal = () => {
+    setIsUploadModalOpen(false);
+    setSelectedProfile(null);
+  };
+
+  const handlePictureUpdated = () => {
+    // Recharger les données pour afficher la nouvelle image
+    hook.setQuery("");
+    handleCloseUploadModal();
+  };
+
   return (
-    <EntityTable
-      title="Profile"
-      fields={fields}
-      columns={columns}
-      hook={hook}
-      idField="profile_id"
-    />
+    <>
+      <EntityTable
+        title="Profile"
+        fields={fields}
+        columns={columns}
+        hook={hook}
+        idField="profile_id"
+      />
+
+      {/* Modal pour l'upload d'image */}
+      {isUploadModalOpen && selectedProfile && (
+        <div className="modal-overlay" onClick={handleCloseUploadModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Profile Picture - {selectedProfile.name}</h3>
+              <button className="close-button" onClick={handleCloseUploadModal}>
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <ProfilePictureUpload
+                profileId={selectedProfile.profile_id}
+                currentPicture={selectedProfile.profile_picture}
+                onPictureUpdated={handlePictureUpdated}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
