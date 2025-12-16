@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model manager {
+  id       Int     @id @default(autoincrement())
+  name     String? @db.VarChar
+  email    String? @unique @db.VarChar
+  password String? @db.VarChar
+}
+
+model offer {
+  offer_id    Int      @id @default(autoincrement())
+  start_date  DateTime @db.Date
+  end_date    DateTime @db.Date
+  fuel_level  Decimal? @db.Decimal(5, 2)
+  adress      String?
+  price       Decimal  @db.Decimal(10, 2)
+  description String?
+  vehicule_id Int
+  vehicule    vehicule @relation(fields: [vehicule_id], references: [vehicule_id], onDelete: Cascade, onUpdate: NoAction)
+  order       order[]
+}
+
+model order {
+  order_id          Int       @id @default(autoincrement())
+  order_date        DateTime? @default(now()) @db.Timestamp(6)
+  date_of_return    DateTime? @db.Date
+  fuel_level_return Decimal?  @db.Decimal(5, 2)
+  payment_status    String?   @default("pending") @db.VarChar(30)
+  offer_id          Int
+  customer_id       Int
+  profile           profile   @relation(fields: [customer_id], references: [profile_id], onDelete: Cascade, onUpdate: NoAction)
+  offer             offer     @relation(fields: [offer_id], references: [offer_id], onDelete: Cascade, onUpdate: NoAction)
+  review            review[]
+}
+
+model profile {
+  profile_id                         Int        @id @default(autoincrement())
+  name                               String     @db.VarChar(255)
+  email                              String     @unique @db.VarChar(100)
+  password                           String     @db.VarChar(255)
+  adress                             String?
+  bank_account                       String?    @db.VarChar(50)
+  is_renter                          Boolean?   @default(false)
+  profile_picture                    String?
+  favorite                           favorite[]
+  order                              order[]
+  review_review_customer_idToprofile review[]   @relation("review_customer_idToprofile")
+  review_review_renter_idToprofile   review[]   @relation("review_renter_idToprofile")
+  vehicule                           vehicule[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model review {
+  review_id                           Int       @id @default(autoincrement())
+  rating                              Int?
+  comment                             String?
+  review_date                         DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
+  customer_id                         Int
+  renter_id                           Int
+  order_id                            Int
+  profile_review_customer_idToprofile profile   @relation("review_customer_idToprofile", fields: [customer_id], references: [profile_id], onDelete: Cascade, onUpdate: NoAction)
+  order                               order     @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+  profile_review_renter_idToprofile   profile   @relation("review_renter_idToprofile", fields: [renter_id], references: [profile_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model vehicule {
+  vehicule_id   Int        @id @default(autoincrement())
+  model         String     @db.VarChar(100)
+  licence_plate String     @unique @db.VarChar(20)
+  description   String?
+  owner_id      Int
+  favorite      favorite[]
+  offer         offer[]
+  profile       profile    @relation(fields: [owner_id], references: [profile_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model favorite {
+  favorite_id Int      @id @default(autoincrement())
+  profile_id  Int
+  vehicule_id Int
+  profile     profile  @relation(fields: [profile_id], references: [profile_id], onDelete: Cascade, onUpdate: NoAction)
+  vehicule    vehicule @relation(fields: [vehicule_id], references: [vehicule_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([profile_id, vehicule_id])
+}
+
+enum payment_status {
+  pending
+  completed
+  failed
+}

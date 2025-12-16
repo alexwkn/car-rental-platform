@@ -1,0 +1,7 @@
+node_modules/
+.env
+/generated/prisma
+
+# Images uploadées par les utilisateurs
+upload/
+
