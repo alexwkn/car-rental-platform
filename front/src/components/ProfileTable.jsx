@@ -104,16 +104,10 @@ function ProfileTable() {
     setSelectedProfile(null);
   };
 
-  const handlePictureUpdated = (updatedData) => {
-    // Mettre à jour le profil sélectionné avec les nouvelles données
-    if (updatedData) {
-      setSelectedProfile((prev) => ({
-        ...prev,
-        profile_picture: updatedData.profile_picture,
-      }));
-    }
-    // Recharger les données pour afficher la nouvelle image dans le tableau
+  const handlePictureUpdated = () => {
+    // Recharger les données pour afficher la nouvelle image
     hook.setQuery("");
+    handleCloseUploadModal();
   };
 
   return (
