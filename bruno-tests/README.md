@@ -1,6 +1,6 @@
-🧪 Key2Go API - Bruno Test Collection
+Key2Go API - Bruno Test Collection
 
-## ⚡ Ordre d'exécution des tests
+## Ordre d'exécution des tests
 
 ### 1. Authentication (Obligatoire en premier)
 
