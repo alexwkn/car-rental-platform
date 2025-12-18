@@ -8,7 +8,7 @@ export default function NavBar() {
       <nav>
         <ul>
           <li><NavLink to={ROUTES.HOME_ROUTE}>Home</NavLink></li>
-          <li><NavLink to={ROUTES.VEHICULE_ROUTE}>Vehicles</NavLink></li>
+          <li><NavLink to={ROUTES.VEHICULE_ROUTE}>Vehicules</NavLink></li>
           <li><NavLink to={ROUTES.ORDER_ROUTE}>Orders</NavLink></li>
           <li><NavLink to={ROUTES.REVIEW_ROUTE}>Reviews</NavLink></li>
           <li><NavLink to={ROUTES.PROFILE_ROUTE}>Profiles</NavLink></li>

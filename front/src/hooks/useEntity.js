@@ -1,33 +1,37 @@
-// src/hooks/useEntity.js
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 export default function useEntity(controller) {
-  const [data, setData] = useState([]);
+  const PAGE_SIZE = 10;
+
+  const [rawData, setRawData] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [isServerPaginated, setIsServerPaginated] = useState(false);
+  const [serverTotalPages, setServerTotalPages] = useState(1);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      // On passe toujours (page, query), même si le controller ne les utilise pas
       const result = await controller.getAll(page, query);
 
-      // Si le backend renvoie un array simple
       if (Array.isArray(result)) {
-        setData(result);
-        setTotalPages(1);
-      } 
-      // Si le backend renvoie { items, totalPages }
+        setRawData(result);
+        setIsServerPaginated(false);
+        setServerTotalPages(1);
+      }
       else if (result && Array.isArray(result.items)) {
-        setData(result.items);
-        setTotalPages(result.totalPages ?? 1);
+        setRawData(result.items);
+        setIsServerPaginated(true);
+        setServerTotalPages(result.totalPages ?? 1);
       } else {
-        setData([]);
-        setTotalPages(1);
+        setRawData([]);
+        setIsServerPaginated(false);
+        setServerTotalPages(1);
       }
     } catch (err) {
       setError(err);
@@ -38,14 +42,47 @@ export default function useEntity(controller) {
 
   useEffect(() => {
     fetchData();
-    // controller est stable (import), donc pas besoin dans le tableau de deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, query]);
+  }, [query]);
 
-  const handleSetQuery = (value) => {
-    setPage(1);          // dès qu'on change le filtre, on repart page 1
-    setQuery(value);
-  };
+  useEffect(() => {
+    if (isServerPaginated) {
+      fetchData();
+    }
+  }, [page, isServerPaginated]);
+
+  const handleSetQuery = useCallback((value) => {
+  setPage(1);
+  setQuery(value ?? "");
+}, []);
+
+  const filteredData = useMemo(() => {
+    if (isServerPaginated) return rawData;
+
+    const q = query.trim().toLowerCase();
+    if (!q) return rawData;
+
+    return rawData.filter((item) =>
+      JSON.stringify(item).toLowerCase().includes(q)
+    );
+  }, [rawData, query, isServerPaginated]);
+
+  const totalPages = useMemo(() => {
+    if (isServerPaginated) return serverTotalPages;
+    return Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+  }, [filteredData.length, isServerPaginated, serverTotalPages]);
+
+  const data = useMemo(() => {
+    if (isServerPaginated) return filteredData;
+
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredData.slice(start, start + PAGE_SIZE);
+  }, [filteredData, page, isServerPaginated]);
+
+  useEffect(() => {
+    if (!isServerPaginated && page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages, isServerPaginated]);
 
   const addEntity = async (entity) => {
     try {
@@ -75,8 +112,8 @@ export default function useEntity(controller) {
   };
 
   return {
-    data,
-    totalPages,
+    data,             
+    totalPages,      
     page,
     setPage,
     setQuery: handleSetQuery,

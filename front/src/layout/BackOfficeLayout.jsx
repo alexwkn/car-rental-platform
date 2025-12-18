@@ -1,4 +1,3 @@
-// src/layout/BackOfficeLayout.jsx
 import PropTypes from "prop-types";
 import SearchBar from "../components/SearchBar";
 import NavBar from "./NavBar";
@@ -9,7 +8,7 @@ export default function BackOfficeLayout({ children }) {
     <div className="App">
       <div className="sidebar">
         <SearchBar
-          placeholder="Search profiles, vehicles..."
+          placeholder="Search Profiles, Vehicules..."
           isGlobal={true}
         />
       </div>
