@@ -42,15 +42,10 @@ import vine from '@vinejs/vine'
 const OrderSchema = vine
 .object({
  order_date: vine
-    .date({
-    formats: ['iso8601']
-  })
-    .afterOrEqual('today')// order_date >= today          
+    .date({ formats: ['yyyy-MM-dd','iso8601'] })       
     .optional(), 
   date_of_return: vine
-    .date({
-    formats: ['iso8601']
-  })
+    .date({ formats: ['yyyy-MM-dd','iso8601'] })
     .afterField('order_date'),        // date_of_return > order_date 
 
   fuel_level_return: vine

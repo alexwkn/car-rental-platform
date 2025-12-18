@@ -1,5 +1,5 @@
 const API_ROUTES = {
-  API_ROUTE: "http://localhost:3001",
+  API_ROUTE: import.meta.env.VITE_API_ROUTE || "http://localhost:3001",
   LOGIN_ROUTE: "/login",
   VEHICLES_ROUTE: "/vehicules",
   REVIEWS_ROUTE: "/reviews",

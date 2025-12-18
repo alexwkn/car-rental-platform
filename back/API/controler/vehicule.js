@@ -84,10 +84,10 @@ export const updateVehicule = async (req, res) => {
         }
 
         const bodyToValidate = {
-            model: req.body.model || existingVehicule.model,
-            licence_plate: req.body.licence_plate || existingVehicule.licence_plate,
+            model: req.body.model ?? existingVehicule.model,
+            licence_plate: req.body.licence_plate ?? existingVehicule.licence_plate,
             description: req.body.description ?? existingVehicule.description,
-            owner_id: req.body.owner_id || existingVehicule.owner_id,
+            owner_id: req.body.owner_id ?? existingVehicule.owner_id,
         };
         const validatedData = await VehiculeValidator.validate(bodyToValidate);
 
@@ -100,8 +100,16 @@ export const updateVehicule = async (req, res) => {
             data: updatedVehicule,
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
+        if (err.messages) {
+            return res.status(422).json({
+                message: 'Validation error',
+                errors: err.messages,
+            });
+        }
+        return res.status(500).json({
+            message: 'Server error',
+            error: err.message || err,
+        });
     }
 };
 export const deleteVehicule = async (req, res) => {

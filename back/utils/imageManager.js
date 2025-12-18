@@ -4,15 +4,20 @@ import sharp from "sharp";
 
 export const saveImage = (imageBuffer, imageName, destFolder) => {
   const folderPath = path.resolve(destFolder);
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+  }
+
+  const filePath = path.join(folderPath, `${imageName}.jpeg`);
 
   return sharp(imageBuffer)
-    .jpeg()
     .resize({
       fit: "inside",
       width: 300,
       height: 300,
     })
-    .toFile(`${folderPath}/${imageName}.jpeg`);
+    .jpeg()
+    .toFile(filePath);
 };
 
 export const deleteImage = (imagePath) => {

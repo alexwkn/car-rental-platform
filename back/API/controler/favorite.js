@@ -90,8 +90,8 @@ export const updateFavorite = async (req, res) => {
             });
         }
         const bodyToValidate = {
-            profile_id: req.body.profile_id || existingFavorite.profile_id,
-            vehicule_id: req.body.vehicule_id || existingFavorite.vehicule_id,
+            profile_id: req.body.profile_id ?? existingFavorite.profile_id,
+            vehicule_id: req.body.vehicule_id ?? existingFavorite.vehicule_id,
         };
         const validatedData = await FavoriteValidator.validate(bodyToValidate);
 

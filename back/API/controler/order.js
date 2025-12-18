@@ -1,7 +1,13 @@
 import prisma from "../../database/databaseORM.js";
 import { OrderValidator } from "../middleware/validator/order.js";
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
+
+const formatDate = (d) => d ? new Date(d).toISOString().slice(0,10) : null;
+const isoDate = (d) => d ? new Date(d) : null;
+const formatOrder = (o) => ({
+    ...o,
+    order_date: formatDate(o.order_date),
+    date_of_return: formatDate(o.date_of_return),
+});
 
 
 /**
@@ -41,7 +47,7 @@ export const getOrderById = async (req, res) => {
             }
         });
         if (order) {
-            res.send(order);
+            res.send(formatOrder(order));
         } else {
             res.status(404).send('Order not found');
         }
@@ -60,7 +66,7 @@ export const getAllOrders = async (req, res) => {
     });
 
     if (orders.length > 0) {
-        res.status(200).json(orders);
+            res.status(200).json(orders.map(formatOrder));
     } else {
         res.status(404).send('No orders found');
     }
@@ -76,11 +82,11 @@ export const createOrder = async (req, res) => {
     try {
         const validatedData = await OrderValidator.validate(req.body);
 
-        const order_date = validatedData.order_date || new Date();
+        const order_date = validatedData.order_date ? isoDate(validatedData.order_date) : new Date();
 
         const payload = {
-            order_date: order_date.toISOString(),
-            date_of_return: validatedData.date_of_return.toISOString(), 
+            order_date: order_date,
+            date_of_return: isoDate(validatedData.date_of_return), 
             fuel_level_return: validatedData.fuel_level_return,
             payment_status: validatedData.payment_status,
             offer_id: validatedData.offer_id,
@@ -92,7 +98,7 @@ export const createOrder = async (req, res) => {
         });
         res.status(201).json({
         message: 'Order created successfully',
-        data: newOrder,
+        data: formatOrder(newOrder),
         });
     } catch (err) {
         if (err.messages) {
@@ -120,12 +126,12 @@ export const updateOrder = async (req, res) => {
         }
          
         const bodyToValidate = { 
-            order_date: req.body.order_date || existingOrder.order_date.toISOString(), 
-            date_of_return: req.body.date_of_return ||existingOrder.date_of_return.toISOString(),
-            fuel_level_return: req.body.fuel_level_return || existingOrder.fuel_level_return,
-            payment_status: req.body.payment_status || existingOrder.payment_status,
-            offer_id: req.body.offer_id || existingOrder.offer_id,
-            customer_id: req.body.customer_id || existingOrder.customer_id,
+            order_date: req.body.order_date ?? formatDate(existingOrder.order_date), 
+            date_of_return: req.body.date_of_return ?? formatDate(existingOrder.date_of_return),
+            fuel_level_return: req.body.fuel_level_return ?? existingOrder.fuel_level_return,
+            payment_status: req.body.payment_status ?? existingOrder.payment_status,
+            offer_id: req.body.offer_id ?? existingOrder.offer_id,
+            customer_id: req.body.customer_id ?? existingOrder.customer_id,
     
         }; 
 
@@ -133,11 +139,15 @@ export const updateOrder = async (req, res) => {
 
         const updatedOrder = await prisma.order.update({
             where: { order_id: parseInt(req.params.id) },
-            data: validatedData
+            data: {
+                ...validatedData,
+                order_date: validatedData.order_date ? isoDate(validatedData.order_date) : existingOrder.order_date,
+                date_of_return: validatedData.date_of_return ? isoDate(validatedData.date_of_return) : existingOrder.date_of_return,
+            }
         });
         return res.status(200).json({
         message: 'Order updated successfully',
-        data: updatedOrder,
+        data: formatOrder(updatedOrder),
         });
     } catch (err) {
     if (err.messages) {

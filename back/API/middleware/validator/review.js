@@ -43,7 +43,7 @@ const ReviewSchema = vine.object({
   comment: vine.string().maxLength(1000).optional().nullable(),
   review_date: vine
     .date({
-      formats: ['iso8601']
+      formats: ['yyyy-MM-dd','iso8601']
     }).afterOrEqual('today').
     optional(),
   customer_id: vine.number().withoutDecimals().positive(),
