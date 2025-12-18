@@ -113,18 +113,52 @@ export const createProfile = async (req, res) => {
 };
 export const updateProfile = async (req, res) => {
   try {
-    const validatedData = await ProfileValidator.validate(req.body);
-    const updatedProfile = await prisma.profile.update({
+    const existingProfile = await prisma.profile.findUnique({
       where: {
         profile_id: parseInt(req.params.id),
       },
-      data: validatedData,
     });
+    if (!existingProfile) {
+      return res.status(404).send("Profile not found");
+    }
+
+    const bodyToValidate = {
+      name: req.body.name ?? existingProfile.name,
+      email: req.body.email ?? existingProfile.email,
+      password: req.body.password ?? existingProfile.password,
+      adress: req.body.adress ?? existingProfile.adress,
+      bank_account: req.body.bank_account ?? existingProfile.bank_account,
+      is_renter: req.body.is_renter ?? existingProfile.is_renter,
+      profile_picture:
+        req.body.profile_picture ?? existingProfile.profile_picture,
+    };
+    
+    const validatedData = await ProfileValidator.validate(bodyToValidate);
+    
+    // hasher le mdp si il est mis à jour
+    const dataToUpdate = { 
+      ...validatedData,
+      password: req.body.password
+        ? await hash(req.body.password)
+        : existingProfile.password, 
+    };
+    
+    const updatedProfile = await prisma.profile.update({
+      where: { profile_id: parseInt(req.params.id) },
+      data: dataToUpdate,
+    });
+
     res.status(200).json({
       message: "Profile updated successfully",
       data: updatedProfile,
     });
   } catch (err) {
+    if (err.messages) {
+      return res.status(422).json({
+        message: "Validation error",
+        errors: err.messages,
+      });
+    }
     console.error(err);
     res.status(500).send("Server error");
   }

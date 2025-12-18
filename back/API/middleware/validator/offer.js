@@ -45,14 +45,10 @@ import vine from "@vinejs/vine"
 const OfferSchema = vine
 .object({
   start_date: vine
-    .date({
-    formats: ['iso8601']
-  })
-    .afterOrEqual('today'), // start_date >= today
+    .date({ formats: ['yyyy-MM-dd','iso8601'] })
+    .optional(),
   end_date: vine
-    .date({
-    formats: ['iso8601']
-  })
+    .date({ formats: ['yyyy-MM-dd','iso8601'] })
     .afterField('start_date'), // end_date > start_date
 
   fuel_level: vine

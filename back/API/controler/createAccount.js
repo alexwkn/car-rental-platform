@@ -95,7 +95,7 @@ export const createAccount = async (req, res) => {
 
         //Générer un token JWT
         const token = sign({
-                id: newProfile.profile_id,      
+                id: newProfile.id,      
                 email: newProfile.email,   
                 is_renter: newProfile.is_renter      
         },
