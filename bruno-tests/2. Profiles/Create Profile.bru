@@ -1,0 +1,43 @@
+meta {
+  name: Create Profile
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/profiles
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "New Profile {{$randomInt}}",
+    "email": "newprofile{{$randomInt}}@mail.com",
+    "password": "securepass123",
+    "adress": "456 New Avenue",
+    "bank_account": "BE98765432109876",
+    "is_renter": true
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has profile_id", function() {
+    expect(res.getBody()).to.have.property('profile_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("profileId", body.profile_id);
+  }
+}

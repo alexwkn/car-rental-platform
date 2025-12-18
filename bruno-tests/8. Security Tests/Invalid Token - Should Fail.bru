@@ -1,0 +1,21 @@
+meta {
+  name: Invalid Token - Should Fail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/profiles
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: invalid.jwt.token.here
+}
+
+tests {
+  test("Status code is 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

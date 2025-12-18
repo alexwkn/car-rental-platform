@@ -1,0 +1,42 @@
+meta {
+  name: Create Review
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/reviews
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "rating": 5,
+    "comment": "Excellent car rental experience! Highly recommended.",
+    "customer_id": 1,
+    "renter_id": 2,
+    "order_id": 1
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has review_id", function() {
+    expect(res.getBody()).to.have.property('review_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("reviewId", body.review_id);
+  }
+}

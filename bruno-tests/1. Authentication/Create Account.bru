@@ -1,0 +1,40 @@
+meta {
+  name: Create Account
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/createAccount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Test User Bruno",
+    "email": "bruno.test{{$randomInt}}@mail.com",
+    "password": "testpass123",
+    "adress": "123 Test Street",
+    "bank_account": "BE12345678901234",
+    "is_renter": false
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has profile_id", function() {
+    expect(res.getBody()).to.have.property('profile_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("profileId", body.profile_id);
+    console.log("Profile created with ID:", body.profile_id);
+  }
+}

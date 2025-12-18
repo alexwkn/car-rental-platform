@@ -1,0 +1,34 @@
+meta {
+  name: Get All Offers
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/offers
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response is an array", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const offers = res.getBody();
+    if (offers.length > 0) {
+      bru.setEnvVar("offerId", offers[0].offer_id);
+    }
+  }
+}

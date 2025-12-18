@@ -1,0 +1,22 @@
+meta {
+  name: No Token - Should Fail
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/profiles
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status code is 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  
+  test("Access denied without token", function() {
+    const body = res.getBody();
+    expect(body).to.not.be.empty;
+  });
+}

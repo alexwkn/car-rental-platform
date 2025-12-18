@@ -1,0 +1,42 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "date_of_return": "2025-12-25",
+    "fuel_level_return": 95,
+    "payment_status": "pending",
+    "offer_id": 1,
+    "customer_id": 1
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has order_id", function() {
+    expect(res.getBody()).to.have.property('order_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("orderId", body.order_id);
+  }
+}

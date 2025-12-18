@@ -1,0 +1,41 @@
+meta {
+  name: Create Vehicule
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/vehicules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "model": "Tesla Model 3",
+    "licence_plate": "TEST-{{$randomInt}}",
+    "description": "Electric vehicle for testing",
+    "owner_id": 1
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has vehicule_id", function() {
+    expect(res.getBody()).to.have.property('vehicule_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("vehiculeId", body.vehicule_id);
+  }
+}

@@ -1,0 +1,39 @@
+meta {
+  name: Create Favorite
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/favorite
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "profile_id": 1,
+    "vehicule_id": 1
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has favorite_id", function() {
+    expect(res.getBody()).to.have.property('favorite_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("favoriteId", body.favorite_id);
+  }
+}

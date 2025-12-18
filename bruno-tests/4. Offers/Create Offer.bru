@@ -1,0 +1,44 @@
+meta {
+  name: Create Offer
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/offers
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "start_date": "2025-12-20",
+    "end_date": "2025-12-25",
+    "fuel_level": 100,
+    "adress": "Brussels Airport",
+    "price": 150.00,
+    "description": "Weekend rental special",
+    "vehicule_id": 1
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has offer_id", function() {
+    expect(res.getBody()).to.have.property('offer_id');
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    const body = res.getBody();
+    bru.setEnvVar("offerId", body.offer_id);
+  }
+}

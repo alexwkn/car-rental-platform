@@ -1,0 +1,36 @@
+meta {
+  name: Update Profile
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/profiles/{{profileId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Updated Name",
+    "email": "updated{{$randomInt}}@mail.com",
+    "adress": "789 Updated Street",
+    "bank_account": "BE11111111111111",
+    "is_renter": false
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Profile was updated", function() {
+    const profile = res.getBody();
+    expect(profile.name).to.equal("Updated Name");
+  });
+}
