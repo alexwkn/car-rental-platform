@@ -2,14 +2,7 @@ import PropTypes from "prop-types";
 import "../../styles/modal.css";
 import { useState, useEffect } from "react";
 
-function EntityForm({
-  isOpen,
-  onClose,
-  title,
-  fields,
-  initialData,
-  onSubmit,
-}) {
+function EntityForm({ isOpen, onClose, title, fields, initialData, onSubmit }) {
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
@@ -74,6 +67,8 @@ function EntityForm({
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(e, field)}
                   required={field.required ?? true}
+                  minLength={field.minLength}
+                  maxLength={field.maxLength}
                 />
               )}
             </div>
