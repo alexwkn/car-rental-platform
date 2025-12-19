@@ -28,9 +28,11 @@ tests {
 }
 
 script:post-response {
-  if (res.getStatus() === 200) {
-    const body = res.getBody();
-    bru.setEnvVar("token", req.body);
-    console.log("Token saved:", req.body);
+  const body = res.getBody();
+  if (body && body.token) {
+    bru.setVar("token", body.token);
+    console.log("✅ Token saved to environment:", body.token.substring(0, 20) + "...");
+  } else {
+    console.log("❌ No token in response");
   }
 }

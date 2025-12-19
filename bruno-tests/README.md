@@ -5,7 +5,11 @@ Key2Go API - Bruno Test Collection
 ### 1. Authentication (Obligatoire en premier)
 
 Exécuter **"Login - Admin"** pour obtenir le token JWT.
-Le token est automatiquement sauvegardé dans les variables d'environnement. {{token}}
+Le token doit ensuite être copié collé dans la variable token dans le fichier Local.bru du code.
+
+Chemin : locationVoiture\bruno-test\environements\Local.bru
+
+Les autres variables sont incrémentés avec des ID valides déjà enregistrés dans la base de données.
 
 ### 2. Profiles
 
@@ -41,17 +45,17 @@ baseUrl: http://localhost:3001
 
 # Variables d'environnement
 
-Les variables suivantes sont automatiquement mises à jour lors de l'exécution :
+Les variables suivantes sont déjà préremplit exepté la variable token :
 
 - `token` : JWT obtenu après login
-- `profileId` : ID du dernier profile créé
-- `vehiculeId` : ID du dernier véhicule créé
-- `offerId` : ID de la dernière offre créée
-- `orderId` : ID de la dernière commande créée
-- `reviewId` : ID du dernier avis créé
-- `favoriteId` : ID du dernier favori créé
+- `profileId` : ID valide
+- `vehiculeId` : ID valide
+- `offerId` : ID valide
+- `orderId` : ID valide
+- `reviewId` : ID valide
+- `favoriteId` : ID valide
 
-# Admin (Manager)
+# Admin (log)
 
 ```json
 {
@@ -60,7 +64,7 @@ Les variables suivantes sont automatiquement mises à jour lors de l'exécution 
 }
 ```
 
-# Utilisateur normal
+# Utilisateur normal (log)
 
 ```json
 {
