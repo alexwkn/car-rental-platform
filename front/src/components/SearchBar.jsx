@@ -19,6 +19,7 @@ export default function SearchBar({
   const [query, setQuery] = useState("");
   const [history, setHistory] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,44 +34,58 @@ export default function SearchBar({
   }, [query, debounce, isGlobal, onSearch]);
 
   const handleSubmit = () => {
-    if (isGlobal && query.trim()) {
-      const newHistory = [...history.slice(0, currentIndex + 1), query];
-      setHistory(newHistory);
-      setCurrentIndex(newHistory.length - 1);
+    if (!isGlobal) return;
 
-      const normalized = query.trim().toLowerCase();
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setErrorMsg("Veuillez entrer un mot-clé.");
+      return;
+    }
 
-      const routes = {
-        vehicule: ROUTES.VEHICULE_ROUTE,
-        vehicules: ROUTES.VEHICULE_ROUTE,
+    const newHistory = [...history.slice(0, currentIndex + 1), trimmed];
+    setHistory(newHistory);
+    setCurrentIndex(newHistory.length - 1);
 
-        profile: ROUTES.PROFILE_ROUTE,
-        profiles: ROUTES.PROFILE_ROUTE,
+    const normalized = trimmed.toLowerCase();
 
-        order: ROUTES.ORDER_ROUTE,
-        orders: ROUTES.ORDER_ROUTE,
+    const routes = {
+      vehicule: ROUTES.VEHICULE_ROUTE,
+      vehicules: ROUTES.VEHICULE_ROUTE,
+      vehicle: ROUTES.VEHICULE_ROUTE,
+      vehicles: ROUTES.VEHICULE_ROUTE,
 
-        favorite: ROUTES.FAVORITE_ROUTE,
-        favorites: ROUTES.FAVORITE_ROUTE,
+      profile: ROUTES.PROFILE_ROUTE,
+      profiles: ROUTES.PROFILE_ROUTE,
 
-        offer: ROUTES.OFFER_ROUTE,
-        offers: ROUTES.OFFER_ROUTE,
+      order: ROUTES.ORDER_ROUTE,
+      orders: ROUTES.ORDER_ROUTE,
 
-        review: ROUTES.REVIEW_ROUTE,
-        reviews: ROUTES.REVIEW_ROUTE,
+      favorite: ROUTES.FAVORITE_ROUTE,
+      favorites: ROUTES.FAVORITE_ROUTE,
 
-        home: ROUTES.HOME_ROUTE,
-      };
+      offer: ROUTES.OFFER_ROUTE,
+      offers: ROUTES.OFFER_ROUTE,
 
-      if (routes[normalized]) {
-        navigate(routes[normalized]);
-      } else {
-        navigate(`/search?q=${encodeURIComponent(query)}`);
-      }
+      review: ROUTES.REVIEW_ROUTE,
+      reviews: ROUTES.REVIEW_ROUTE,
+
+      home: ROUTES.HOME_ROUTE,
+    };
+
+    if (routes[normalized]) {
+      setErrorMsg("");
+      navigate(routes[normalized]);
+    } else {
+      setErrorMsg(
+        `Aucun tableau ne correspond à "${trimmed}". Mots-clés: vehicule/vehicle, profile, order, favorite, offer, review, home.`
+      );
     }
   };
 
-  const handleClear = () => setQuery("");
+  const handleClear = () => {
+    setQuery("");
+    setErrorMsg("");
+  };
 
   const handleBack = () => navigate(-1);
   const handleForward = () => navigate(1);
@@ -100,20 +115,31 @@ export default function SearchBar({
         </div>
       )}
 
-      <div className={`search-bar ${isGlobal ? "global" : "local"}`}>
-        <input
-          type="text"
-          placeholder={placeholder}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-        />
-        <img
-          src={searchIcon}
-          alt="Search"
-          className="search-icon"
-          onClick={handleSubmit}
-        />
+      <div style={isGlobal ? { flex: 1, width: "100%" } : undefined}>
+        <div className={`search-bar ${isGlobal ? "global" : "local"}`}>
+          <input
+            type="text"
+            placeholder={placeholder}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (errorMsg) setErrorMsg("");
+            }}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          />
+          <img
+            src={searchIcon}
+            alt="Search"
+            className="search-icon"
+            onClick={handleSubmit}
+          />
+        </div>
+
+        {isGlobal && errorMsg && (
+          <p style={{ color: "red", marginTop: "8px", marginLeft: "10px" }}>
+            {errorMsg}
+          </p>
+        )}
       </div>
     </div>
   );

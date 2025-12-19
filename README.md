@@ -16,9 +16,9 @@ Le fichier `.env` doit être présent à la racine du projet
 
 Ouvrez un terminal PowerShell dans le dossier racine du projet et exécutez :
 
-
+```bash
 docker compose up --build -d
-
+```
 
 Cette commande va :
 - Construire les images Docker pour le backend et le frontend
@@ -31,9 +31,9 @@ Cette commande va :
 
 Une fois les conteneurs démarrés, initialisez la base de données avec les données de test :
 
-
+```bash
 docker compose exec back node scripts/JS/initDB.js
-
+```
 
 Vous devriez voir :
 
