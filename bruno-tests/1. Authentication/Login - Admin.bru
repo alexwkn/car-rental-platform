@@ -30,7 +30,7 @@ tests {
 script:post-response {
   if (res.getStatus() === 200) {
     const body = res.getBody();
-    bru.setEnvVar("token", body.token);
-    console.log("Token saved:", body.token);
+    bru.setEnvVar("token", req.body);
+    console.log("Token saved:", req.body);
   }
 }
