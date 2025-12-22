@@ -16,6 +16,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
+import { validateRegistration } from "../utils/validator";
+
+// Définition des couleurs (Best Practice : souvent mis dans un fichier séparé constants/colors.js)
+const Colors = {
+  primary: "#007C7C",      // Anciennement 'teal' - Couleur principale de la marque
+  link: "#1E6DFF",         // Anciennement 'blue' - Pour les liens/actions secondaires
+  placeholder: "#9A9A9A",  // Texte grisé
+  border: "#BDBDBD",       // Bordures des inputs
+  background: "#FFFFFF",   // Fond d'écran
+  text: "#222222",         // Texte principal
+};
+
 export default function RegistrationScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -39,48 +51,32 @@ export default function RegistrationScreen({ navigation }) {
     LexendRegular: require("../assets/fonts/Lexend-Regular.ttf"),
   });
 
-  const isValidName = (value) => { return /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/.test(value); }; 
-  const isValidEmail = (value) => { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); }; 
-  const isValidStreet = (value) => { return /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+\s+\d+[A-Za-z]?$/.test(value); };
-
   const handleRegister = () => {
-  if (!email || !password || !firstName || !lastName || !postalCode || !city || !streetNumber || !confirmPassword) {
-    return Alert.alert("Erreur", "Veuillez remplir tous les champs.");
-  }
+    const formData = {
+      firstName,
+      lastName,
+      email,
+      streetNumber,
+      postalCode,
+      city,
+      password,
+      confirmPassword,
+    };
 
-  if (!isValidName(lastName)) {
-    return Alert.alert("Erreur", "Le nom ne peut contenir que des lettres.");
-  }
+    const error = validateRegistration(formData);
 
-  if (!isValidName(firstName)) {
-    return Alert.alert("Erreur", "Le prénom ne peut contenir que des lettres.");
-  }
+    if (error) {
+      return Alert.alert("Erreur", error);
+    }
 
-  if (!isValidEmail(email)) {
-    return Alert.alert("Erreur", "Veuillez entrer une adresse e-mail valide.");
-  }
-
-  if (!isValidStreet(streetNumber)) {
-    return Alert.alert(
-      "Erreur",
-      "L'adresse doit contenir un nom de rue suivi d'un numéro (ex: Rue Centrale 19 ou Rue Centrale 19A)."
-    );
-  }
-
-  if (password !== confirmPassword) {
-    return Alert.alert("Erreur", "Les mots de passe ne correspondent pas.");
-  }
-
-  Alert.alert("Succès", "Compte créé !");
-  navigation.navigate("Login");
-};
-
-
+    Alert.alert("Succès", "Compte créé !");
+    navigation.navigate("Login");
+  };
 
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007C7C" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
@@ -93,12 +89,12 @@ export default function RegistrationScreen({ navigation }) {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView
-            contentContainerStyle={styles.screen}
+            contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.brandRow}>
-              <Text style={styles.brand}>Key2Go</Text>
+            <View style={styles.brandContainer}>
+              <Text style={styles.brandText}>Key2Go</Text>
             </View>
 
             <Text style={styles.title}>Créer un compte</Text>
@@ -106,14 +102,14 @@ export default function RegistrationScreen({ navigation }) {
 
             <View style={styles.separator} />
 
-            <View style={styles.form}>
+            <View style={styles.formContainer}>
               <View style={styles.row}>
                 <TextInput
                   placeholder="Nom"
-                  placeholderTextColor={V.placeholder}
+                  placeholderTextColor={Colors.placeholder}
                   value={lastName}
                   onChangeText={setLastName}
-                  style={[styles.input, styles.half]}
+                  style={[styles.input, styles.halfInput]}
                   autoCorrect={false}
                   returnKeyType="next"
                   onSubmitEditing={() => firstNameRef.current?.focus()}
@@ -122,10 +118,10 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   ref={firstNameRef}
                   placeholder="Prénom"
-                  placeholderTextColor={V.placeholder}
+                  placeholderTextColor={Colors.placeholder}
                   value={firstName}
                   onChangeText={setFirstName}
-                  style={[styles.input, styles.half]}
+                  style={[styles.input, styles.halfInput]}
                   autoCorrect={false}
                   returnKeyType="next"
                   onSubmitEditing={() => emailRef.current?.focus()}
@@ -135,10 +131,10 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={emailRef}
                 placeholder="Adresse e-mail"
-                placeholderTextColor={V.placeholder}
+                placeholderTextColor={Colors.placeholder}
                 value={email}
                 onChangeText={setEmail}
-                style={[styles.input, styles.groupEnd]}
+                style={[styles.input, styles.inputGroupEnd]}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -149,7 +145,7 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={streetNumberRef}
                 placeholder="Rue et numéro"
-                placeholderTextColor={V.placeholder}
+                placeholderTextColor={Colors.placeholder}
                 value={streetNumber}
                 onChangeText={setStreetNumber}
                 style={styles.input}
@@ -162,10 +158,10 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   ref={postalCodeRef}
                   placeholder="Code postal"
-                  placeholderTextColor={V.placeholder}
+                  placeholderTextColor={Colors.placeholder}
                   value={postalCode}
                   onChangeText={setPostalCode}
-                  style={[styles.input, styles.half]}
+                  style={[styles.input, styles.halfInput]}
                   keyboardType="number-pad"
                   autoCorrect={false}
                   returnKeyType="next"
@@ -175,10 +171,10 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   ref={cityRef}
                   placeholder="Ville"
-                  placeholderTextColor={V.placeholder}
+                  placeholderTextColor={Colors.placeholder}
                   value={city}
                   onChangeText={setCity}
-                  style={[styles.input, styles.half, styles.groupEnd]}
+                  style={[styles.input, styles.halfInput, styles.inputGroupEnd]}
                   autoCorrect={false}
                   returnKeyType="next"
                   onSubmitEditing={() => passwordRef.current?.focus()}
@@ -188,7 +184,7 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={passwordRef}
                 placeholder="Mot de passe"
-                placeholderTextColor={V.placeholder}
+                placeholderTextColor={Colors.placeholder}
                 value={password}
                 onChangeText={setPassword}
                 style={styles.input}
@@ -200,7 +196,7 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={confirmPasswordRef}
                 placeholder="Confirmer votre mot de passe"
-                placeholderTextColor={V.placeholder}
+                placeholderTextColor={Colors.placeholder}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 style={styles.input}
@@ -209,13 +205,14 @@ export default function RegistrationScreen({ navigation }) {
                 onSubmitEditing={handleRegister}
               />
 
-              <Pressable style={styles.button} onPress={handleRegister}>
-                <Text style={styles.buttonText}>S&apos;inscrire</Text>
+              <Pressable style={styles.primaryButton} onPress={handleRegister}>
+                <Text style={styles.primaryButtonText}>S&apos;inscrire</Text>
               </Pressable>
 
               <Pressable onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.loginText}>
-                  Déjà membre ? <Text style={styles.loginCta}>Connectez-vous !</Text>
+                  Déjà membre ?{" "}
+                  <Text style={styles.loginLink}>Connectez-vous !</Text>
                 </Text>
               </Pressable>
             </View>
@@ -226,25 +223,18 @@ export default function RegistrationScreen({ navigation }) {
   );
 }
 
-const V = {
-  placeholder: "#9A9A9A",
-  border: "#BDBDBD",
-  teal: "#007C7C",
-  blue: "#1E6DFF",
-};
-
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#FFFFFF" },
+  safe: { flex: 1, backgroundColor: Colors.background },
   flex: { flex: 1 },
 
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
   },
 
-  screen: {
+  scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 22,
     paddingTop: 10,
@@ -252,16 +242,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  brandRow: {
+  brandContainer: {
     width: "100%",
     maxWidth: 380,
     alignItems: "flex-start",
     marginBottom: 10,
   },
-  brand: {
+  brandText: {
     fontFamily: "LexendMedium",
     fontSize: 12,
-    color: V.teal,
+    color: Colors.primary,
   },
 
   title: {
@@ -288,7 +278,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
 
-  form: {
+  formContainer: {
     width: "100%",
     maxWidth: 380,
     alignItems: "center",
@@ -305,46 +295,46 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: V.border,
-    backgroundColor: "#FFFFFF",
+    borderColor: Colors.border,
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     fontSize: 14,
-    color: "#222",
+    color: Colors.text,
     fontFamily: "LexendRegular",
     marginBottom: 12,
   },
 
-  half: { flex: 1 },
+  halfInput: { flex: 1 },
 
-  groupEnd: {
+  inputGroupEnd: {
     marginBottom: 22,
   },
 
-  button: {
+  primaryButton: {
     marginTop: 14,
     width: "72%",
     height: 52,
     borderRadius: 999,
-    backgroundColor: V.teal,
+    backgroundColor: Colors.primary,
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
   },
-  buttonText: {
+  primaryButtonText: {
     color: "#FFFFFF",
     fontFamily: "LexendMedium",
     fontSize: 16,
   },
 
   loginText: {
-    marginTop: 14,
+    marginTop: 20,
     textAlign: "center",
     fontFamily: "LexendRegular",
-    fontSize: 12,
+    fontSize: 15,
     color: "#111",
   },
-  loginCta: {
-    color: V.blue,
+  loginLink: {
+    color: Colors.link,
     fontFamily: "LexendMedium",
   },
 });

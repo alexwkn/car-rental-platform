@@ -19,6 +19,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { LinearGradient } from "expo-linear-gradient";
 
+// IMPORTER LE VALIDATEUR ICI
+import { validateLogin } from "../utils/validator";
+
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +34,13 @@ export default function LoginScreen({ navigation }) {
   });
 
   const handleLogin = () => {
-    if (!email || !password) {
-      return Alert.alert("Erreur", "Veuillez remplir tous les champs.");
+    // Utilisation du validateur centralisé
+    const error = validateLogin(email, password);
+
+    if (error) {
+      return Alert.alert("Erreur", error);
     }
+
     console.log("Tentative de connexion avec:", email);
     Alert.alert("OK", "Connexion simulée");
   };
@@ -115,7 +122,9 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.forgotText}>Mot de passe oublié ?</Text>
                   </Pressable>
 
-                  <Pressable onPress={() => navigation.navigate("Registration")}>
+                  <Pressable
+                    onPress={() => navigation.navigate("Registration")}
+                  >
                     <Text style={styles.registerText}>
                       Pas encore de compte ?{" "}
                       <Text style={styles.registerCta}>Inscrivez-vous !</Text>
