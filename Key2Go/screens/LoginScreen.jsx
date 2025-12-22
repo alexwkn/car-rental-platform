@@ -112,6 +112,10 @@ export default function LoginScreen() {
                   <Pressable onPress={() => console.log("Mdp oublié")}>
                     <Text style={styles.forgotText}>Mot de passe oublié ?</Text>
                   </Pressable>
+
+                  <Pressable onPress={() => console.log("S'inscrire")}>
+                    <Text style={styles.registerText}>Pas encore de compte ? <Text style={styles.registerCta}>Inscrivez-vous</Text></Text>
+                  </Pressable>
                 </View>
 
               </View>
@@ -237,4 +241,20 @@ const styles = StyleSheet.create({
     fontFamily: "LexendRegular",
     opacity: 0.9,
   },
+  
+  registerText: {
+    color: "white",
+    fontSize: 14,
+    fontFamily: "LexendRegular",
+    textAlign: "center",
+    marginTop: 90,
+    lineHeight: 20,
+},
+
+registerCta: {
+  fontFamily: "LexendMedium",
+  color: "#7FF0E6", // accent lisible sur ton fond teal
+  textDecorationLine: "underline",
+  textDecorationStyle: "solid",
+},
 });
