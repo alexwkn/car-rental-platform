@@ -18,14 +18,13 @@ import { useFonts } from "expo-font";
 
 import { validateRegistration } from "../utils/validator";
 
-// Définition des couleurs (Best Practice : souvent mis dans un fichier séparé constants/colors.js)
 const Colors = {
-  primary: "#007C7C",      // Anciennement 'teal' - Couleur principale de la marque
-  link: "#1E6DFF",         // Anciennement 'blue' - Pour les liens/actions secondaires
-  placeholder: "#9A9A9A",  // Texte grisé
-  border: "#BDBDBD",       // Bordures des inputs
-  background: "#FFFFFF",   // Fond d'écran
-  text: "#222222",         // Texte principal
+  primary: "#007C7C",      
+  link: "#1E6DFF",       
+  placeholder: "#9A9A9A",  
+  border: "#BDBDBD",       
+  background: "#FFFFFF",   
+  text: "#222222",         
 };
 
 export default function RegistrationScreen({ navigation }) {
@@ -69,8 +68,7 @@ export default function RegistrationScreen({ navigation }) {
       return Alert.alert("Erreur", error);
     }
 
-    Alert.alert("Succès", "Compte créé !");
-    navigation.navigate("Login");
+    navigation.replace("Home");
   };
 
   if (!fontsLoaded) {

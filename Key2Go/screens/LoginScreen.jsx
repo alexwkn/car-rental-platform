@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -19,7 +19,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { LinearGradient } from "expo-linear-gradient";
 
-// IMPORTER LE VALIDATEUR ICI
 import { validateLogin } from "../utils/validator";
 
 export default function LoginScreen({ navigation }) {
@@ -34,15 +33,12 @@ export default function LoginScreen({ navigation }) {
   });
 
   const handleLogin = () => {
-    // Utilisation du validateur centralisé
     const error = validateLogin(email, password);
 
     if (error) {
       return Alert.alert("Erreur", error);
     }
-
-    console.log("Tentative de connexion avec:", email);
-    Alert.alert("OK", "Connexion simulée");
+    navigation.replace("Home");
   };
 
   if (!fontsLoaded) {
@@ -248,3 +244,4 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+
