@@ -38,7 +38,7 @@ export default function LoginScreen({ navigation }) {
     if (error) {
       return Alert.alert("Erreur", error);
     }
-    navigation.replace("Home");
+    navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
   };
 
   if (!fontsLoaded) {
@@ -244,4 +244,3 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
-
