@@ -1,9 +1,14 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+import TopHeader from "../components/TopHeader";
+
 
 export default function ReservationsScreen() {
   return (
-    <View>
-      <Text>Réservations</Text>
-    </View>
+    <ScrollView>
+      <View>
+        <TopHeader/>
+        <Text>Réservations</Text>
+      </View>
+    </ScrollView>
   );
 }

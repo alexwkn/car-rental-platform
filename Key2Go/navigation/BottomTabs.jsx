@@ -32,7 +32,7 @@ const BottomTabs = () => {
         tabBarInactiveTintColor: "#D3D3D3",
 
         tabBarStyle: {
-          backgroundColor: "#009595",
+          backgroundColor: "#007C7C",
           borderTopWidth: 0,
         },
       })}

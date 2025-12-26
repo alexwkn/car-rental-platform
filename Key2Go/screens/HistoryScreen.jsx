@@ -1,9 +1,14 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+import TopHeader from "../components/TopHeader";
+
 
 export default function HistoryScreen() {
   return (
-    <View>
-      <Text>Historique</Text>
-    </View>
+    <ScrollView>
+      <View>
+        <TopHeader/>
+        <Text>Historique</Text>
+      </View>
+    </ScrollView>
   );
 }

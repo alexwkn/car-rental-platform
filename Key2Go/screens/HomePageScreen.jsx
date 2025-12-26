@@ -1,9 +1,14 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+import TopHeader from "../components/TopHeader";
+
 
 export default function HomePageScreen({navigation}) {
     return ( 
-        <View>
-            <Text>Voici la Home Page</Text>
-        </View>
+        <ScrollView>
+            <View>
+                <TopHeader/>
+                <Text>Voici la Home Page</Text>
+            </View>
+        </ScrollView>
     );
 }

@@ -1,9 +1,13 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import TopHeader from "../components/TopHeader";
 
 export default function AccountScreen() {
   return (
-    <View>
-      <Text>Compte</Text>
-    </View>
+    <ScrollView>
+      <View>
+        <TopHeader/>
+        <Text>Compte</Text>
+      </View>
+    </ScrollView>
   );
 }
