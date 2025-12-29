@@ -10,44 +10,60 @@ import {
   ImageBackground,
   TouchableWithoutFeedback,
   Keyboard,
-  ActivityIndicator,
+  TouchableOpacity,
   Alert,
   StatusBar,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFonts } from "expo-font";
-import { LinearGradient } from "expo-linear-gradient";
 
-import { validateLogin } from "../utils/validator";
+import { LinearGradient } from "expo-linear-gradient";
+import { login } from "../redux/userSlice";
+import { API } from "../utils/api";
+import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const passwordRef = useRef(null);
 
-  const [fontsLoaded] = useFonts({
-    KodchasanMedium: require("../assets/fonts/Kodchasan-Medium.ttf"),
-    LexendMedium: require("../assets/fonts/Lexend-Medium.ttf"),
-    LexendRegular: require("../assets/fonts/Lexend-Regular.ttf"),
-  });
+    const handleLogin = async () => {
+        if (!email) {
+            Alert.alert("Erreur", "Veuillez remplir l'email");
+            return;
+        }
 
-  const handleLogin = () => {
-    const error = validateLogin(email, password);
+        if (!password) {
+            Alert.alert("Erreur", "Veuillez entrer votre mot de passe");
+            return;
+        }
 
-    if (error) {
-      return Alert.alert("Erreur", error);
-    }
-    navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
-  };
+        setIsLoading(true);
 
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007C7C" />
-      </View>
-    );
-  }
+        try {
+          // Login
+          const response = await API.post(`${process.env.EXPO_PUBLIC_LOGIN_ROUTE}`, { email, password });
+          const token = response.data; // backend returns raw JWT string
+
+          // Decoder le JWT et prendre les infos (id, status, email, name, adress)
+          const payload = jwtDecode(token);
+          const userInfo = { id: payload.id, status: payload.status, email: payload.email, name: payload.name, adress: payload.adress };
+
+          dispatch(login({ token, userInfo }));
+
+          // main app
+          navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+        } catch (error) {
+            Alert.alert("Erreur", "La connexion a échoué. Veuillez vérifier vos identifiants.");
+            console.error(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
   return (
     <View style={styles.mainContainer}>
@@ -104,15 +120,10 @@ export default function LoginScreen({ navigation }) {
                     onSubmitEditing={handleLogin}
                   />
 
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.loginButton,
-                      pressed && styles.loginButtonPressed,
-                    ]}
-                    onPress={handleLogin}
-                  >
-                    <Text style={styles.loginButtonText}>Se connecter</Text>
-                  </Pressable>
+
+                    <Pressable style={styles.button} onPress={handleLogin} disabled={isLoading}>
+                        <Text style={styles.buttonText}>{isLoading ? 'Connexion...' : 'Se connecter'}</Text>
+                    </Pressable>
 
                   <Pressable onPress={() => console.log("Mdp oublié")}>
                     <Text style={styles.forgotText}>Mot de passe oublié ?</Text>

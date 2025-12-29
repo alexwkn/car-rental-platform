@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { View, StyleSheet, Pressable, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,10 +10,17 @@ import ProfilePhotoCard from "../components/accounts/ProfilePhotoCard";
 import InfoLine from "../components/accounts/InfoLine";
 import ActionRow from "../components/accounts/ActionRow";
 import CameraModal from "../components/accounts/CameraModal";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/userSlice";
+import { useNavigation } from "@react-navigation/native";
 
 export default function AccountScreen() {
   const insets = useSafeAreaInsets();
-
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const user = useSelector((state) => state.user.userInfo);
+  const token = useSelector((state) => state.user.token); 
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   const [photoUri, setPhotoUri] = useState(null);
 
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -23,6 +30,26 @@ export default function AccountScreen() {
   const TOP_HEADER_SPACE = insets.top + 70;
 
   const toggleFacing = () => setFacing((cur) => (cur === "back" ? "front" : "back"));
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Déconnexion",
+      "Es-tu sûr de vouloir te déconnecter?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Déconnecter",
+          style: "destructive",
+          onPress: () => {
+            dispatch(logout());
+            navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+          },
+        },
+      ]
+    );
+  };
+
+  
 
   const pickFromGallery = async () => {
   try {
@@ -76,6 +103,8 @@ export default function AccountScreen() {
     ].filter(Boolean));
   };
 
+
+
   return (
     <View style={styles.screen}>
       <TopHeader />
@@ -93,13 +122,13 @@ export default function AccountScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ProfilePhotoCard
-          name="Nguyen Antoine"
+          name={user.name}
           photoUri={photoUri}
           onPressAvatar={openPhotoMenu}
         />
 
-        <InfoLine label="Email" value="ngmisteranto@gmail.com" />
-        <InfoLine label="Adresse" value="Rue de Marchienne, 29" />
+        <InfoLine label="Email" value={user.email} />
+        <InfoLine label="Adresse" value={user.adress || "Non renseignée"} />
 
         <View style={styles.actions}>
           <ActionRow icon="card-outline" title="Mes moyens de paiement" onPress={() => {}} />
@@ -107,7 +136,7 @@ export default function AccountScreen() {
 
           <View style={styles.divider} />
 
-          <ActionRow icon="log-out-outline" title="Se déconnecter" chevron={false} onPress={() => {}} />
+          <ActionRow icon="log-out-outline" title="Se déconnecter" chevron={false} onPress={handleLogout} />
           <ActionRow
             icon="trash-outline"
             title="Supprimer le compte"

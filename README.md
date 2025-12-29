@@ -16,9 +16,9 @@ Le fichier `.env` doit être présent à la racine du projet
 
 Ouvrez un terminal PowerShell dans le dossier racine du projet et exécutez :
 
-```bash
+
 docker compose up --build -d
-```
+
 
 Cette commande va :
 - Construire les images Docker pour le backend et le frontend
@@ -31,9 +31,9 @@ Cette commande va :
 
 Une fois les conteneurs démarrés, initialisez la base de données avec les données de test :
 
-```bash
+
 docker compose exec back node scripts/JS/initDB.js
-```
+
 
 Vous devriez voir :
 
@@ -47,7 +47,7 @@ L'application est maintenant accessible :
 
 - **Frontend** : [http://localhost:8080](http://localhost:8080)
 - **Backend API** : [http://localhost:3001](http://localhost:3001)
-- **Swagger Documentation** : [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
+
 
 ### Comptes de test
 
@@ -59,6 +59,5 @@ L'application est maintenant accessible :
 - **Email** : `alex@mail.com` | **Mot de passe** : `password123`
 - **Email** : `marie@mail.com` | **Mot de passe** : `securepass`
 - **Email** : `lucas@mail.com` | **Mot de passe** : `pass1`
-
 
 

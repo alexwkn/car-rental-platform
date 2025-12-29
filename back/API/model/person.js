@@ -21,11 +21,11 @@ export const readPerson = async (email, password) => {
     if (client) {
             const isPasswordValid = await safeCompare(password, client.password);
 
-        return isPasswordValid ? { id: client.id, status: "client" } : { id: null, status: null };
+        return isPasswordValid ? { id: client.profile_id, name: client.name, email: client.email, adress: client.adress, status: "client" } : { id: null, status: null };
     } else if (manager) {
         const isPasswordValid = await safeCompare(password, manager.password);
 
-        return isPasswordValid ? { id: manager.id, status: "manager" } : { id: null, status: null };
+        return isPasswordValid ? { id: manager.id, name: manager.name, email: manager.email, status: "manager" } : { id: null, status: null };
     } else
         return { id: null, status: null };
 
