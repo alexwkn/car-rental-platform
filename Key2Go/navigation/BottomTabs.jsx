@@ -5,6 +5,7 @@ import HomePageScreen from "../screens/HomePageScreen";
 import HistoryScreen from "../screens/HistoryScreen";
 import ReservationsScreen from "../screens/ReservationsScreen";
 import AccountScreen from "../screens/AccountScreen";
+import MapScreen from "../screens/Map";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +25,8 @@ const BottomTabs = () => {
             iconName = focused ? "car" : "car-outline";
           } else if (route.name === "Compte") {
             iconName = focused ? "person-circle" : "person-circle-outline";
+          }else if (route.name === "Map") {
+            iconName = focused ? "map" : "map-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -39,8 +42,10 @@ const BottomTabs = () => {
     >
       <Tab.Screen name="Accueil" component={HomePageScreen} />
       <Tab.Screen name="Réservations" component={ReservationsScreen} />
+      <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Historique" component={HistoryScreen} />
       <Tab.Screen name="Compte" component={AccountScreen} />
+
     </Tab.Navigator>
   );
 };
