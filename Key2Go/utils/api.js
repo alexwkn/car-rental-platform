@@ -54,4 +54,20 @@ export const setAuthToken = (token) => {
 
 export const fetcher = url => API.get(url).then(res => res.data);
 
-export default {API, fetcher, setAuthToken};
+export const apiRequest = async (method, url, data = null) => {
+    try {
+        const config = {
+            method: method.toLowerCase(),
+            url,
+        };
+        if (data) {
+            config.data = data;
+        }
+        const response = await API(config);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export default {API, fetcher, setAuthToken, apiRequest};

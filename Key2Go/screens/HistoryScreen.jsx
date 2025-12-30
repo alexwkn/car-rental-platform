@@ -3,9 +3,18 @@ import TopHeader from "../components/TopHeader";
 import useSWR from "swr";
 import { fetcher } from "../utils/api";
 import { Ionicons } from "@expo/vector-icons";
+import { useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HistoryScreen() {
-    const { data, error } = useSWR(`${process.env.EXPO_PUBLIC_ORDER_ROUTE}/history`, fetcher);
+    const { data, error, mutate } = useSWR(`${process.env.EXPO_PUBLIC_ORDER_ROUTE}/history`, fetcher);
+
+    // Rafraîchir quand on revient à l'écran
+    useFocusEffect(
+        useCallback(() => {
+            mutate();
+        }, [mutate])
+    );
 
     if (error) {
         return (

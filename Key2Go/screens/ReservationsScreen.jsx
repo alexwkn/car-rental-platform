@@ -3,9 +3,18 @@ import TopHeader from "../components/TopHeader";
 import useSWR from "swr";
 import { fetcher } from "../utils/api";
 import { Ionicons } from "@expo/vector-icons";
+import { useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default function ReservationsScreen() {
-    const { data, error } = useSWR(`${process.env.EXPO_PUBLIC_ORDER_ROUTE}/current`, fetcher);
+export default function ReservationsScreen({ navigation }) {
+    const { data, error, mutate } = useSWR(`${process.env.EXPO_PUBLIC_ORDER_ROUTE}/current`, fetcher);
+
+    // Rafraîchir quand on revient à l'écran
+    useFocusEffect(
+        useCallback(() => {
+            mutate();
+        }, [mutate])
+    );
 
     if (error) {
         return (
@@ -54,7 +63,13 @@ export default function ReservationsScreen() {
     };
 
     const renderItem = ({ item }) => (
-        <Pressable style={styles.card}>
+        <Pressable 
+            style={({pressed}) => [
+                styles.card,
+                pressed && styles.cardPressed
+            ]}
+            onPress={() => navigation.navigate('ReservationDetailScreen', { order: item })}
+        >
             <View style={styles.cardHeader}>
                 <Text style={styles.orderId}>Commande #{item.order_id}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.payment_status) }]}>
@@ -90,6 +105,25 @@ export default function ReservationsScreen() {
                     <Text style={styles.infoLabel}>Offre ID:</Text>
                     <Text style={styles.infoValue}>#{item.offer_id}</Text>
                 </View>
+
+                {item.offer?.vehicule && (
+                    <View style={styles.infoRow}>
+                        <Ionicons name="car-outline" size={16} color="#666" />
+                        <Text style={styles.infoLabel}>Véhicule:</Text>
+                        <Text style={styles.infoValue}>
+                            {item.offer.vehicule.model || 'Modèle inconnu'}
+                            {item.offer.vehicule.licence_plate ? ` • ${item.offer.vehicule.licence_plate}` : ''}
+                        </Text>
+                    </View>
+                )}
+
+                {item.offer?.adress && (
+                    <View style={styles.infoRow}>
+                        <Ionicons name="location-outline" size={16} color="#666" />
+                        <Text style={styles.infoLabel}>Adresse:</Text>
+                        <Text style={styles.infoValue}>{item.offer.adress}</Text>
+                    </View>
+                )}
             </View>
         </Pressable>
     );
@@ -146,6 +180,9 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
         overflow: 'hidden',
+    },
+    cardPressed: {
+        opacity: 0.7,
     },
     cardHeader: {
         flexDirection: 'row',

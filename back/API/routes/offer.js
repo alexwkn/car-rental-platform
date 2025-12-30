@@ -1,5 +1,5 @@
 import Router from 'express';
-import { getAllOffers, getOfferById, createOffer, updateOffer, deleteOffer } from '../controler/offer.js';
+import { getAllOffers, getOfferById, createOffer, updateOffer, deleteOffer, getAvailableOffers } from '../controler/offer.js';
 import { manager } from '../middleware/auth/mustBe.js';
 
 const router = Router();
@@ -38,6 +38,30 @@ const router = Router();
  *         description: Server error
  */
 router.get('/', getAllOffers);
+
+/**
+ * @swagger
+ * /offers/available:
+ *   get:
+ *     summary: Get all available offers (not reserved)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of available offers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Offer'
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       500:
+ *         description: Server error
+ */
+router.get('/available', getAvailableOffers);
 
 /**
  * @swagger

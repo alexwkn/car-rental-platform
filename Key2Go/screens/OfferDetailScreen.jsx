@@ -1,14 +1,57 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TopHeader from "../components/TopHeader";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { apiRequest } from "../utils/api";
 
 export default function OfferDetailScreen({ route, navigation }) {
     const insets = useSafeAreaInsets();
     const { offer } = route.params;
+    const [isFavorite, setIsFavorite] = useState(false);
+    const userInfo = useSelector(state => state.user.userInfo);
 
-    const handleReserve = () => {
-        Alert.alert("Réservation", "Fonctionnalité en développement");
+    const handleReserve = async () => {
+        if (!userInfo?.id) {
+            Alert.alert("Erreur", "Utilisateur non authentifié");
+            return;
+        }
+
+        try {
+            const orderData = {
+                offer_id: offer.offer_id,
+                customer_id: userInfo.id,
+                date_of_return: offer.end_date,
+                fuel_level_return: 0,
+                payment_status: 'pending'
+            };
+
+            const response = await apiRequest('POST', process.env.EXPO_PUBLIC_ORDER_ROUTE, orderData);
+            
+            Alert.alert("Succès", "Réservation créée avec succès!", [
+                {
+                    text: "OK",
+                    onPress: () => {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'RéservationsStack' }],
+                        });
+                    }
+                }
+            ]);
+        } catch (error) {
+            console.error('[handleReserve] Error:', error);
+            Alert.alert("Erreur", error.response?.data?.message || "Erreur lors de la réservation");
+        }
+    };
+
+    const handleToggleFavorite = () => {
+        setIsFavorite(!isFavorite);
+        Alert.alert(
+            isFavorite ? "Retiré des favoris" : "Ajouté aux favoris",
+            isFavorite ? "Véhicule retiré de vos favoris" : "Véhicule ajouté à vos favoris"
+        );
     };
 
     const calculateDays = () => {
@@ -42,6 +85,67 @@ export default function OfferDetailScreen({ route, navigation }) {
                 <View style={styles.mainCard}>
                     <Text style={styles.description}>{offer.description || "Offre sans titre"}</Text>
                     
+                    {offer.vehicule && (
+                        <>
+                            <View style={styles.divider} />
+                            
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionTitle}>🚗 Véhicule</Text>
+                                    <Pressable
+                                        onPress={handleToggleFavorite}
+                                        style={({pressed}) => [
+                                            styles.favoriteButton,
+                                            pressed && styles.favoriteButtonPressed
+                                        ]}
+                                        hitSlop={10}
+                                    >
+                                        <Ionicons 
+                                            name={isFavorite ? "heart" : "heart-outline"} 
+                                            size={28} 
+                                            color={isFavorite ? "#ff4757" : "#007C7C"} 
+                                        />
+                                    </Pressable>
+                                </View>
+                                
+                                <View style={styles.vehiculeInfo}>
+                                    <Text style={styles.vehiculeModel}>{offer.vehicule.model}</Text>
+                                    <Text style={styles.vehiculePlate}>{offer.vehicule.licence_plate}</Text>
+                                    {offer.vehicule.description && (
+                                        <Text style={styles.vehiculeDescription}>{offer.vehicule.description}</Text>
+                                    )}
+                                </View>
+
+                                {offer.vehicule.profile && (
+                                    <>
+                                        <View style={styles.ownerDivider} />
+                                        <View style={styles.ownerContainer}>
+                                            <Text style={styles.ownerTitle}>Propriétaire</Text>
+                                            <View style={styles.ownerInfo}>
+                                                {offer.vehicule.profile.profile_picture ? (
+                                                    <Image 
+                                                        source={{ uri: `${process.env.EXPO_PUBLIC_BASE_API_ROUTE}/upload/profiles/${offer.vehicule.profile.profile_picture}` }}
+                                                        style={styles.ownerPhoto}
+                                                    />
+                                                ) : (
+                                                    <View style={styles.ownerPhotoPlaceholder}>
+                                                        <Ionicons name="person" size={32} color="#007C7C" />
+                                                    </View>
+                                                )}
+                                                <View style={styles.ownerDetails}>
+                                                    <Text style={styles.ownerName}>{offer.vehicule.profile.name}</Text>
+                                                    <Text style={styles.ownerEmail}>{offer.vehicule.profile.email}</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </>
+                                )}
+                            </View>
+                        </>
+                    )}
+                    
+                    <View style={styles.divider} />
+
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Informations de localisation</Text>
                         <View style={styles.infoRow}>
@@ -289,5 +393,89 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    favoriteButton: {
+        padding: 4,
+    },
+    favoriteButtonPressed: {
+        opacity: 0.6,
+    },
+    vehiculeInfo: {
+        marginBottom: 8,
+    },
+    vehiculeModel: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#007C7C',
+        marginBottom: 4,
+    },
+    vehiculePlate: {
+        fontSize: 14,
+        color: '#666',
+        fontWeight: '500',
+        marginBottom: 6,
+    },
+    vehiculeDescription: {
+        fontSize: 13,
+        color: '#333',
+        lineHeight: 20,
+    },
+    ownerDivider: {
+        height: 1,
+        backgroundColor: '#f0f0f0',
+        marginVertical: 12,
+    },
+    ownerContainer: {
+        marginTop: 8,
+    },
+    ownerTitle: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#999',
+        marginBottom: 10,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+    },
+    ownerInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    ownerPhoto: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        marginRight: 12,
+        borderWidth: 2,
+        borderColor: '#007C7C',
+    },
+    ownerPhotoPlaceholder: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        marginRight: 12,
+        backgroundColor: '#f0f0f0',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: '#007C7C',
+    },
+    ownerDetails: {
+        flex: 1,
+    },
+    ownerName: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 4,
+    },
+    ownerEmail: {
+        fontSize: 13,
+        color: '#666',
     },
 });

@@ -1,12 +1,21 @@
-import { View, Text, ScrollView, FlatList, StyleSheet, Pressable } from "react-native";
+import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import TopHeader from "../components/TopHeader";
 import useSWR from "swr";
 import { fetcher } from "../utils/api";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 export default function HomePageScreen({navigation}) {
-    const insets = useSafeAreaInsets();
-    const {data, error} = useSWR(`${process.env.EXPO_PUBLIC_OFFER_ROUTE}/`, fetcher);
+
+    const {data, error,mutate} = useSWR(`${process.env.EXPO_PUBLIC_OFFER_ROUTE}/available`, fetcher);
+
+    // Rafraîchir quand on revient à l'écran
+    useFocusEffect(
+        useCallback(() => {
+            mutate();
+        }, [mutate])
+    );
 
     if (error) {
         return (
@@ -27,6 +36,18 @@ export default function HomePageScreen({navigation}) {
         >
             <View style={styles.card}>
             <View style={styles.cardContent}>
+                {item.vehicule && (
+                    <View style={styles.vehiculeHeader}>
+                        <View>
+                            <Text style={styles.vehiculeModel}>🚗 {item.vehicule.model}</Text>
+                            {item.vehicule.description && (
+                                <Text style={styles.vehiculeDescription}>{item.vehicule.description}</Text>
+                            )}
+                        </View>
+                        <Text style={styles.licencePlate}>{item.vehicule.licence_plate}</Text>
+                    </View>
+                )}
+                
                 <Text style={styles.description}>{item.description || "Offre sans titre"}</Text>
                 
                 <View style={styles.detailsRow}>
@@ -181,5 +202,28 @@ const styles = StyleSheet.create({
         color: '#666',
         marginTop: 6,
         fontStyle: 'italic',
+    },
+    vehiculeHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+        paddingBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+    },
+    vehiculeModel: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#007C7C',
+    },
+    licencePlate: {
+        fontSize: 12,
+        color: '#666',
+        fontWeight: '500',
+    },
+    vehiculeDescription: {
+        fontSize: 13,
+        color: '#333',
+        marginTop: 4,
     },
 });

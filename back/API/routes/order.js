@@ -1,5 +1,5 @@
 import Router from 'express';
-import{getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, getCurrentOrders, getOrderHistory } from '../controler/order.js';
+import{getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, getCurrentOrders, getOrderHistory, completeOrder } from '../controler/order.js';
 import { manager } from '../middleware/auth/mustBe.js';
 
 const router = Router();
@@ -35,7 +35,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/', getAllOrders);
+router.get('/', manager, getAllOrders);
 
 /**
  * @swagger
@@ -88,6 +88,45 @@ router.get('/current', getCurrentOrders);
  *         description: Server error
  */
 router.get('/history', getOrderHistory);
+
+/**
+ * @swagger
+ * /orders/{id}/complete:
+ *   patch:
+ *     summary: Complete an order (update fuel and status)
+ *     tags: [Order]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Order ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fuel_level_return:
+ *                 type: number
+ *                 description: Fuel level on return (0-100)
+ *               date_of_return:
+ *                 type: string
+ *                 format: date
+ *                 description: Return date
+ *     responses:
+ *       200:
+ *         description: Order completed successfully
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Server error
+ */
+router.patch('/:id/complete', completeOrder);
 
 /**
  * @swagger
@@ -161,7 +200,7 @@ router.get('/:id', manager, getOrderById);
  *       500:
  *         description: Server error
  */
-router.post('/', manager, createOrder);
+router.post('/', createOrder);
 /**
  * @swagger
  * /orders/{id}:
@@ -208,7 +247,7 @@ router.post('/', manager, createOrder);
  *       500:
  *         description: Server error
  */
-router.patch('/:id', manager, updateOrder);
+router.patch('/:id', updateOrder);
 /**
  * @swagger
  * /orders/{id}:
@@ -233,12 +272,9 @@ router.patch('/:id', manager, updateOrder);
  *         description: Invalid ID
  *       401:
  *         description: Unauthorized — missing or invalid JWT
- *       403:
- *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */
-router.delete('/:id', manager, deleteOrder);
+router.delete('/:id', deleteOrder);
 
 export default router;
-

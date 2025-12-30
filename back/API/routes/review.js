@@ -1,8 +1,10 @@
 import Router from 'express';
-import { getAllReviews, getReviewById, createReview, updateReview, deleteReview } from '../controler/review.js';
+import { getAllReviews, getReviewsByUserId, getReviewById, createReview, updateReview, deleteReview } from '../controler/review.js';
 import { manager } from '../middleware/auth/mustBe.js';
 
 const router = Router();
+
+router.get('/user/:userId', getReviewsByUserId);
 /**
  * @swagger
  * tags:
@@ -101,12 +103,10 @@ router.get('/:id', manager, getReviewById);
  *         description: Validation error (VineJS)
  *       401:
  *         description: Unauthorized — missing or invalid JWT
- *       403:
- *         description: Forbidden — must be manager
  *       500:
  *         description: Server error
  */
-router.post('/', manager, createReview); 
+router.post('/', createReview); 
 /**
  * @swagger
  * /reviews/{id}:

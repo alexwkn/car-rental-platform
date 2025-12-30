@@ -5,7 +5,11 @@ import { Ionicons } from "@expo/vector-icons";
 import HomePageScreen from "../screens/HomePageScreen";
 import HistoryScreen from "../screens/HistoryScreen";
 import ReservationsScreen from "../screens/ReservationsScreen";
+import ReservationDetailScreen from "../screens/ReservationDetailScreen";
+import CloseReservationScreen from "../screens/CloseReservationScreen";
 import AccountScreen from "../screens/AccountScreen";
+import ReviewsListScreen from "../screens/ReviewsListScreen";
+import SupportScreen from "../screens/SupportScreen";
 import MapScreen from "../screens/Map";
 import OfferDetailScreen from "../screens/OfferDetailScreen";
 
@@ -25,6 +29,55 @@ const HomeStack = () => {
   );
 };
 
+const ReservationsStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="ReservationsMain" component={ReservationsScreen} />
+      <Stack.Screen 
+        name="ReservationDetailScreen" 
+        component={ReservationDetailScreen}
+        options={{ animationEnabled: true }}
+      />
+      <Stack.Screen 
+        name="CloseReservationScreen" 
+        component={CloseReservationScreen}
+        options={{ animationEnabled: true }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const MapStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MapMain" component={MapScreen} />
+      <Stack.Screen 
+        name="OfferDetailScreen" 
+        component={OfferDetailScreen}
+        options={{ animationEnabled: true }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const AccountStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="AccountMain" component={AccountScreen} />
+      <Stack.Screen 
+        name="ReviewsList" 
+        component={ReviewsListScreen}
+        options={{ animationEnabled: true }}
+      />
+      <Stack.Screen 
+        name="Support" 
+        component={SupportScreen}
+        options={{ animationEnabled: true }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const BottomTabs = () => {
   return (
     <Tab.Navigator
@@ -37,11 +90,11 @@ const BottomTabs = () => {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Historique") {
             iconName = focused ? "timer" : "timer-outline";
-          } else if (route.name === "Réservations") {
+          } else if (route.name === "RéservationsStack") {
             iconName = focused ? "car" : "car-outline";
           } else if (route.name === "Compte") {
             iconName = focused ? "person-circle" : "person-circle-outline";
-          }else if (route.name === "Map") {
+          } else if (route.name === "Map") {
             iconName = focused ? "map" : "map-outline";
           }
 
@@ -61,10 +114,21 @@ const BottomTabs = () => {
         component={HomeStack}
         options={{ title: "Accueil" }}
       />
-      <Tab.Screen name="Réservations" component={ReservationsScreen} />
-      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen 
+        name="RéservationsStack" 
+        component={ReservationsStack}
+        options={{ title: "Réservations" }}
+      />
+      <Tab.Screen 
+        name="Map" 
+        component={MapStack} 
+      />
       <Tab.Screen name="Historique" component={HistoryScreen} />
-      <Tab.Screen name="Compte" component={AccountScreen} />
+      <Tab.Screen 
+        name="Compte" 
+        component={AccountStack}
+        options={{ title: "Compte" }}
+      />
 
     </Tab.Navigator>
   );

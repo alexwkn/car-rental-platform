@@ -71,6 +71,24 @@ export const getAllReviews = async (req, res) => {
     }
 };
 
+export const getReviewsByUserId = async (req, res) => {
+    try {
+        const userId = parseInt(req.params.userId);
+        const reviews = await prisma.review.findMany({
+            where: {
+                customer_id: userId
+            },
+            orderBy: {  
+                review_date: "desc"
+            }
+        });
+        res.status(200).json(reviews.map(formatReview));
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};
+
 export const createReview = async (req, res) => {
     try {
         const validatedData = await ReviewValidator.validate(req.body);

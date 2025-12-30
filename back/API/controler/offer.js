@@ -42,6 +42,13 @@ export const getOfferById = async (req, res) => {
         const offer = await prisma.offer.findUnique({
             where: {
                 offer_id: parseInt(req.params.id)
+            },
+            include: {
+                vehicule: {
+                    include: {
+                        profile: true
+                    }
+                }
             }
         });
         if (offer) {
@@ -74,7 +81,49 @@ export const getAllOffers = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+// Récupérer toutes les offres qui n'ont pas été réservées
+export const getAvailableOffers = async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Début du jour actuel
+        
+        const offers = await prisma.offer.findMany({
+            where: {
+                AND: [
+                    {
+                        order: {
+                            none: {} // Aucun order associé à cette offre
+                        }
+                    },
+                    {
+                        end_date: {
+                            gte: today // end_date >= today
+                        }
+                    }
+                ]
+            },
+            include: {
+                vehicule: {
+                    include: {
+                        profile: true
+                    }
+                }
+            },
+            orderBy: {
+                offer_id: "asc"
+            }
+        });
 
+        if (offers.length > 0) {
+            res.status(200).json(offers.map(formatOffer));
+        } else {
+            res.status(200).json([]); 
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};
 export const createOffer = async (req, res) => {
     try {
         const validatedData = await OfferValidator.validate(req.body);

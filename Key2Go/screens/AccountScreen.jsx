@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { View, StyleSheet, Pressable, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,7 +12,9 @@ import ActionRow from "../components/accounts/ActionRow";
 import CameraModal from "../components/accounts/CameraModal";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/userSlice";
+import { setAuthToken } from "../utils/api";
 import { useNavigation } from "@react-navigation/native";
+import { apiRequest } from "../utils/api";
 
 export default function AccountScreen() {
   const insets = useSafeAreaInsets();
@@ -133,6 +135,8 @@ export default function AccountScreen() {
         <View style={styles.actions}>
           <ActionRow icon="card-outline" title="Mes moyens de paiement" onPress={() => {}} />
           <ActionRow icon="car-outline" title="Mes véhicules" onPress={() => {}} />
+          <ActionRow icon="star-outline" title="Mes avis" onPress={() => navigation.navigate("ReviewsList")} />
+          <ActionRow icon="help-circle-outline" title="Aide" onPress={() => navigation.navigate("Support") } />
 
           <View style={styles.divider} />
 
