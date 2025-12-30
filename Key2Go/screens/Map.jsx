@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, View } from 'react-native';
 import * as Location from 'expo-location';
-
+import TopHeader from '../components/TopHeader';
 
 const INITIAL_REGION = {
   latitude: 50.464069,
@@ -45,6 +45,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+    <TopHeader title="Carte" />
       <MapView
         style={styles.map}
         initialRegion={region}

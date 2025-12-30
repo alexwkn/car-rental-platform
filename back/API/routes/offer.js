@@ -37,7 +37,8 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/', manager, getAllOffers);
+router.get('/', getAllOffers);
+
 /**
  * @swagger
  * /offers/{id}:

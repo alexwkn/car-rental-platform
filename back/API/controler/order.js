@@ -193,3 +193,72 @@ export const deleteOrder = async (req, res) => {
         });
     }
 };
+
+// Récupérer les réservations en cours pour un utilisateur spécifique
+export const getCurrentOrders = async (req, res) => {
+    try {
+        const userId = req.session.id; // ID de l'utilisateur depuis le JWT
+        console.log('[getCurrentOrders] User ID from session:', userId);
+        const today = new Date();
+        
+        const orders = await prisma.order.findMany({
+            where: {
+                customer_id: userId,
+                OR: [
+                    { date_of_return: null },
+                    { date_of_return: { gte: today } }
+                ]
+            },
+            include: {
+                offer: true // Inclure les détails de l'offre
+            },
+            orderBy: {
+                order_date: 'desc'
+            }
+        });
+
+        console.log('[getCurrentOrders] Found orders:', orders.length);
+
+        if (orders.length > 0) {
+            res.status(200).json(orders.map(formatOrder));
+        } else {
+            res.status(200).json([]); // Retourner tableau vide au lieu de 404
+        }
+    } catch (err) {
+        console.error('[getCurrentOrders] Error:', err);
+        res.status(500).send('Server error');
+    }
+};
+
+// Récupérer l'historique des réservations pour un utilisateur spécifique
+export const getOrderHistory = async (req, res) => {
+    try {
+        const userId = req.session.id; // ID de l'utilisateur depuis le JWT
+        console.log('[getOrderHistory] User ID from session:', userId);
+        const today = new Date();
+        
+        const orders = await prisma.order.findMany({
+            where: {
+                customer_id: userId,
+                date_of_return: { lt: today }
+            },
+            include: {
+                offer: true // Inclure les détails de l'offre
+            },
+            orderBy: {
+                date_of_return: 'desc'
+            }
+        });
+
+        console.log('[getOrderHistory] Found orders:', orders.length);
+
+        if (orders.length > 0) {
+            res.status(200).json(orders.map(formatOrder));
+        } else {
+            res.status(200).json([]); // Retourner tableau vide au lieu de 404
+        }
+    } catch (err) {
+        console.error('[getOrderHistory] Error:', err);
+        res.status(500).send('Server error');
+    }
+};

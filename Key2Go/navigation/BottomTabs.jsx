@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
 import HomePageScreen from "../screens/HomePageScreen";
@@ -6,8 +7,23 @@ import HistoryScreen from "../screens/HistoryScreen";
 import ReservationsScreen from "../screens/ReservationsScreen";
 import AccountScreen from "../screens/AccountScreen";
 import MapScreen from "../screens/Map";
+import OfferDetailScreen from "../screens/OfferDetailScreen";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeMain" component={HomePageScreen} />
+      <Stack.Screen 
+        name="OfferDetailScreen" 
+        component={OfferDetailScreen}
+        options={{ animationEnabled: true }}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const BottomTabs = () => {
   return (
@@ -17,7 +33,7 @@ const BottomTabs = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Accueil") {
+          if (route.name === "AccueilStack") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Historique") {
             iconName = focused ? "timer" : "timer-outline";
@@ -40,7 +56,11 @@ const BottomTabs = () => {
         },
       })}
     >
-      <Tab.Screen name="Accueil" component={HomePageScreen} />
+      <Tab.Screen 
+        name="AccueilStack" 
+        component={HomeStack}
+        options={{ title: "Accueil" }}
+      />
       <Tab.Screen name="Réservations" component={ReservationsScreen} />
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Historique" component={HistoryScreen} />

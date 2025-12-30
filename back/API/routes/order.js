@@ -1,5 +1,5 @@
 import Router from 'express';
-import{getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder } from '../controler/order.js';
+import{getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, getCurrentOrders, getOrderHistory } from '../controler/order.js';
 import { manager } from '../middleware/auth/mustBe.js';
 
 const router = Router();
@@ -35,7 +35,60 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/', manager, getAllOrders);
+router.get('/', getAllOrders);
+
+/**
+ * @swagger
+ * /orders/current:
+ *   get:
+ *     summary: Get current orders for authenticated user
+ *     tags: [Order]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of current orders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       404:
+ *         description: No current orders found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       500:
+ *         description: Server error
+ */
+router.get('/current', getCurrentOrders);
+
+/**
+ * @swagger
+ * /orders/history:
+ *   get:
+ *     summary: Get order history for authenticated user
+ *     tags: [Order]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of past orders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       404:
+ *         description: No order history found
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       500:
+ *         description: Server error
+ */
+router.get('/history', getOrderHistory);
+
 /**
  * @swagger
  * /orders/{id}:

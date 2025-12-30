@@ -107,7 +107,7 @@ export default function AccountScreen() {
 
   return (
     <View style={styles.screen}>
-      <TopHeader />
+      <TopHeader title="Mon compte" />
 
       <Pressable
         onPress={() => console.log("Settings")}

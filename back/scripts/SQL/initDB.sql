@@ -148,7 +148,11 @@ VALUES
 ('2026-01-13', '2026-01-15', 95.00, 'completed', 6, 6),
 ('2026-01-18', '2026-01-20', 80.00, 'completed', 7, 11),
 ('2026-01-08', '2026-01-10', 100.00, 'failed', 8, 2),
-('2026-01-23', '2026-01-25', 90.00, 'pending', 9, 12);
+('2026-01-23', '2026-01-25', 90.00, 'pending', 9, 12),
+-- Orders pour Alex Dupont (customer_id = 1)
+('2025-12-25', '2025-12-28', 85.00, 'completed', 1, 1),  -- Historique (passé)
+('2025-12-29', '2026-01-05', NULL, 'pending', 2, 1),     -- En cours (retour futur)
+('2026-01-10', '2026-01-15', NULL, 'pending', 3, 1);     -- En cours (retour futur)
 
 INSERT INTO review (rating, comment, customer_id, renter_id, order_id)
 VALUES 

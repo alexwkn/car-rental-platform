@@ -1,29 +1,30 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function TopHeader() {
+export default function TopHeader({ title = "Key2Go" }) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.wrapper, { paddingTop: insets.top + 6 }]}>
-      <Text style={styles.brand}>Key2Go</Text>
+    <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+      <View style={{ width: 28 }} />
+      <Text style={styles.headerTitle}>{title}</Text>
+      <View style={{ width: 28 }} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 50,
+  header: {
+    backgroundColor: '#007C7C',
     paddingHorizontal: 16,
-    alignItems: "flex-start",
+    paddingBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  brand: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#007C7C", 
+  headerTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
