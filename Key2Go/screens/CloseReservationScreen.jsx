@@ -8,7 +8,7 @@ import { apiRequest } from "../utils/api";
 
 export default function CloseReservationScreen({ route, navigation }) {
     const insets = useSafeAreaInsets();
-    const { order, onSuccess } = route.params;
+    const { order } = route.params;
     const customerId = useSelector((state) => state.user.userInfo?.id);
     const [fuelLevel, setFuelLevel] = useState('');
     const [rating, setRating] = useState(0);
@@ -43,7 +43,7 @@ export default function CloseReservationScreen({ route, navigation }) {
                 if (rating > 0) {
                     await apiRequest(
                         'POST',
-                        `${process.env.EXPO_PUBLIC_BASE_API_ROUTE}/reviews`,
+                        process.env.EXPO_PUBLIC_REVIEW_ROUTE,
                         {
                             customer_id: customerId,
                             renter_id: order.offer?.vehicule?.owner_id || 1,
@@ -61,12 +61,8 @@ export default function CloseReservationScreen({ route, navigation }) {
                         {
                             text: "OK",
                             onPress: () => {
-                                // Rafraîchir les données
-                                if (onSuccess) {
-                                    onSuccess();
-                                }
-                                navigation.goBack();
-                                navigation.goBack();
+                                // Revenir à la liste des réservations
+                                navigation.pop(2);
                             }
                         }
                     ]

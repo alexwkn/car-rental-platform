@@ -44,6 +44,24 @@ services:
     ports:
       - "8080:80"
 
+  mobile:
+    build: ./Key2Go
+    env_file:
+      - ./Key2Go/.env
+    depends_on:
+      back:
+        condition: service_started
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+      - "8081:8081"
+    volumes:
+      - ./Key2Go:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
 volumes:
   pgdata:
   uploads:

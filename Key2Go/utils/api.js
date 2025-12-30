@@ -11,8 +11,7 @@ const resolvedBaseURL = (() => {
         }
         return envBase;
     }
-    // iOS simulator can use localhost; real devices need LAN IP set in env
-    return envBase || 'http://localhost:3001';
+
 })();
 
 export const API = axios.create({

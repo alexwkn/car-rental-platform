@@ -45,11 +45,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
                     text: "Continuer",
                     onPress: () => {
                         navigation.navigate('CloseReservationScreen', { 
-                            order,
-                            onSuccess: () => {
-                                // Rafraîchir les réservations
-                                navigation.navigate('ReservationsMain');
-                            }
+                            order
                         });
                     },
                     style: "default"

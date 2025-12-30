@@ -226,7 +226,7 @@ export const getCurrentOrders = async (req, res) => {
         if (orders.length > 0) {
             res.status(200).json(orders.map(formatOrder));
         } else {
-            res.status(200).json([]); // Retourner tableau vide au lieu de 404
+            res.status(200).json([]); 
         }
     } catch (err) {
         console.error('[getCurrentOrders] Error:', err);
@@ -246,7 +246,7 @@ export const getOrderHistory = async (req, res) => {
                 payment_status: 'completed' 
             },
             include: {
-                offer: true // Inclure les détails de l'offre
+                offer: true 
             },
             orderBy: {
                 date_of_return: 'desc'

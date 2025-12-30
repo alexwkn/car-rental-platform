@@ -6,6 +6,8 @@ import TopHeader from '../components/TopHeader';
 import { apiRequest } from '../utils/api';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 const INITIAL_REGION = {
   latitude: 50.464069,
@@ -13,6 +15,8 @@ const INITIAL_REGION = {
   latitudeDelta: 0.1,
   longitudeDelta: 0.1,
 };
+
+
 
 const toRadians = (deg) => (deg * Math.PI) / 180;
 const haversineKm = (lat1, lon1, lat2, lon2) => {
@@ -24,10 +28,14 @@ const haversineKm = (lat1, lon1, lat2, lon2) => {
     Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(R * c * 10) / 10; // km, 0.1 precision
+  return Math.round(R * c * 10) / 10;
 };
 
 export default function MapScreen() {
+
+
+
+        
   const navigation = useNavigation();
   const user = useSelector(state => state.user.userInfo);
   const token = useSelector(state => state.user.token);
@@ -39,6 +47,15 @@ export default function MapScreen() {
   const [markers, setMarkers] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshTick, setRefreshTick] = useState(0);
+
+  // Rafraîchir quand on revient à l'écran
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshTick((v) => v + 1);
+    }, [])
+  );
+
 
   // Ask permission and locate user
   useEffect(() => {
@@ -128,7 +145,7 @@ export default function MapScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user?.id, token, userCoords, selected]);
+  }, [user?.id, token, userCoords, selected, refreshTick]);
 
   const selectedOffer = selected?.offer;
 

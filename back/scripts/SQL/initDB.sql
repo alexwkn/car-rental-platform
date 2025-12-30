@@ -133,8 +133,8 @@ VALUES
 INSERT INTO offer (start_date, end_date, fuel_level, adress, price, description, vehicule_id)
 VALUES 
 ('2026-01-20', '2026-01-30', 100.00, 'Rue du Centre 10, Namur', 50.00, 'Location voiture propre et fiable', 1),
-('2026-01-10', '2026-01-15', 100, 'Charleroi', 45.00, 'Parfaite pour la ville', 2),
-('2026-01-05', '2026-01-15', 100, 'Bruxelles', 90.00, 'Électrique et silencieuse', 3),
+('2025-12-10', '2026-01-15', 100, 'Charleroi', 45.00, 'Parfaite pour la ville', 2),
+('2026-12-10', '2026-01-15', 100, 'Bruxelles', 90.00, 'Électrique et silencieuse', 3),
 ('2025-11-25', '2025-12-05', 80, 'Namur', 60.00, 'Idéale pour longs trajets', 4),
 ('2025-12-10', '2025-12-20', 100, 'Charleroi', 75.00, 'Voiture récente et propre', 5),
 ('2026-01-05', '2026-01-15', 100, 'Dinant', 70.00, 'Voiture très confortable', 6),
@@ -163,8 +163,8 @@ VALUES
 ('2026-01-23', '2026-01-25', 90.00, 'pending', 9, 12),
 -- Orders pour Alex Dupont (customer_id = 1)
 ('2025-12-25', '2025-12-28', 85.00, 'completed', 1, 1),  -- Historique (passé)
-('2026-01-10', '2026-01-15', NULL, 'pending', 2, 1),     -- En cours (retour futur)
-('2026-01-05', '2026-01-15', NULL, 'pending', 3, 1);     -- En cours (retour futur)
+('2025-12-10', '2026-01-15', NULL, 'pending', 2, 1),     -- En cours (retour futur)
+('2025-12-05', '2026-01-15', NULL, 'pending', 3, 1);     -- En cours (retour futur)
 
 INSERT INTO review (rating, comment, customer_id, renter_id, order_id)
 VALUES 

@@ -43,7 +43,7 @@ export default function ReviewsListScreen({ navigation }) {
     const renderReviewCard = ({ item }) => (
         <View style={styles.reviewCard}>
             <View style={styles.reviewHeader}>
-                <Text style={styles.reviewTitle}>{item.title || "Avis sans titre"}</Text>
+                <Text style={styles.reviewTitle}>{"Mon avis"}</Text>
                 <View style={styles.ratingContainer}>
                     {[...Array(5)].map((_, i) => (
                         <Ionicons
