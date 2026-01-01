@@ -10,7 +10,6 @@ import {
   ImageBackground,
   TouchableWithoutFeedback,
   Keyboard,
-  TouchableOpacity,
   Alert,
   StatusBar,
 } from "react-native";
@@ -121,8 +120,8 @@ export default function LoginScreen({ navigation }) {
                   />
 
 
-                    <Pressable style={styles.button} onPress={handleLogin} disabled={isLoading}>
-                        <Text style={styles.buttonText}>{isLoading ? 'Connexion...' : 'Se connecter'}</Text>
+                    <Pressable style={styles.loginButton} onPress={handleLogin} disabled={isLoading}>
+                        <Text style={styles.loginButtonText}>{isLoading ? 'Connexion...' : 'Se connecter'}</Text>
                     </Pressable>
 
                   <Pressable onPress={() => console.log("Mdp oublié")}>
