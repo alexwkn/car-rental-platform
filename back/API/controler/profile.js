@@ -329,3 +329,28 @@ export const deleteMe = async (req, res) => {
   }
 };
 
+export const changeMyPassword = async (req, res) => {
+  try {
+    const userId = req.session?.id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+    const { password } = req.body;
+    if (!password || password.length < 6) {
+      return res.status(422).json({ message: "Mot de passe invalide" });
+    }
+
+    const hashedPassword = await hash(password);
+
+    await prisma.profile.update({
+      where: { profile_id: parseInt(userId) },
+      data: { password: hashedPassword },
+    });
+
+    return res.status(200).json({ message: "Mot de passe mis à jour" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+

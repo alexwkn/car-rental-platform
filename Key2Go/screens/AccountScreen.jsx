@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { View, StyleSheet, Pressable, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -138,8 +138,7 @@ export default function AccountScreen() {
       <TopHeader title="Mon compte" />
 
       <Pressable
-        onPress={() => console.log("Settings")}
-        hitSlop={12}
+        onPress={() => navigation.navigate("AdvancedSettings")}
         style={[styles.settingsBtn, { top: insets.top + 8 }]}
       >
         <Ionicons name="settings-outline" size={35} color="#111" />

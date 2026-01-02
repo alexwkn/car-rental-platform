@@ -12,6 +12,8 @@ import ReviewsListScreen from "../screens/ReviewsListScreen";
 import SupportScreen from "../screens/SupportScreen";
 import MapScreen from "../screens/Map";
 import OfferDetailScreen from "../screens/OfferDetailScreen";
+import AdvancedSettingsScreen from "../screens/AdvancedSettingsScreen";
+import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -20,8 +22,8 @@ const HomeStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeMain" component={HomePageScreen} />
-      <Stack.Screen 
-        name="OfferDetailScreen" 
+      <Stack.Screen
+        name="OfferDetailScreen"
         component={OfferDetailScreen}
         options={{ animationEnabled: true }}
       />
@@ -33,13 +35,13 @@ const ReservationsStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ReservationsMain" component={ReservationsScreen} />
-      <Stack.Screen 
-        name="ReservationDetailScreen" 
+      <Stack.Screen
+        name="ReservationDetailScreen"
         component={ReservationDetailScreen}
         options={{ animationEnabled: true }}
       />
-      <Stack.Screen 
-        name="CloseReservationScreen" 
+      <Stack.Screen
+        name="CloseReservationScreen"
         component={CloseReservationScreen}
         options={{ animationEnabled: true }}
       />
@@ -51,8 +53,8 @@ const MapStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MapMain" component={MapScreen} />
-      <Stack.Screen 
-        name="OfferDetailScreen" 
+      <Stack.Screen
+        name="OfferDetailScreen"
         component={OfferDetailScreen}
         options={{ animationEnabled: true }}
       />
@@ -64,14 +66,26 @@ const AccountStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AccountMain" component={AccountScreen} />
-      <Stack.Screen 
-        name="ReviewsList" 
+      <Stack.Screen
+        name="ReviewsList"
         component={ReviewsListScreen}
         options={{ animationEnabled: true }}
       />
-      <Stack.Screen 
-        name="Support" 
+      <Stack.Screen
+        name="Support"
         component={SupportScreen}
+        options={{ animationEnabled: true }}
+      />
+
+      <Stack.Screen
+        name="AdvancedSettings"
+        component={AdvancedSettingsScreen}
+        options={{ animationEnabled: true }}
+      />
+
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
         options={{ animationEnabled: true }}
       />
     </Stack.Navigator>
@@ -109,27 +123,23 @@ const BottomTabs = () => {
         },
       })}
     >
-      <Tab.Screen 
-        name="AccueilStack" 
+      <Tab.Screen
+        name="AccueilStack"
         component={HomeStack}
         options={{ title: "Accueil" }}
       />
-      <Tab.Screen 
-        name="RéservationsStack" 
+      <Tab.Screen
+        name="RéservationsStack"
         component={ReservationsStack}
         options={{ title: "Réservations" }}
       />
-      <Tab.Screen 
-        name="Map" 
-        component={MapStack} 
-      />
+      <Tab.Screen name="Map" component={MapStack} />
       <Tab.Screen name="Historique" component={HistoryScreen} />
-      <Tab.Screen 
-        name="Compte" 
+      <Tab.Screen
+        name="Compte"
         component={AccountStack}
         options={{ title: "Compte" }}
       />
-
     </Tab.Navigator>
   );
 };
