@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,62 +13,108 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
 import { validateRegistration } from "../utils/validator";
+import { API } from "../utils/api";
+
+import { useDispatch } from "react-redux";
+import { login } from "../redux/userSlice";
 
 const Colors = {
-  primary: "#007C7C",      
-  link: "#1E6DFF",       
-  placeholder: "#9A9A9A",  
-  border: "#BDBDBD",       
-  background: "#FFFFFF",   
-  text: "#222222",         
+  primary: "#007C7C",
+  link: "#1E6DFF",
+  placeholder: "#9A9A9A",
+  border: "#BDBDBD",
+  background: "#FFFFFF",
+  text: "#222222",
 };
 
-export default function RegistrationScreen({ navigation }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [streetNumber, setStreetNumber] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [city, setCity] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+// Route API
+const REGISTER_ROUTE = process.env.EXPO_PUBLIC_CREATEACCOUNT_ROUTE ?? "/createAccount";
 
-  const firstNameRef = useRef(null);
-  const emailRef = useRef(null);
-  const streetNumberRef = useRef(null);
-  const postalCodeRef = useRef(null);
-  const cityRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
+export default function RegistrationScreen({ navigation }) {
+  const dispatch = useDispatch();
+
+  // État du formulaire
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    streetNumber: "",
+    postalCode: "",
+    city: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Références
+  const refs = {
+    firstName: useRef(null),
+    email: useRef(null),
+    streetNumber: useRef(null),
+    postalCode: useRef(null),
+    city: useRef(null),
+    password: useRef(null),
+    confirmPassword: useRef(null),
+  };
 
   const [fontsLoaded] = useFonts({
     LexendMedium: require("../assets/fonts/Lexend-Medium.ttf"),
     LexendRegular: require("../assets/fonts/Lexend-Regular.ttf"),
   });
 
-  const handleRegister = () => {
-    const formData = {
-      firstName,
-      lastName,
-      email,
-      streetNumber,
-      postalCode,
-      city,
-      password,
-      confirmPassword,
-    };
+  // Mise à jour d'un champ
+  const updateField = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
-    const error = validateRegistration(formData);
+  const handleRegister = async () => {
+    const error = validateRegistration(form);
+    if (error) return Alert.alert("Erreur", error);
 
-    if (error) {
-      return Alert.alert("Erreur", error);
+    setIsLoading(true);
+
+    try {
+      const name = `${form.firstName} ${form.lastName}`.trim();
+      const adress = `${form.streetNumber}, ${form.postalCode} ${form.city}`.trim();
+
+      const response = await API.post(REGISTER_ROUTE, {
+        email: form.email,
+        password: form.password,
+        name,
+        adress,
+        is_renter: true,
+      });
+
+      const token = response.data?.data?.token;
+      const profile = response.data?.data?.profile;
+
+      const userInfo = {
+        id: profile.profile_id,
+        status: profile.is_renter ? "renter" : "customer",
+        email: profile.email,
+        name: profile.name,
+        adress: profile.adress,
+      };
+
+      dispatch(login({ token, userInfo }));
+
+      navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+    } catch (e) {
+      Alert.alert(
+        "Erreur",
+        e?.response?.data?.error ||
+          e?.response?.data?.message ||
+          "Inscription impossible. Vérifie les informations."
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    navigation.replace("Home");
   };
 
   if (!fontsLoaded) {
@@ -96,121 +142,121 @@ export default function RegistrationScreen({ navigation }) {
             </View>
 
             <Text style={styles.title}>Créer un compte</Text>
-            <Text style={styles.subtitle}>C&apos;est simple et rapide</Text>
+            <Text style={styles.subtitle}>C’est simple et rapide</Text>
 
             <View style={styles.separator} />
 
             <View style={styles.formContainer}>
+              {/* Nom + Prénom */}
               <View style={styles.row}>
                 <TextInput
                   placeholder="Nom"
                   placeholderTextColor={Colors.placeholder}
-                  value={lastName}
-                  onChangeText={setLastName}
+                  value={form.lastName}
+                  onChangeText={(v) => updateField("lastName", v)}
                   style={[styles.input, styles.halfInput]}
-                  autoCorrect={false}
                   returnKeyType="next"
-                  onSubmitEditing={() => firstNameRef.current?.focus()}
+                  onSubmitEditing={() => refs.firstName.current?.focus()}
                 />
 
                 <TextInput
-                  ref={firstNameRef}
+                  ref={refs.firstName}
                   placeholder="Prénom"
                   placeholderTextColor={Colors.placeholder}
-                  value={firstName}
-                  onChangeText={setFirstName}
+                  value={form.firstName}
+                  onChangeText={(v) => updateField("firstName", v)}
                   style={[styles.input, styles.halfInput]}
-                  autoCorrect={false}
                   returnKeyType="next"
-                  onSubmitEditing={() => emailRef.current?.focus()}
+                  onSubmitEditing={() => refs.email.current?.focus()}
                 />
               </View>
 
+              {/* Email */}
               <TextInput
-                ref={emailRef}
+                ref={refs.email}
                 placeholder="Adresse e-mail"
                 placeholderTextColor={Colors.placeholder}
-                value={email}
-                onChangeText={setEmail}
+                value={form.email}
+                onChangeText={(v) => updateField("email", v)}
                 style={[styles.input, styles.inputGroupEnd]}
                 autoCapitalize="none"
-                autoCorrect={false}
                 keyboardType="email-address"
                 returnKeyType="next"
-                onSubmitEditing={() => streetNumberRef.current?.focus()}
+                onSubmitEditing={() => refs.streetNumber.current?.focus()}
               />
 
+              {/* Adresse */}
               <TextInput
-                ref={streetNumberRef}
+                ref={refs.streetNumber}
                 placeholder="Rue et numéro"
                 placeholderTextColor={Colors.placeholder}
-                value={streetNumber}
-                onChangeText={setStreetNumber}
+                value={form.streetNumber}
+                onChangeText={(v) => updateField("streetNumber", v)}
                 style={styles.input}
-                autoCorrect={false}
                 returnKeyType="next"
-                onSubmitEditing={() => postalCodeRef.current?.focus()}
+                onSubmitEditing={() => refs.postalCode.current?.focus()}
               />
 
               <View style={styles.row}>
                 <TextInput
-                  ref={postalCodeRef}
+                  ref={refs.postalCode}
                   placeholder="Code postal"
                   placeholderTextColor={Colors.placeholder}
-                  value={postalCode}
-                  onChangeText={setPostalCode}
+                  value={form.postalCode}
+                  onChangeText={(v) => updateField("postalCode", v)}
                   style={[styles.input, styles.halfInput]}
                   keyboardType="number-pad"
-                  autoCorrect={false}
                   returnKeyType="next"
-                  onSubmitEditing={() => cityRef.current?.focus()}
+                  onSubmitEditing={() => refs.city.current?.focus()}
                 />
 
                 <TextInput
-                  ref={cityRef}
+                  ref={refs.city}
                   placeholder="Ville"
                   placeholderTextColor={Colors.placeholder}
-                  value={city}
-                  onChangeText={setCity}
+                  value={form.city}
+                  onChangeText={(v) => updateField("city", v)}
                   style={[styles.input, styles.halfInput, styles.inputGroupEnd]}
-                  autoCorrect={false}
                   returnKeyType="next"
-                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  onSubmitEditing={() => refs.password.current?.focus()}
                 />
               </View>
 
+              {/* Mot de passe */}
               <TextInput
-                ref={passwordRef}
+                ref={refs.password}
                 placeholder="Mot de passe"
                 placeholderTextColor={Colors.placeholder}
-                value={password}
-                onChangeText={setPassword}
+                value={form.password}
+                onChangeText={(v) => updateField("password", v)}
                 style={styles.input}
                 secureTextEntry
                 returnKeyType="next"
-                onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+                onSubmitEditing={() => refs.confirmPassword.current?.focus()}
               />
 
               <TextInput
-                ref={confirmPasswordRef}
+                ref={refs.confirmPassword}
                 placeholder="Confirmer votre mot de passe"
                 placeholderTextColor={Colors.placeholder}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                value={form.confirmPassword}
+                onChangeText={(v) => updateField("confirmPassword", v)}
                 style={styles.input}
                 secureTextEntry
                 returnKeyType="done"
                 onSubmitEditing={handleRegister}
               />
 
+              {/* Bouton inscription */}
               <Pressable style={styles.primaryButton} onPress={handleRegister}>
-                <Text style={styles.primaryButtonText}>S&apos;inscrire</Text>
+                <Text style={styles.primaryButtonText}>
+                  {isLoading ? "Inscription..." : "S’inscrire"}
+                </Text>
               </Pressable>
 
               <Pressable onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.loginText}>
-                  Déjà membre ?{" "}
-                  <Text style={styles.loginLink}>Connectez-vous !</Text>
+                  Déjà membre ? <Text style={styles.loginLink}>Connectez-vous !</Text>
                 </Text>
               </Pressable>
             </View>
@@ -255,7 +301,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "LexendMedium",
     fontSize: 38,
-    color: "#111",
+    color: Colors.text,
     textAlign: "center",
     marginTop: 4,
   },
@@ -329,7 +375,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "LexendRegular",
     fontSize: 15,
-    color: "#111",
+    color: Colors.text,
   },
   loginLink: {
     color: Colors.link,
