@@ -31,6 +31,8 @@ export default function AccountScreen() {
 
   const TOP_HEADER_SPACE = insets.top + 70;
 
+  const PROFILE_ROUTE = process.env.EXPO_PUBLIC_PROFILE_ROUTE ?? "/profiles";
+
   const toggleFacing = () => setFacing((cur) => (cur === "back" ? "front" : "back"));
 
   const handleLogout = () => {
@@ -50,6 +52,30 @@ export default function AccountScreen() {
       ]
     );
   };
+
+  const handleDeleteAccount = () => {
+  Alert.alert(
+    "Supprimer le compte",
+    "Cette action est irréversible. Continuer ?",
+    [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Supprimer",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await apiRequest("DELETE", `${PROFILE_ROUTE}/me`);
+            dispatch(logout());
+            navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+          } catch (e) {
+            console.log("[DELETE ACCOUNT] error:", e?.response?.data || e?.message);
+            Alert.alert("Erreur", e?.response?.data?.message || "Suppression impossible");
+          }
+        },
+      },
+    ]
+  );
+};
 
   
 
@@ -146,7 +172,7 @@ export default function AccountScreen() {
             title="Supprimer le compte"
             chevron={false}
             danger
-            onPress={() => Alert.alert("Suppression", "À brancher sur ton API / logique de suppression.")}
+            onPress={handleDeleteAccount}
           />
         </View>
       </ScrollView>

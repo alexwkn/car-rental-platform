@@ -1,3 +1,4 @@
+// screens/RegistrationScreen.jsx
 import { useRef, useState } from "react";
 import {
   View,
@@ -13,13 +14,12 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
+import { jwtDecode } from "jwt-decode";
 
 import { validateRegistration } from "../utils/validator";
 import { API } from "../utils/api";
-
 import { useDispatch } from "react-redux";
 import { login } from "../redux/userSlice";
 
@@ -32,13 +32,14 @@ const Colors = {
   text: "#222222",
 };
 
-// Route API
-const REGISTER_ROUTE = process.env.EXPO_PUBLIC_CREATEACCOUNT_ROUTE ?? "/createAccount";
+const REGISTER_ROUTE =
+  process.env.EXPO_PUBLIC_CREATEACCOUNT_ROUTE ?? "/createAccount";
+
+const LOGIN_ROUTE = process.env.EXPO_PUBLIC_LOGIN_ROUTE ?? "/login";
 
 export default function RegistrationScreen({ navigation }) {
   const dispatch = useDispatch();
 
-  // État du formulaire
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -52,7 +53,6 @@ export default function RegistrationScreen({ navigation }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Références
   const refs = {
     firstName: useRef(null),
     email: useRef(null),
@@ -68,7 +68,6 @@ export default function RegistrationScreen({ navigation }) {
     LexendRegular: require("../assets/fonts/Lexend-Regular.ttf"),
   });
 
-  // Mise à jour d'un champ
   const updateField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -83,7 +82,8 @@ export default function RegistrationScreen({ navigation }) {
       const name = `${form.firstName} ${form.lastName}`.trim();
       const adress = `${form.streetNumber}, ${form.postalCode} ${form.city}`.trim();
 
-      const response = await API.post(REGISTER_ROUTE, {
+      // 1) Create account
+      await API.post(REGISTER_ROUTE, {
         email: form.email,
         password: form.password,
         name,
@@ -91,25 +91,38 @@ export default function RegistrationScreen({ navigation }) {
         is_renter: true,
       });
 
-      const token = response.data?.data?.token;
-      const profile = response.data?.data?.profile;
+      // 2) Login to get the SAME token format as LoginScreen (raw JWT string)
+      const loginRes = await API.post(LOGIN_ROUTE, {
+        email: form.email,
+        password: form.password,
+      });
+
+      const token = loginRes?.data;
+
+      if (!token || typeof token !== "string") {
+        console.log("[REGISTER] loginRes.data:", loginRes?.data);
+        throw new Error("Token manquant/invalide après connexion");
+      }
+
+      // 3) Decode JWT for userInfo
+      const payload = jwtDecode(token);
 
       const userInfo = {
-        id: profile.profile_id,
-        status: profile.is_renter ? "renter" : "customer",
-        email: profile.email,
-        name: profile.name,
-        adress: profile.adress,
+        id: payload.id,
+        status: payload.status, // "renter"/"customer" selon ton backend /login
+        email: payload.email,
+        name: payload.name,
+        adress: payload.adress,
       };
 
       dispatch(login({ token, userInfo }));
-
       navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
     } catch (e) {
       Alert.alert(
         "Erreur",
         e?.response?.data?.error ||
           e?.response?.data?.message ||
+          e?.message ||
           "Inscription impossible. Vérifie les informations."
       );
     } finally {
@@ -147,7 +160,6 @@ export default function RegistrationScreen({ navigation }) {
             <View style={styles.separator} />
 
             <View style={styles.formContainer}>
-              {/* Nom + Prénom */}
               <View style={styles.row}>
                 <TextInput
                   placeholder="Nom"
@@ -158,7 +170,6 @@ export default function RegistrationScreen({ navigation }) {
                   returnKeyType="next"
                   onSubmitEditing={() => refs.firstName.current?.focus()}
                 />
-
                 <TextInput
                   ref={refs.firstName}
                   placeholder="Prénom"
@@ -171,7 +182,6 @@ export default function RegistrationScreen({ navigation }) {
                 />
               </View>
 
-              {/* Email */}
               <TextInput
                 ref={refs.email}
                 placeholder="Adresse e-mail"
@@ -185,7 +195,6 @@ export default function RegistrationScreen({ navigation }) {
                 onSubmitEditing={() => refs.streetNumber.current?.focus()}
               />
 
-              {/* Adresse */}
               <TextInput
                 ref={refs.streetNumber}
                 placeholder="Rue et numéro"
@@ -209,7 +218,6 @@ export default function RegistrationScreen({ navigation }) {
                   returnKeyType="next"
                   onSubmitEditing={() => refs.city.current?.focus()}
                 />
-
                 <TextInput
                   ref={refs.city}
                   placeholder="Ville"
@@ -222,7 +230,6 @@ export default function RegistrationScreen({ navigation }) {
                 />
               </View>
 
-              {/* Mot de passe */}
               <TextInput
                 ref={refs.password}
                 placeholder="Mot de passe"
@@ -247,8 +254,15 @@ export default function RegistrationScreen({ navigation }) {
                 onSubmitEditing={handleRegister}
               />
 
-              {/* Bouton inscription */}
-              <Pressable style={styles.primaryButton} onPress={handleRegister}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && { opacity: 0.85 },
+                  isLoading && { opacity: 0.6 },
+                ]}
+                onPress={handleRegister}
+                disabled={isLoading}
+              >
                 <Text style={styles.primaryButtonText}>
                   {isLoading ? "Inscription..." : "S’inscrire"}
                 </Text>
@@ -256,7 +270,8 @@ export default function RegistrationScreen({ navigation }) {
 
               <Pressable onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.loginText}>
-                  Déjà membre ? <Text style={styles.loginLink}>Connectez-vous !</Text>
+                  Déjà membre ?{" "}
+                  <Text style={styles.loginLink}>Connectez-vous !</Text>
                 </Text>
               </Pressable>
             </View>

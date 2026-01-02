@@ -298,3 +298,34 @@ export const deleteProfileImage = async (req, res) => {
     });
   }
 };
+
+export const deleteMe = async (req, res) => {
+  try {
+    const myId = req.session?.id; // mis par checkJWT
+    if (!myId) return res.status(401).json({ message: "Unauthorized" });
+
+    const profile = await prisma.profile.findUnique({
+      where: { profile_id: myId },
+    });
+
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
+    if (profile.profile_picture) {
+      try {
+        await deleteImage(profile.profile_picture);
+      } catch (err) {
+        console.warn("Error deleting profile image:", err.message);
+      }
+    }
+
+    await prisma.profile.delete({
+      where: { profile_id: myId },
+    });
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+

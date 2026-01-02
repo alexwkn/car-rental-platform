@@ -1,11 +1,14 @@
 import Router from 'express';
-import { getAllProfiles, getProfileById, createProfile, updateProfile, deleteProfile, uploadProfileImage, deleteProfileImage } from '../controler/profile.js';
+import { getAllProfiles, getProfileById, createProfile, updateProfile, deleteProfile, uploadProfileImage, deleteProfileImage, deleteMe  } from '../controler/profile.js';
 import { manager } from '../middleware/auth/mustBe.js';
 import { upload } from '../middleware/upload/multerConfig.js';
+import { checkJWT } from "../middleware/auth/checkJWT.js";
+
 
 
 
 const router = Router();
+router.delete("/me", checkJWT, deleteMe);
 
 /**
  * @swagger
