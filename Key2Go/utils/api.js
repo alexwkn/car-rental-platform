@@ -53,20 +53,33 @@ export const setAuthToken = (token) => {
 
 export const fetcher = url => API.get(url).then(res => res.data);
 
-export const apiRequest = async (method, url, data = null) => {
-    try {
-        const config = {
-            method: method.toLowerCase(),
-            url,
-        };
-        if (data) {
-            config.data = data;
-        }
-        const response = await API(config);
-        return response;
-    } catch (error) {
-        throw error;
+export const apiRequest = async (method, url, data = null, extraConfig = {}) => {
+  try {
+    const m = method.toLowerCase();
+
+    const isFormData =
+      data && typeof data === "object" && typeof data.append === "function";
+
+    const config = {
+      method: m,
+      url,
+      ...extraConfig,
+      headers: {
+        ...(extraConfig.headers || {}),
+        ...(isFormData ? { "Content-Type": "multipart/form-data" } : {}),
+      },
+    };
+
+    if (data !== null && ["post", "put", "patch", "delete"].includes(m)) {
+      config.data = data;
     }
+
+    const response = await API(config);
+    return response;
+  } catch (error) {
+    // Tu relances l’erreur pour que l’écran puisse faire Alert / logs
+    throw error;
+  }
 };
 
 export default {API, fetcher, setAuthToken, apiRequest};

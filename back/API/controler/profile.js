@@ -353,4 +353,107 @@ export const changeMyPassword = async (req, res) => {
   }
 };
 
+const toPublicUrl = (req, path) => {
+  if (!path) return null;
+  const base = `${req.protocol}://${req.get("host")}`;
+  return `${base}/upload/${path}`;
+};
+
+export const getMyProfile = async (req, res) => {
+  try {
+    const profileId = Number(req.session?.id); 
+    if (!profileId) return res.status(401).json({ message: "Unauthorized" });
+
+    const profile = await prisma.profile.findUnique({
+      where: { profile_id: profileId },
+    });
+
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
+    return res.status(200).json({
+      message: "OK",
+      data: {
+        ...profile,
+        profile_picture_url: toPublicUrl(req, profile.profile_picture),
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const uploadMyProfileImage = async (req, res) => {
+  try {
+    const profileId = Number(req.session?.id);
+    if (!profileId) return res.status(401).json({ message: "Unauthorized" });
+
+    if (!req.file) return res.status(400).json({ message: "No image provided" });
+
+    const existingProfile = await prisma.profile.findUnique({
+      where: { profile_id: profileId },
+      select: { profile_picture: true },
+    });
+    if (!existingProfile) return res.status(404).json({ message: "Profile not found" });
+
+    const imageName = uuid.v4();
+    const imagePath = `profiles/${imageName}.jpeg`;
+
+    await saveImage(req.file.buffer, imageName, "upload/profiles");
+
+    if (existingProfile.profile_picture) {
+      try { await deleteImage(existingProfile.profile_picture); } catch {}
+    }
+
+    const updated = await prisma.profile.update({
+      where: { profile_id: profileId },
+      data: { profile_picture: imagePath },
+      select: { profile_id: true, profile_picture: true },
+    });
+
+    return res.status(200).json({
+      message: "Profile image updated successfully",
+      data: {
+        ...updated,
+        profile_picture_url: toPublicUrl(req, updated.profile_picture),
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Server error", error: e.message });
+  }
+};
+
+export const deleteMyProfileImage = async (req, res) => {
+  try {
+    const profileId = Number(req.session?.id);
+    if (!profileId) return res.status(401).json({ message: "Unauthorized" });
+
+    const profile = await prisma.profile.findUnique({
+      where: { profile_id: profileId },
+      select: { profile_picture: true },
+    });
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
+    if (profile.profile_picture) {
+      try { await deleteImage(profile.profile_picture); } catch {}
+    }
+
+    const updated = await prisma.profile.update({
+      where: { profile_id: profileId },
+      data: { profile_picture: null },
+      select: { profile_id: true, profile_picture: true },
+    });
+
+    return res.status(200).json({
+      message: "Profile image deleted successfully",
+      data: { ...updated, profile_picture_url: null },
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
