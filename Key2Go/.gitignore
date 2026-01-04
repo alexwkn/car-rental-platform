@@ -43,5 +43,3 @@ yarn-error.*
 # WebStorm, IntelliJ, PHPStorm 
 .idea/
 *.iml 
-
-.env

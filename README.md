@@ -21,7 +21,7 @@ docker compose up --build -d
 
 
 Cette commande va :
-- Construire les images Docker pour le backend et le frontend
+- Construire les images Docker pour le backend, le frontend et mobile
 - Créer un conteneur PostgreSQL pour la base de données
 - Démarrer tous les services en arrière-plan
 
@@ -47,7 +47,7 @@ L'application est maintenant accessible :
 
 - **Frontend** : [http://localhost:8080](http://localhost:8080)
 - **Backend API** : [http://localhost:3001](http://localhost:3001)
-
+-**Mobile** : Via expo
 
 ### Comptes de test
 

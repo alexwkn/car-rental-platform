@@ -191,7 +191,7 @@ export default function AddVehicleScreen({ navigation }) {
 
           {/* Niveau de carburant */}
           <View style={styles.sliderContainer}>
-            <Text style={styles.label}>Le niveau de carburant de retour</Text>
+            <Text style={styles.label}>Le niveau de carburant de la voiture</Text>
             <View style={styles.sliderRow}>
               <Slider
                 style={styles.slider}
