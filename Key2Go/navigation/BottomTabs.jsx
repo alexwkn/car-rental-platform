@@ -10,6 +10,8 @@ import CloseReservationScreen from "../screens/CloseReservationScreen";
 import AccountScreen from "../screens/AccountScreen";
 import ReviewsListScreen from "../screens/ReviewsListScreen";
 import SupportScreen from "../screens/SupportScreen";
+import MyVehiculesScreen from "../screens/MyVehiculesScreen";
+import AddVehicleScreen from "../screens/AddVehicleScreen";
 import MapScreen from "../screens/Map";
 import OfferDetailScreen from "../screens/OfferDetailScreen";
 import AdvancedSettingsScreen from "../screens/AdvancedSettingsScreen";
@@ -69,6 +71,16 @@ const AccountStack = () => {
       <Stack.Screen
         name="ReviewsList"
         component={ReviewsListScreen}
+        options={{ animationEnabled: true }}
+      />
+      <Stack.Screen
+        name="MyVehicules"
+        component={MyVehiculesScreen}
+        options={{ animationEnabled: true }}
+      />
+      <Stack.Screen
+        name="AddVehicle"
+        component={AddVehicleScreen}
         options={{ animationEnabled: true }}
       />
       <Stack.Screen

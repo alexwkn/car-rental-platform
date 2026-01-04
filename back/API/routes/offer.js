@@ -1,6 +1,14 @@
-import Router from 'express';
-import { getAllOffers, getOfferById, createOffer, updateOffer, deleteOffer, getAvailableOffers } from '../controler/offer.js';
-import { manager } from '../middleware/auth/mustBe.js';
+import Router from "express";
+import {
+  getAllOffers,
+  getOfferById,
+  createOffer,
+  updateOffer,
+  deleteOffer,
+  getAvailableOffers,
+  updateOwnOffer,
+} from "../controler/offer.js";
+import { manager } from "../middleware/auth/mustBe.js";
 
 const router = Router();
 
@@ -37,7 +45,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/', getAllOffers);
+router.get("/", getAllOffers);
 
 /**
  * @swagger
@@ -61,7 +69,7 @@ router.get('/', getAllOffers);
  *       500:
  *         description: Server error
  */
-router.get('/available', getAvailableOffers);
+router.get("/available", getAvailableOffers);
 
 /**
  * @swagger
@@ -97,7 +105,7 @@ router.get('/available', getAvailableOffers);
  *         description: Server error
  */
 
-router.get('/:id', manager, getOfferById);
+router.get("/:id", manager, getOfferById);
 /**
  * @swagger
  * /offers:
@@ -136,7 +144,7 @@ router.get('/:id', manager, getOfferById);
  *       500:
  *         description: Server error
  */
-router.post('/', manager, createOffer);
+router.post("/", manager, createOffer);
 /**
  * @swagger
  * /offers/{id}:
@@ -181,7 +189,38 @@ router.post('/', manager, createOffer);
  *       500:
  *         description: Server error
  */
-router.patch('/:id', manager, updateOffer);
+router.patch("/:id", manager, updateOffer);
+
+/**
+ * @swagger
+ * /offers/my/{id}:
+ *   put:
+ *     summary: Update own offer (user)
+ *     tags: [Offer]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Offer ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/OfferSchema'
+ *     responses:
+ *       200:
+ *         description: Offer updated successfully
+ *       403:
+ *         description: Not authorized
+ *       404:
+ *         description: Offer not found
+ */
+router.put("/my/:id", updateOwnOffer);
 /**
  * @swagger
  * /offers/{id}:
@@ -211,6 +250,6 @@ router.patch('/:id', manager, updateOffer);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', manager, deleteOffer);
+router.delete("/:id", manager, deleteOffer);
 
 export default router;

@@ -1,6 +1,15 @@
-import Router from 'express';
-import { getAllVehicules, getVehiculeById, createVehicule, updateVehicule, deleteVehicule } from '../controler/vehicule.js';
-import { manager } from '../middleware/auth/mustBe.js';
+import Router from "express";
+import {
+  getAllVehicules,
+  getVehiculeById,
+  createVehicule,
+  updateVehicule,
+  deleteVehicule,
+  getUserVehicules,
+  createVehiculeWithOffer,
+  deleteOwnVehicule,
+} from "../controler/vehicule.js";
+import { manager } from "../middleware/auth/mustBe.js";
 
 const router = Router();
 
@@ -65,7 +74,88 @@ const router = Router();
  *         description: Server error
  */
 
-router.get('/', manager, getAllVehicules);
+router.get("/", manager, getAllVehicules);
+
+/**
+ * @swagger
+ * /vehicules/my:
+ *   get:
+ *     summary: Get vehicles owned by the authenticated user
+ *     tags: [Vehicule]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user's vehicles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Vehicule'
+ *       401:
+ *         description: Unauthorized — missing or invalid JWT
+ *       500:
+ *         description: Server error
+ */
+router.get("/my", getUserVehicules);
+
+/**
+ * @swagger
+ * /vehicules/with-offer:
+ *   post:
+ *     summary: Create a vehicle with an offer (authenticated user)
+ *     tags: [Vehicule]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - vehicule
+ *               - offer
+ *             properties:
+ *               vehicule:
+ *                 type: object
+ *                 properties:
+ *                   model:
+ *                     type: string
+ *                   licence_plate:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *               offer:
+ *                 type: object
+ *                 properties:
+ *                   start_date:
+ *                     type: string
+ *                     format: date
+ *                   end_date:
+ *                     type: string
+ *                     format: date
+ *                   fuel_level:
+ *                     type: number
+ *                   adress:
+ *                     type: string
+ *                   price:
+ *                     type: number
+ *                   description:
+ *                     type: string
+ *     responses:
+ *       201:
+ *         description: Vehicule and offer created successfully
+ *       401:
+ *         description: Unauthorized
+ *       422:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.post("/with-offer", createVehiculeWithOffer);
+
 /**
  * @swagger
  * /vehicules/{id}:
@@ -99,7 +189,7 @@ router.get('/', manager, getAllVehicules);
  *       500:
  *         description: Server error
  */
-router.get('/:id', manager, getVehiculeById);
+router.get("/:id", manager, getVehiculeById);
 /**
  * @swagger
  * /vehicules:
@@ -135,7 +225,7 @@ router.get('/:id', manager, getVehiculeById);
  *       500:
  *         description: Server error
  */
-router.post('/', manager, createVehicule);
+router.post("/", manager, createVehicule);
 /**
  * @swagger
  * /vehicules/{id}:
@@ -183,7 +273,7 @@ router.post('/', manager, createVehicule);
  *         description: Server error
  */
 
-router.patch('/:id', manager, updateVehicule);
+router.patch("/:id", manager, updateVehicule);
 /**
  * @swagger
  * /vehicules/{id}:
@@ -213,6 +303,33 @@ router.patch('/:id', manager, updateVehicule);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', manager, deleteVehicule);    
+router.delete("/:id", manager, deleteVehicule);
+
+/**
+ * @swagger
+ * /vehicules/my/{id}:
+ *   delete:
+ *     summary: Delete own vehicle (authenticated user)
+ *     tags: [Vehicule]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Vehicule ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Vehicle deleted successfully
+ *       403:
+ *         description: Forbidden — can only delete own vehicles
+ *       404:
+ *         description: Vehicle not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/my/:id", deleteOwnVehicule);
 
 export default router;
