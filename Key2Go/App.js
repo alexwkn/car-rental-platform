@@ -6,9 +6,10 @@ import { useEffect } from "react";
 import LoginScreen from "./screens/LoginScreen";
 import RegistrationScreen from "./screens/RegistrationScreen";
 import BottomTabs from "./navigation/BottomTabs";
-import { Provider, useDispatch } from 'react-redux';
-import store from './redux/store';
-import { getUserFromStorage } from './redux/userSlice';
+import { Provider, useDispatch } from "react-redux";
+import store from "./redux/store";
+import { getUserFromStorage } from "./redux/userSlice";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +35,9 @@ function RootNavigator() {
 export default function App() {
   return (
     <Provider store={store}>
-      <RootNavigator />
+      <ThemeProvider>
+        <RootNavigator />
+      </ThemeProvider>
     </Provider>
   );
 }

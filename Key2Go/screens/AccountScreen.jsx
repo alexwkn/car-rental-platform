@@ -15,8 +15,11 @@ import { logout } from "../redux/userSlice";
 import { setAuthToken } from "../utils/api";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { apiRequest } from "../utils/api";
+import { useTheme } from '../context/ThemeContext';
+
 
 export default function AccountScreen() {
+  const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -194,14 +197,14 @@ export default function AccountScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, {backgroundColor: theme.colors.background}]}>
       <TopHeader title="Mon compte" />
 
       <Pressable
         onPress={() => navigation.navigate("AdvancedSettings")}
         style={[styles.settingsBtn, { top: insets.top + 8 }]}
       >
-        <Ionicons name="settings-outline" size={35} color="#111" />
+        <Ionicons name="settings-outline" size={35} color="white" />
       </Pressable>
 
       <ScrollView
@@ -217,8 +220,8 @@ export default function AccountScreen() {
           onPressAvatar={openPhotoMenu}
         />
 
-        <InfoLine label="Email" value={user.email} />
-        <InfoLine label="Adresse" value={user.adress || "Non renseignée"} />
+        <InfoLine label="Email" value={user.email}/>
+        <InfoLine label="Adresse" value={user.adress || "Non renseignée"}/>
 
         <View style={styles.actions}>
           <ActionRow
@@ -242,7 +245,7 @@ export default function AccountScreen() {
             onPress={() => navigation.navigate("Support")}
           />
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, {backgroundColor: theme.colors.rowBorder}]} />
 
           <ActionRow
             icon="log-out-outline"
@@ -281,7 +284,7 @@ export default function AccountScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#fff" },
+  screen: { flex: 1 },
 
   content: {
     paddingHorizontal: 18,
@@ -297,13 +300,8 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
   },
 
   actions: { marginTop: 18 },
-  divider: { height: 1, backgroundColor: "#ededed", marginVertical: 10 },
+  divider: { height: 1, marginVertical: 10 },
 });

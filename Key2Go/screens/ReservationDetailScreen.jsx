@@ -3,8 +3,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TopHeader from "../components/TopHeader";
 import { apiRequest } from "../utils/api";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function ReservationDetailScreen({ route, navigation }) {
+    const { theme } = useTheme();
+
     const insets = useSafeAreaInsets();
     const { order } = route.params;
 
@@ -22,7 +26,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
             case 'pending': return '#FFA500';
             case 'confirmed': return '#4CAF50';
             case 'cancelled': return '#F44336';
-            default: return '#999';
+            default: return theme.colors.placeholder;
         }
     };
 
@@ -101,13 +105,13 @@ export default function ReservationDetailScreen({ route, navigation }) {
     const days = calculateDays();
 
     return (
-        <View style={styles.screen}>
-            <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.screen, {backgroundColor: theme.colors.background}]}>
+            <View style={[styles.header, { paddingTop: insets.top, backgroundColor: theme.colors.primary }]}>
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     hitSlop={10}
                 >
-                    <Ionicons name="chevron-back" size={28} color="#fff" />
+                    <Ionicons name="chevron-back" size={28} color={theme.colors.bg} />
                 </Pressable>
                 <TopHeader title="Détails de la réservation" />
             </View>
@@ -116,61 +120,61 @@ export default function ReservationDetailScreen({ route, navigation }) {
                 style={styles.content}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.mainCard}>
+                <View style={[styles.mainCard, { backgroundColor: theme.colors.card}]}>
                     <View style={styles.headerSection}>
                         <View>
-                            <Text style={styles.orderId}>Commande #{order.order_id}</Text>
-                            <Text style={styles.orderDate}>{formatDate(order.order_date)}</Text>
+                            <Text style={[styles.orderId, { color: theme.colors.heading}]}>Commande #{order.order_id}</Text>
+                            <Text style={[styles.orderDate, { color: theme.colors.subText}]}>{formatDate(order.order_date)}</Text>
                         </View>
                         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.payment_status) }]}>
-                            <Text style={styles.statusText}>{getStatusText(order.payment_status)}</Text>
+                            <Text style={[styles.statusText, { color: theme.colors.bg}]}>{getStatusText(order.payment_status)}</Text>
                         </View>
                     </View>
 
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, { backgroundColor: theme.colors.rowBorder}]} />
 
                     {order.offer && (
                         <>
                             <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>📍 Offre</Text>
-                                <Text style={styles.offerDescription}>{order.offer.description || "Offre sans titre"}</Text>
+                                <Text style={[styles.sectionTitle, { color: theme.colors.heading}]}>📍 Offre</Text>
+                                <Text style={[styles.offerDescription, { color: theme.colors.primary}]}>{order.offer.description || "Offre sans titre"}</Text>
                                 <View style={styles.infoRow}>
-                                    <Ionicons name="location-outline" size={18} color="#007C7C" />
-                                    <Text style={styles.infoText}>{order.offer.adress || "Non spécifiée"}</Text>
+                                    <Ionicons name="location-outline" size={18} color={theme.colors.primary} />
+                                    <Text style={[styles.infoText, { color: theme.colors.subText}]}>{order.offer.adress || "Non spécifiée"}</Text>
                                 </View>
                             </View>
 
-                            <View style={styles.divider} />
+                            <View style={[styles.divider, { backgroundColor: theme.colors.rowBorder}]} />
                         </>
                     )}
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>📅 Dates</Text>
+                        <Text style={[styles.sectionTitle, { color: theme.colors.heading}]}>📅 Dates</Text>
                         <View style={styles.datesContainer}>
-                            <View style={styles.dateBox}>
-                                <Text style={styles.dateLabel}>Début</Text>
-                                <Text style={styles.dateValue}>{formatDate(order.order_date)}</Text>
+                            <View style={[styles.dateBox, { backgroundColor: theme.colors.bg}]}>
+                                <Text style={[styles.dateLabel, { color: theme.colors.subText}]}>Début</Text>
+                                <Text style={[styles.dateValue, { color: theme.colors.primary}]}>{formatDate(order.order_date)}</Text>
                             </View>
                             <View style={styles.arrowContainer}>
-                                <Ionicons name="arrow-forward" size={24} color="#007C7C" />
+                                <Ionicons name="arrow-forward" size={24} color={theme.colors.primary} />
                             </View>
-                            <View style={styles.dateBox}>
-                                <Text style={styles.dateLabel}>Fin</Text>
-                                <Text style={styles.dateValue}>{formatDate(order.date_of_return)}</Text>
+                            <View style={[styles.dateBox, { backgroundColor: theme.colors.bg}]}>
+                                <Text style={[styles.dateLabel, { color: theme.colors.subText}]}>Fin</Text>
+                                <Text style={[styles.dateValue, { color: theme.colors.primary}]}>{formatDate(order.date_of_return)}</Text>
                             </View>
                         </View>
-                        <Text style={styles.durationText}>Durée: {days} jour{days > 1 ? 's' : ''}</Text>
+                        <Text style={[styles.durationText, { color: theme.colors.subText}]}>Durée: {days} jour{days > 1 ? 's' : ''}</Text>
                     </View>
 
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, { backgroundColor: theme.colors.rowBorder}]} />
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ℹ️ Informations</Text>
+                        <Text style={[styles.sectionTitle, { color: theme.colors.heading}]}>ℹ️ Informations</Text>
                         <View style={styles.infoRow}>
-                            <Ionicons name="information-circle-outline" size={18} color="#007C7C" />
+                            <Ionicons name="information-circle-outline" size={18} color={theme.colors.primary} />
                             <View style={{ flex: 1, marginLeft: 12 }}>
-                                <Text style={styles.infoLabel}>Offre ID:</Text>
-                                <Text style={styles.infoValue}>#{order.offer_id}</Text>
+                                <Text style={[styles.infoLabel, { color: theme.colors.subText}]}>Offre ID:</Text>
+                                <Text style={[styles.infoValue, { color: theme.colors.text}]}>#{order.offer_id}</Text>
                             </View>
                         </View>
                         {order.fuel_level_return && (
@@ -186,7 +190,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
                 </View>
             </ScrollView>
 
-            <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
+            <View style={[styles.footer, { paddingBottom: insets.bottom + 16, backgroundColor: theme.colors.card }]}>
                 <Pressable 
                     style={({pressed}) => [
                         styles.closeButton,
@@ -194,8 +198,8 @@ export default function ReservationDetailScreen({ route, navigation }) {
                     ]}
                     onPress={handleCloseReservation}
                 >
-                    <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
-                    <Text style={styles.closeButtonText}>Clôturer</Text>
+                    <Ionicons name="checkmark-circle-outline" size={20} color={theme.colors.bg} />
+                    <Text style={[styles.closeButtonText, { color: theme.colors.bg}]}>Clôturer</Text>
                 </Pressable>
 
                 <Pressable 
@@ -205,8 +209,8 @@ export default function ReservationDetailScreen({ route, navigation }) {
                     ]}
                     onPress={handleCancelReservation}
                 >
-                    <Ionicons name="close-circle-outline" size={20} color="#fff" />
-                    <Text style={styles.cancelButtonText}>Annuler</Text>
+                    <Ionicons name="close-circle-outline" size={20} color={theme.colors.bg} />
+                    <Text style={[styles.cancelButtonText, {colors: theme.colors.bg}]}>Annuler</Text>
                 </Pressable>
             </View>
         </View>
@@ -216,10 +220,8 @@ export default function ReservationDetailScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     header: {
-        backgroundColor: '#007C7C',
         paddingHorizontal: 16,
         paddingBottom: 16,
         flexDirection: 'row',
@@ -232,7 +234,6 @@ const styles = StyleSheet.create({
         paddingTop: 16,
     },
     mainCard: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         padding: 16,
         marginBottom: 20,
@@ -251,12 +252,10 @@ const styles = StyleSheet.create({
     orderId: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#1a1a1a',
         marginBottom: 4,
     },
     orderDate: {
         fontSize: 13,
-        color: '#666',
     },
     statusBadge: {
         paddingHorizontal: 12,
@@ -266,11 +265,9 @@ const styles = StyleSheet.create({
     statusText: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#fff',
     },
     divider: {
         height: 1,
-        backgroundColor: '#e0e0e0',
         marginVertical: 16,
     },
     section: {
@@ -279,13 +276,11 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#333',
         marginBottom: 12,
     },
     offerDescription: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#007C7C',
         marginBottom: 12,
     },
     infoRow: {
@@ -295,19 +290,16 @@ const styles = StyleSheet.create({
     },
     infoText: {
         fontSize: 14,
-        color: '#666',
         marginLeft: 12,
         flex: 1,
     },
     infoLabel: {
         fontSize: 12,
-        color: '#999',
         marginBottom: 4,
     },
     infoValue: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#333',
     },
     datesContainer: {
         flexDirection: 'row',
@@ -317,35 +309,29 @@ const styles = StyleSheet.create({
     },
     dateBox: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
         borderRadius: 8,
         padding: 12,
         alignItems: 'center',
     },
     dateLabel: {
         fontSize: 12,
-        color: '#999',
         marginBottom: 4,
     },
     dateValue: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#007C7C',
     },
     arrowContainer: {
         marginHorizontal: 12,
     },
     durationText: {
         fontSize: 12,
-        color: '#666',
         fontStyle: 'italic',
     },
     footer: {
         paddingHorizontal: 16,
         paddingTop: 16,
-        backgroundColor: '#fff',
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
         flexDirection: 'row',
         gap: 12,
     },
@@ -370,12 +356,10 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     closeButtonText: {
-        color: '#fff',
         fontSize: 14,
         fontWeight: '600',
     },
     cancelButtonText: {
-        color: '#fff',
         fontSize: 14,
         fontWeight: '600',
     },

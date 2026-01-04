@@ -5,8 +5,11 @@ import { fetcher } from "../utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function ReservationsScreen({ navigation }) {
+    const { theme } = useTheme();
     const { data, error, mutate } = useSWR(`${process.env.EXPO_PUBLIC_ORDER_ROUTE}/current`, fetcher);
 
     // Rafraîchir quand on revient à l'écran
@@ -29,11 +32,11 @@ export default function ReservationsScreen({ navigation }) {
 
     if (!data || data.length === 0) {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
                 <TopHeader title="Mes réservations" />
                 <View style={styles.emptyContainer}>
-                    <Ionicons name="calendar-outline" size={60} color="#ccc" />
-                    <Text style={styles.emptyText}>Aucune réservation</Text>
+                    <Ionicons name="calendar-outline" size={60} color={theme.colors.subheading} />
+                    <Text style={[styles.emptyText, { color: theme.colors.heading}]}>Aucune réservation</Text>
                 </View>
             </View>
         );
@@ -49,7 +52,7 @@ export default function ReservationsScreen({ navigation }) {
             case 'pending': return '#FFA500';
             case 'confirmed': return '#4CAF50';
             case 'cancelled': return '#F44336';
-            default: return '#999';
+            default: return theme.colors.placeholder;
         }
     };
 
@@ -66,51 +69,52 @@ export default function ReservationsScreen({ navigation }) {
         <Pressable 
             style={({pressed}) => [
                 styles.card,
+                { backgroundColor: theme.colors.card },
                 pressed && styles.cardPressed
             ]}
             onPress={() => navigation.navigate('ReservationDetailScreen', { order: item })}
         >
-            <View style={styles.cardHeader}>
-                <Text style={styles.orderId}>Commande #{item.order_id}</Text>
+            <View style={[styles.cardHeader, {borderBottomColor: theme.colors.rowBorder}]}>
+                <Text style={[styles.orderId, { color: theme.colors.heading}]}>Commande #{item.order_id}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.payment_status) }]}>
-                    <Text style={styles.statusText}>{getStatusText(item.payment_status)}</Text>
+                    <Text style={[styles.statusText, { color: theme.colors.bg}]}>{getStatusText(item.payment_status)}</Text>
                 </View>
             </View>
 
             <View style={styles.cardContent}>
                 <View style={styles.infoRow}>
-                    <Ionicons name="calendar-outline" size={16} color="#666" />
-                    <Text style={styles.infoLabel}>Date de commande:</Text>
-                    <Text style={styles.infoValue}>{formatDate(item.order_date)}</Text>
+                    <Ionicons name="calendar-outline" size={16} color={theme.colors.placeholder} />
+                    <Text style={[styles.infoLabel, {color: theme.colors.subText}]}>Date de commande:</Text>
+                    <Text style={[styles.infoValue, {color: theme.colors.text}]}>{formatDate(item.order_date)}</Text>
                 </View>
 
                 {item.date_of_return && (
                     <View style={styles.infoRow}>
-                        <Ionicons name="return-down-back-outline" size={16} color="#666" />
-                        <Text style={styles.infoLabel}>Date de retour:</Text>
-                        <Text style={styles.infoValue}>{formatDate(item.date_of_return)}</Text>
+                        <Ionicons name="return-down-back-outline" size={16} color={theme.colors.placeholder} />
+                        <Text style={[styles.infoLabel, {color: theme.colors.subText}]}>Date de retour:</Text>
+                        <Text style={[styles.infoValue, {color: theme.colors.text}]}>{formatDate(item.date_of_return)}</Text>
                     </View>
                 )}
 
                 {item.fuel_level_return && (
                     <View style={styles.infoRow}>
-                        <Ionicons name="speedometer-outline" size={16} color="#666" />
-                        <Text style={styles.infoLabel}>Carburant retour:</Text>
-                        <Text style={styles.infoValue}>{item.fuel_level_return}%</Text>
+                        <Ionicons name="speedometer-outline" size={16} color={theme.colors.placeholder} />
+                        <Text style={[styles.infoLabel, {color: theme.colors.subText}]}>Carburant retour:</Text>
+                        <Text style={[styles.infoValue, {color: theme.colors.text}]}>{item.fuel_level_return}%</Text>
                     </View>
                 )}
 
                 <View style={styles.infoRow}>
-                    <Ionicons name="pricetag-outline" size={16} color="#666" />
-                    <Text style={styles.infoLabel}>Offre ID:</Text>
-                    <Text style={styles.infoValue}>#{item.offer_id}</Text>
+                    <Ionicons name="pricetag-outline" size={16} color={theme.colors.placeholder} />
+                    <Text style={[styles.infoLabel, {color: theme.colors.subText}]}>Offre ID:</Text>
+                    <Text style={[styles.infoValue, {color: theme.colors.text}]}>#{item.offer_id}</Text>
                 </View>
 
                 {item.offer?.vehicule && (
                     <View style={styles.infoRow}>
-                        <Ionicons name="car-outline" size={16} color="#666" />
-                        <Text style={styles.infoLabel}>Véhicule:</Text>
-                        <Text style={styles.infoValue}>
+                        <Ionicons name="car-outline" size={16} color={theme.colors.placeholder} />
+                        <Text style={[styles.infoLabel, {color: theme.colors.subText}]}>Véhicule:</Text>
+                        <Text style={[styles.infoValue, {color: theme.colors.text}]}>
                             {item.offer.vehicule.model || 'Modèle inconnu'}
                             {item.offer.vehicule.licence_plate ? ` • ${item.offer.vehicule.licence_plate}` : ''}
                         </Text>
@@ -119,9 +123,9 @@ export default function ReservationsScreen({ navigation }) {
 
                 {item.offer?.adress && (
                     <View style={styles.infoRow}>
-                        <Ionicons name="location-outline" size={16} color="#666" />
-                        <Text style={styles.infoLabel}>Adresse:</Text>
-                        <Text style={styles.infoValue}>{item.offer.adress}</Text>
+                        <Ionicons name="location-outline" size={16} color={theme.colors.placeholder} />
+                        <Text style={[styles.infoLabel, {color: theme.colors.subText}]}>Adresse:</Text>
+                        <Text style={[styles.infoValue, {color: theme.colors.text}]}>{item.offer.adress}</Text>
                     </View>
                 )}
             </View>
@@ -144,7 +148,6 @@ export default function ReservationsScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     errorContainer: {
         flex: 1,
@@ -154,7 +157,6 @@ const styles = StyleSheet.create({
     },
     errorText: {
         fontSize: 16,
-        color: '#666',
     },
     emptyContainer: {
         flex: 1,
@@ -164,14 +166,12 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 16,
-        color: '#999',
         marginTop: 16,
     },
     listContainer: {
         padding: 16,
     },
     card: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         marginBottom: 12,
         shadowColor: '#000',
@@ -190,12 +190,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
     },
     orderId: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#1a1a1a',
     },
     statusBadge: {
         paddingHorizontal: 12,
@@ -205,7 +203,6 @@ const styles = StyleSheet.create({
     statusText: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#fff',
     },
     cardContent: {
         padding: 16,
@@ -217,13 +214,11 @@ const styles = StyleSheet.create({
     },
     infoLabel: {
         fontSize: 13,
-        color: '#666',
         marginLeft: 8,
         flex: 1,
     },
     infoValue: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#333',
     },
 });

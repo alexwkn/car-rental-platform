@@ -5,8 +5,11 @@ import TopHeader from "../components/TopHeader";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../utils/api";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function OfferDetailScreen({ route, navigation }) {
+    const { theme } = useTheme();
     const insets = useSafeAreaInsets();
     const { offer } = route.params;
     const [isFavorite, setIsFavorite] = useState(false);
@@ -66,13 +69,13 @@ export default function OfferDetailScreen({ route, navigation }) {
     const days = calculateDays();
 
     return (
-        <View style={styles.screen}>
-            <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
+            <View style={[styles.header, { paddingTop: insets.top, backgroundColor: theme.colors.primary }]}>
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     hitSlop={10}
                 >
-                    <Ionicons name="chevron-back" size={28} color="#fff" />
+                    <Ionicons name="chevron-back" size={28} color={theme.colors.onPrimary} />
                 </Pressable>
                 
                  <TopHeader title="Détails de l'offre" />
@@ -82,16 +85,16 @@ export default function OfferDetailScreen({ route, navigation }) {
                 style={styles.content}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.mainCard}>
-                    <Text style={styles.description}>{offer.description || "Offre sans titre"}</Text>
+                <View style={[styles.mainCard, , { backgroundColor: theme.colors.card }]}>
+                    <Text style={[styles.description, { color: theme.colors.text }]}>{offer.description || "Offre sans titre"}</Text>
                     
                     {offer.vehicule && (
                         <>
-                            <View style={styles.divider} />
+                            <View style={[styles.divider, { backgroundColor: theme.colors.rowBorder }]} />
                             
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Text style={styles.sectionTitle}>🚗 Véhicule</Text>
+                                    <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🚗 Véhicule</Text>
                                     <Pressable
                                         onPress={handleToggleFavorite}
                                         style={({pressed}) => [
@@ -103,29 +106,29 @@ export default function OfferDetailScreen({ route, navigation }) {
                                         <Ionicons 
                                             name={isFavorite ? "heart" : "heart-outline"} 
                                             size={28} 
-                                            color={isFavorite ? "#ff4757" : "#007C7C"} 
+                                            color={isFavorite ? "#ff4757" : theme.colors.primary} 
                                         />
                                     </Pressable>
                                 </View>
                                 
                                 <View style={styles.vehiculeInfo}>
-                                    <Text style={styles.vehiculeModel}>{offer.vehicule.model}</Text>
-                                    <Text style={styles.vehiculePlate}>{offer.vehicule.licence_plate}</Text>
+                                    <Text style={[styles.vehiculeModel, {color: theme.colors.primary}]}>{offer.vehicule.model}</Text>
+                                    <Text style={[styles.vehiculePlate, {color: theme.colors.subText}]}>{offer.vehicule.licence_plate}</Text>
                                     {offer.vehicule.description && (
-                                        <Text style={styles.vehiculeDescription}>{offer.vehicule.description}</Text>
+                                        <Text style={[styles.vehiculeDescription, {color: theme.colors.subText}]}>{offer.vehicule.description}</Text>
                                     )}
                                 </View>
 
                                 {offer.vehicule.profile && (
                                     <>
-                                        <View style={styles.ownerDivider} />
+                                        <View style={[styles.ownerDivider, {backgroundColor: theme.colors.rowBorder}]} />
                                         <View style={styles.ownerContainer}>
-                                            <Text style={styles.ownerTitle}>Propriétaire</Text>
+                                            <Text style={[styles.ownerTitle, {color: theme.colors.mutedText}]}>Propriétaire</Text>
                                             <View style={styles.ownerInfo}>
                                                 {offer.vehicule.profile.profile_picture ? (
                                                     <Image 
                                                         source={{ uri: `${process.env.EXPO_PUBLIC_BASE_API_ROUTE}/upload/profiles/${offer.vehicule.profile.profile_picture}` }}
-                                                        style={styles.ownerPhoto}
+                                                        style={[styles.ownerPhoto, {borderColor: theme.colors.primary}]}
                                                     />
                                                 ) : (
                                                     <View style={styles.ownerPhotoPlaceholder}>
@@ -133,8 +136,8 @@ export default function OfferDetailScreen({ route, navigation }) {
                                                     </View>
                                                 )}
                                                 <View style={styles.ownerDetails}>
-                                                    <Text style={styles.ownerName}>{offer.vehicule.profile.name}</Text>
-                                                    <Text style={styles.ownerEmail}>{offer.vehicule.profile.email}</Text>
+                                                    <Text style={[styles.ownerName, {color: theme.colors.text}]}>{offer.vehicule.profile.name}</Text>
+                                                    <Text style={[styles.ownerEmail, {color: theme.colors.subText}]}>{offer.vehicule.profile.email}</Text>
                                                 </View>
                                             </View>
                                         </View>
@@ -144,78 +147,79 @@ export default function OfferDetailScreen({ route, navigation }) {
                         </>
                     )}
                     
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, {color: theme.colors.rowBorder}]} />
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Informations de localisation</Text>
+                        <Text style={[styles.sectionTitle, {color: theme.colors.text}]}>Informations de localisation</Text>
                         <View style={styles.infoRow}>
-                            <Ionicons name="location-outline" size={20} color="#007C7C" />
-                            <Text style={styles.infoText}>{offer.adress || "Non spécifiée"}</Text>
+                            <Ionicons name="location-outline" size={20} color={theme.colors.primary} />
+                            <Text style={[styles.infoText, {color: theme.colors.subText}]}>{offer.adress || "Non spécifiée"}</Text>
                         </View>
                     </View>
 
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, {backgroundColor: theme.colors.rowBorder}]} />
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Dates de location</Text>
+                        <Text style={[styles.sectionTitle, {color: theme.colors.text}]}>Dates de location</Text>
                         <View style={styles.datesContainer}>
                             <View style={styles.dateBox}>
-                                <Text style={styles.dateLabel}>Début</Text>
-                                <Text style={styles.dateValue}>{offer.start_date}</Text>
+                                <Text style={[styles.dateLabel, {color: theme.colors.mutedText}]}>Début</Text>
+                                <Text style={[styles.dateValue, {color: theme.colors.primary}]}>{offer.start_date}</Text>
                             </View>
                             <View style={styles.arrowContainer}>
-                                <Ionicons name="arrow-forward" size={24} color="#007C7C" />
+                                <Ionicons name="arrow-forward" size={24} color={theme.colors.primary} />
                             </View>
                             <View style={styles.dateBox}>
-                                <Text style={styles.dateLabel}>Fin</Text>
-                                <Text style={styles.dateValue}>{offer.end_date}</Text>
+                                <Text style={[styles.dateLabel, {color: theme.colors.mutedText}]}>Fin</Text>
+                                <Text style={[styles.dateValue, {color: theme.colors.primary}]}>{offer.end_date}</Text>
                             </View>
                         </View>
-                        <Text style={styles.durationText}>Durée: {days} jour{days > 1 ? 's' : ''}</Text>
+                        <Text style={[styles.durationText, {color: theme.colors.subText}]}>Durée: {days} jour{days > 1 ? 's' : ''}</Text>
                     </View>
 
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, {color: theme.colors.rowBorder}]} />
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>État du véhicule</Text>
+                        <Text style={[styles.sectionTitle, {color: theme.colors.text}]}>État du véhicule</Text>
                         <View style={styles.fuelContainer}>
-                            <Text style={styles.fuelLabel}>Niveau de carburant</Text>
-                            <View style={styles.fuelBar}>
+                            <Text style={[styles.fuelLabel, {color: theme.colors.text}]}>Niveau de carburant</Text>
+                            <View style={[styles.fuelBar, {backgroundColor: theme.colors.rowBorder}]}>
                                 <View 
                                     style={[
                                         styles.fuelLevel,
-                                        { width: `${offer.fuel_level}%` }
+                                        { width: `${offer.fuel_level}%`}
                                     ]}
                                 />
                             </View>
-                            <Text style={styles.fuelText}>{offer.fuel_level}%</Text>
+                            <Text style={[styles.fuelText, {color: theme.colors.subText}]}>{offer.fuel_level}%</Text>
                         </View>
                     </View>
 
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, {backgroundColor: theme.colors.card}]} />
 
-                    <View style={styles.pricingContainer}>
+                    <View style={[styles.pricingContainer, {backgroundColor: theme.colors.card}]}>
                         <View style={styles.priceRow}>
-                            <Text style={styles.priceLabel}>Nombre de jours</Text>
-                            <Text style={styles.priceValue}>{days}</Text>
+                            <Text style={[styles.priceLabel, {color: theme.colors.subText}]}>Nombre de jours</Text>
+                            <Text style={[styles.priceValue, {color: theme.colors.text}]}>{days}</Text>
                         </View>
                         <View style={[styles.priceRow, styles.totalRow]}>
-                            <Text style={styles.totalLabel}>Prix total</Text>
-                            <Text style={styles.totalValue}>{price}€</Text>
+                            <Text style={[styles.totalLabel, {color: theme.colors.text}]}>Prix total</Text>
+                            <Text style={[styles.totalValue, {color: theme.colors.primary}]}>{price}€</Text>
                         </View>
                     </View>
                 </View>
             </ScrollView>
 
-            <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
+            <View style={[styles.footer, { paddingBottom: insets.bottom + 16, backgroundColor: theme.colors.card}]}>
                 <Pressable 
                     style={({pressed}) => [
                         styles.reserveButton,
+                        { backgroundColor: theme.colors.primary },
                         pressed && styles.reserveButtonPressed
                     ]}
                     onPress={handleReserve}
                 >
-                    <Text style={styles.reserveButtonText}>Réserver maintenant</Text>
+                    <Text style={[styles.reserveButtonText, { color: theme.colors.onPrimary }]}>Réserver maintenant</Text>
                 </Pressable>
             </View>
         </View>
@@ -225,10 +229,8 @@ export default function OfferDetailScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     header: {
-        backgroundColor: '#007C7C',
         paddingHorizontal: 16,
         paddingBottom: 16,
         flexDirection: 'row',
@@ -242,7 +244,6 @@ const styles = StyleSheet.create({
         paddingTop: 16,
     },
     mainCard: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         padding: 16,
         marginBottom: 20,
@@ -255,7 +256,6 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#1a1a1a',
         marginBottom: 20,
     },
     section: {
@@ -264,7 +264,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#333',
         marginBottom: 12,
     },
     infoRow: {
@@ -274,13 +273,11 @@ const styles = StyleSheet.create({
     },
     infoText: {
         fontSize: 14,
-        color: '#666',
         marginLeft: 12,
         flex: 1,
     },
     divider: {
         height: 1,
-        backgroundColor: '#e0e0e0',
         marginVertical: 16,
     },
     datesContainer: {
@@ -290,27 +287,23 @@ const styles = StyleSheet.create({
     },
     dateBox: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
         borderRadius: 8,
         padding: 12,
         alignItems: 'center',
     },
     dateLabel: {
         fontSize: 12,
-        color: '#999',
         marginBottom: 4,
     },
     dateValue: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#007C7C',
     },
     arrowContainer: {
         marginHorizontal: 12,
     },
     durationText: {
         fontSize: 12,
-        color: '#666',
         marginTop: 12,
         fontStyle: 'italic',
     },
@@ -319,12 +312,10 @@ const styles = StyleSheet.create({
     },
     fuelLabel: {
         fontSize: 13,
-        color: '#333',
         marginBottom: 8,
     },
     fuelBar: {
         height: 8,
-        backgroundColor: '#e0e0e0',
         borderRadius: 4,
         overflow: 'hidden',
         marginBottom: 8,
@@ -336,10 +327,8 @@ const styles = StyleSheet.create({
     },
     fuelText: {
         fontSize: 12,
-        color: '#666',
     },
     pricingContainer: {
-        backgroundColor: '#f9f9f9',
         borderRadius: 8,
         padding: 12,
     },
@@ -350,38 +339,30 @@ const styles = StyleSheet.create({
     },
     priceLabel: {
         fontSize: 13,
-        color: '#666',
     },
     priceValue: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#333',
     },
     totalRow: {
         borderTopWidth: 1,
-        borderTopColor: '#ddd',
         paddingTop: 12,
         marginTop: 8,
     },
     totalLabel: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1a1a1a',
     },
     totalValue: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#007C7C',
     },
     footer: {
         paddingHorizontal: 16,
         paddingTop: 16,
-        backgroundColor: '#fff',
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
     },
     reserveButton: {
-        backgroundColor: '#007C7C',
         paddingVertical: 14,
         borderRadius: 10,
         alignItems: 'center',
@@ -390,7 +371,6 @@ const styles = StyleSheet.create({
         opacity: 0.8,
     },
     reserveButtonText: {
-        color: '#fff',
         fontSize: 16,
         fontWeight: '600',
     },
@@ -412,23 +392,19 @@ const styles = StyleSheet.create({
     vehiculeModel: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#007C7C',
         marginBottom: 4,
     },
     vehiculePlate: {
         fontSize: 14,
-        color: '#666',
         fontWeight: '500',
         marginBottom: 6,
     },
     vehiculeDescription: {
         fontSize: 13,
-        color: '#333',
         lineHeight: 20,
     },
     ownerDivider: {
         height: 1,
-        backgroundColor: '#f0f0f0',
         marginVertical: 12,
     },
     ownerContainer: {
@@ -437,7 +413,6 @@ const styles = StyleSheet.create({
     ownerTitle: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#999',
         marginBottom: 10,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
@@ -452,18 +427,15 @@ const styles = StyleSheet.create({
         borderRadius: 28,
         marginRight: 12,
         borderWidth: 2,
-        borderColor: '#007C7C',
     },
     ownerPhotoPlaceholder: {
         width: 56,
         height: 56,
         borderRadius: 28,
         marginRight: 12,
-        backgroundColor: '#f0f0f0',
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 2,
-        borderColor: '#007C7C',
     },
     ownerDetails: {
         flex: 1,
@@ -471,11 +443,9 @@ const styles = StyleSheet.create({
     ownerName: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#333',
         marginBottom: 4,
     },
     ownerEmail: {
         fontSize: 13,
-        color: '#666',
     },
 });

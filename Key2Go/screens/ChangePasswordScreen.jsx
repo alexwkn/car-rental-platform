@@ -19,23 +19,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { setAuthToken, apiRequest } from "../utils/api";
 import { useSelector } from "react-redux";
+import { useTheme } from "../context/ThemeContext";
 
 const PROFILE_ROUTE = process.env.EXPO_PUBLIC_PROFILE_ROUTE ?? "/profiles";
 const CHANGE_PASSWORD_ROUTE_ENV = process.env.EXPO_PUBLIC_CHANGE_PASSWORD_ROUTE;
 
-// Couleurs fixes (sans thèmes)
-const UI = {
-  bg: "#FFFFFF",
-  card: "#FFFFFF",
-  text: "#111111",
-  mutedText: "rgba(0,0,0,0.6)",
-  border: "rgba(0,0,0,0.20)",
-  placeholder: "rgba(0,0,0,0.35)",
-  primary: "#007C7C",
-  onPrimary: "#FFFFFF",
-};
-
 export default function ChangePasswordScreen({ navigation }) {
+  const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 
   const token = useSelector((s) => s.user.token);
@@ -46,14 +36,11 @@ export default function ChangePasswordScreen({ navigation }) {
 
   const confirmRef = useRef(null);
 
-  // ✅ S'assure que le token est bien appliqué (axios)
   useEffect(() => {
     if (token) setAuthToken(token);
   }, [token]);
 
-  // ✅ Route finale : PATCH /profiles/me/password
   const CHANGE_PASSWORD_ROUTE = useMemo(() => {
-    // override possible via .env: EXPO_PUBLIC_CHANGE_PASSWORD_ROUTE="/profiles/me/password"
     return CHANGE_PASSWORD_ROUTE_ENV ?? `${PROFILE_ROUTE}/me/password`;
   }, []);
 
@@ -70,7 +57,6 @@ export default function ChangePasswordScreen({ navigation }) {
 
     setIsLoading(true);
     try {
-      // ✅ même helper que DELETE /profiles/me
       await apiRequest("PATCH", CHANGE_PASSWORD_ROUTE, { password: newPassword });
 
       Alert.alert("OK", "Mot de passe mis à jour !");
@@ -92,7 +78,7 @@ export default function ChangePasswordScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: UI.bg }]}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -106,7 +92,7 @@ export default function ChangePasswordScreen({ navigation }) {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <Text style={[styles.brand, { color: UI.primary }]}>Key2Go</Text>
+            <Text style={[styles.brand, { color: theme.colors.primary }]}>Key2Go</Text>
 
             <View style={styles.headerRow}>
               <Pressable
@@ -114,10 +100,10 @@ export default function ChangePasswordScreen({ navigation }) {
                 hitSlop={12}
                 style={styles.backBtn}
               >
-                <Ionicons name="arrow-back" size={28} color={UI.primary} />
+                <Ionicons name="arrow-back" size={28} color={theme.colors.primary} />
               </Pressable>
 
-              <Text style={[styles.title, { color: UI.text }]}>
+              <Text style={[styles.title, { color: theme.colors.text }]}>
                 Modification{"\n"}du mot de passe
               </Text>
 
@@ -125,7 +111,7 @@ export default function ChangePasswordScreen({ navigation }) {
             </View>
 
             <View style={styles.form}>
-              <Text style={[styles.label, { color: UI.text }]}>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
                 Nouveau mot de passe
               </Text>
 
@@ -133,21 +119,21 @@ export default function ChangePasswordScreen({ navigation }) {
                 value={newPassword}
                 onChangeText={setNewPassword}
                 placeholder="Nouveau mot de passe"
-                placeholderTextColor={UI.placeholder}
+                placeholderTextColor={theme.colors.placeholder}
                 secureTextEntry
                 style={[
                   styles.input,
                   {
-                    borderColor: UI.border,
-                    backgroundColor: UI.card,
-                    color: UI.text,
+                    borderColor: theme.colors.rowBorder,
+                    backgroundColor: theme.colors.card,
+                    color: theme.colors.text,
                   },
                 ]}
                 returnKeyType="next"
                 onSubmitEditing={() => confirmRef.current?.focus()}
               />
 
-              <Text style={[styles.label, { color: UI.text, marginTop: 18 }]}>
+              <Text style={[styles.label, { color: theme.colors.text, marginTop: 18 }]}>
                 Confirmer le mot de passe
               </Text>
 
@@ -156,23 +142,20 @@ export default function ChangePasswordScreen({ navigation }) {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholder="Confirmer le mot de passe"
-                placeholderTextColor={UI.placeholder}
+                placeholderTextColor={theme.colors.placeholder}
                 secureTextEntry
                 style={[
                   styles.input,
                   {
-                    borderColor: UI.border,
-                    backgroundColor: UI.card,
-                    color: UI.text,
+                    borderColor: theme.colors.rowBorder,
+                    backgroundColor: theme.colors.card,
+                    color: theme.colors.text,
                   },
                 ]}
                 returnKeyType="done"
                 onSubmitEditing={handleConfirm}
               />
 
-              <Text style={[styles.hint, { color: UI.mutedText }]}>
-                Le mot de passe sera enregistré en base via l’API.
-              </Text>
 
               <Pressable
                 onPress={handleConfirm}
@@ -180,15 +163,15 @@ export default function ChangePasswordScreen({ navigation }) {
                 style={({ pressed }) => [
                   styles.button,
                   {
-                    backgroundColor: UI.primary,
+                    backgroundColor: theme.colors.primary,
                     opacity: pressed || isLoading ? 0.9 : 1,
                   },
                 ]}
               >
                 {isLoading ? (
-                  <ActivityIndicator color={UI.onPrimary} />
+                  <ActivityIndicator color={theme.colors.swithThumbOn} />
                 ) : (
-                  <Text style={[styles.buttonText, { color: UI.onPrimary }]}>
+                  <Text style={[styles.buttonText, { color: theme.colors.swithThumbOn }]}>
                     Confirmer
                   </Text>
                 )}

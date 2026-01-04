@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../utils/api";
 import useSWR from "swr";
+import { useTheme } from "../context/ThemeContext";
+
 
 const fetcher = async (url) => {
     const response = await apiRequest('GET', url);
@@ -15,6 +17,7 @@ const fetcher = async (url) => {
 const REVIEW_ROUTE = process.env.EXPO_PUBLIC_REVIEW_ROUTE || '/reviews';
 
 export default function ReviewsListScreen({ navigation }) {
+    const { theme } = useTheme();
     const insets = useSafeAreaInsets();
     const userInfo = useSelector(state => state.user.userInfo);
     const [reviews, setReviews] = useState([]);
@@ -41,9 +44,9 @@ export default function ReviewsListScreen({ navigation }) {
     }, [userInfo?.id]);
 
     const renderReviewCard = ({ item }) => (
-        <View style={styles.reviewCard}>
+        <View style={[styles.reviewCard, {backgroundColor: theme.colors.card}]}>
             <View style={styles.reviewHeader}>
-                <Text style={styles.reviewTitle}>{"Mon avis"}</Text>
+                <Text style={[styles.reviewTitle, {color: theme.colors.heading}]}>{"Mon avis"}</Text>
                 <View style={styles.ratingContainer}>
                     {[...Array(5)].map((_, i) => (
                         <Ionicons
@@ -56,32 +59,32 @@ export default function ReviewsListScreen({ navigation }) {
                 </View>
             </View>
             {item.comment && (
-                <Text style={styles.reviewComment}>{item.comment}</Text>
+                <Text style={[styles.reviewComment, { color: theme.colors.subText}]}>{item.comment}</Text>
             )}
         </View>
     );
 
     return (
-        <View style={styles.screen}>
-            <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.screen, {backgroundColor: theme.colors.background}]}>
+            <View style={[styles.header, { paddingTop: insets.top, backgroundColor: theme.colors.primary }]}>
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     hitSlop={10}
                 >
-                    <Ionicons name="chevron-back" size={28} color="#fff" />
+                    <Ionicons name="chevron-back" size={28} color={theme.colors.bg} />
                 </Pressable>
                 <TopHeader title="Mes avis" />
             </View>
 
             {loading ? (
                 <View style={styles.centerContainer}>
-                    <Text style={styles.loadingText}>Chargement...</Text>
+                    <Text style={[styles.loadingText, {colors: theme.colors.placeholder}]}>Chargement...</Text>
                 </View>
             ) : reviews.length === 0 ? (
                 <View style={styles.centerContainer}>
-                    <Ionicons name="star-outline" size={64} color="#ccc" />
-                    <Text style={styles.emptyText}>Aucun avis pour le moment</Text>
-                    <Text style={styles.emptySubtext}>Vos avis apparaîtront ici</Text>
+                    <Ionicons name="star-outline" size={64} color={theme.colors.subHeading} />
+                    <Text style={[styles.emptyText, { color: theme.colors.heading}]}>Aucun avis pour le moment</Text>
+                    <Text style={[styles.emptySubtext, {color: theme.colors.subHeading}]}>Vos avis apparaîtront ici</Text>
                 </View>
             ) : (
                 <FlatList
@@ -99,10 +102,8 @@ export default function ReviewsListScreen({ navigation }) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     header: {
-        backgroundColor: '#007C7C',
         paddingHorizontal: 16,
         paddingBottom: 16,
         flexDirection: 'row',
@@ -116,17 +117,14 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         fontSize: 16,
-        color: '#666',
     },
     emptyText: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#333',
         marginTop: 16,
     },
     emptySubtext: {
         fontSize: 14,
-        color: '#999',
         marginTop: 8,
     },
     listContent: {
@@ -134,7 +132,6 @@ const styles = StyleSheet.create({
         paddingTop: 16,
     },
     reviewCard: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -153,7 +150,6 @@ const styles = StyleSheet.create({
     reviewTitle: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#333',
         flex: 1,
         marginRight: 12,
     },
@@ -163,12 +159,10 @@ const styles = StyleSheet.create({
     },
     reviewComment: {
         fontSize: 14,
-        color: '#666',
         lineHeight: 20,
         marginBottom: 12,
     },
     reviewDate: {
         fontSize: 12,
-        color: '#999',
     },
 });

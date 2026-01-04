@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTheme } from '../context/ThemeContext';
+
 
 const INITIAL_REGION = {
   latitude: 50.464069,
@@ -32,10 +34,8 @@ const haversineKm = (lat1, lon1, lat2, lon2) => {
 };
 
 export default function MapScreen() {
-
-
-
-        
+  const { theme } = useTheme();
+    
   const navigation = useNavigation();
   const user = useSelector(state => state.user.userInfo);
   const token = useSelector(state => state.user.token);
@@ -158,11 +158,11 @@ export default function MapScreen() {
   }, [selected]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background}]}>
       <TopHeader title="Carte" />
       {loading && (
-        <View style={styles.loader}>
-          <ActivityIndicator size="small" color="#007C7C" />
+        <View style={[styles.loader, { backgroundColor: theme.colors.card}]}>
+          <ActivityIndicator size="small" color={theme.colors.primary} />
         </View>
       )}
       <MapView
@@ -184,18 +184,18 @@ export default function MapScreen() {
       </MapView>
 
       {selectedOffer && (
-        <Pressable style={styles.card} onPress={() => navigation.navigate('OfferDetailScreen', { offer: selectedOffer })}>
+        <Pressable style={[styles.card, { backgroundColor: theme.colors.card}]} onPress={() => navigation.navigate('OfferDetailScreen', { offer: selectedOffer })}>
           <View style={styles.cardRow}>
-            <View style={styles.cardAvatar}>
+            <View style={[styles.cardAvatar, { backgroundColor: theme.colors.bg}]}>
               <Image source={require('../assets/images/car-placeholder.png')} style={styles.cardAvatarImg} resizeMode="contain" />
             </View>
             <View style={styles.cardInfo}>
-              <Text style={styles.cardTitle}>{selectedOffer.vehicule?.model || 'Véhicule'}</Text>
-              <Text style={styles.cardSubtitle} numberOfLines={2}>
+              <Text style={[styles.cardTitle, { color: theme.colors.heading}]}>{selectedOffer.vehicule?.model || 'Véhicule'}</Text>
+              <Text style={[styles.cardSubtitle, {color: theme.colors.subText}]} numberOfLines={2}>
                 {subtitle || selectedOffer.description || 'Offre disponible'}
               </Text>
             </View>
-            <View style={styles.cardIconWrap}>
+            <View style={[styles.cardIconWrap, { backgroundColor: theme.colors.bg}]}>
               <Text style={styles.cardIcon}>🚗</Text>
             </View>
           </View>
@@ -206,14 +206,13 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f7f7f7' },
+  container: { flex: 1 },
   map: { width: '100%', height: '100%' },
   loader: {
     position: 'absolute',
     top: 70,
     right: 16,
     zIndex: 10,
-    backgroundColor: 'rgba(255,255,255,0.9)',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
@@ -223,7 +222,6 @@ const styles = StyleSheet.create({
     bottom: 24,
     left: 16,
     right: 16,
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 14,
     shadowColor: '#000',
@@ -237,20 +235,18 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 12,
-    backgroundColor: '#e8f5f5',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   cardAvatarImg: { width: 42, height: 42 },
   cardInfo: { flex: 1 },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: '#111' },
-  cardSubtitle: { fontSize: 13, color: '#666', marginTop: 4 },
+  cardTitle: { fontSize: 16, fontWeight: '700'},
+  cardSubtitle: { fontSize: 13, marginTop: 4 },
   cardIconWrap: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#e8f5f5',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 10,

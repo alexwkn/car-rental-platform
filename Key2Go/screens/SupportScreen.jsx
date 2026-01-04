@@ -3,9 +3,13 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Linking } from "react-na
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TopHeader from "../components/TopHeader";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function SupportScreen() {
   const insets = useSafeAreaInsets();
+    const { theme } = useTheme();
+
 
   const rows = [
     {
@@ -29,18 +33,18 @@ export default function SupportScreen() {
   ];
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
       <TopHeader title="Support" />
       <ScrollView
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.heading}>Besoin d'aide ?</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.heading, {color: theme.colors.text}]}>Besoin d'aide ?</Text>
+        <Text style={[styles.subtitle, {color: theme.colors.secondaryText}]}>
           Contacte notre équipe, nous répondons du lundi au samedi de 8h à 20h.
         </Text>
 
-        <View style={styles.card}>
+        <View style={[styles.card, {backgroundColor: theme.colors.background}]}>
           {rows.map((row) => (
             <Pressable
               key={row.label}
@@ -48,20 +52,20 @@ export default function SupportScreen() {
               onPress={row.onPress}
             >
               <View style={styles.rowLeft}>
-                <Ionicons name={row.icon} size={22} color="#007C7C" />
+                <Ionicons name={row.icon} size={22} color={theme.colors.primary} />
                 <View style={styles.rowTextContainer}>
-                  <Text style={styles.rowLabel}>{row.label}</Text>
-                  <Text style={styles.rowValue}>{row.value}</Text>
+                  <Text style={[styles.rowLabel, {color: theme.colors.rowLabel}]}>{row.label}</Text>
+                  <Text style={[styles.rowValue, {color: theme.colors.text}]}>{row.value}</Text>
                 </View>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#999" />
+              <Ionicons name="chevron-forward" size={18} color={theme.colors.discretIcon} />
             </Pressable>
           ))}
         </View>
 
         <View style={styles.tips}>
-          <Ionicons name="information-circle-outline" size={18} color="#555" />
-          <Text style={styles.tipsText}>
+          <Ionicons name="information-circle-outline" size={18} color={theme.colors.secondaryText} />
+          <Text style={[styles.tipsText, {color: theme.colors.secondaryText}]}>
             En cas d'urgence sur une réservation en cours, appelle-nous directement pour une prise en charge immédiate.
           </Text>
         </View>
@@ -71,7 +75,7 @@ export default function SupportScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f5f5f5" },
+  screen: { flex: 1 },
   content: {
     paddingHorizontal: 18,
     gap: 12,
@@ -79,15 +83,12 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#111",
   },
   subtitle: {
     fontSize: 14,
-    color: "#555",
     lineHeight: 20,
   },
   card: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 12,
     shadowColor: "#000",
@@ -106,13 +107,13 @@ const styles = StyleSheet.create({
   rowPressed: { opacity: 0.6 },
   rowLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
   rowTextContainer: { gap: 2 },
-  rowLabel: { fontSize: 12, color: "#777" },
-  rowValue: { fontSize: 15, color: "#111", fontWeight: "600" },
+  rowLabel: { fontSize: 12 },
+  rowValue: { fontSize: 15, fontWeight: "600" },
   tips: {
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 8,
     padding: 12,
   },
-  tipsText: { flex: 1, color: "#444", lineHeight: 18, fontSize: 13 },
+  tipsText: { flex: 1, lineHeight: 18, fontSize: 13 },
 });
