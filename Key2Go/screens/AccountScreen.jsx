@@ -229,7 +229,7 @@ export default function AccountScreen() {
           <ActionRow
             icon="car-outline"
             title="Mes véhicules"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("MyVehicules")}
           />
           <ActionRow
             icon="star-outline"
