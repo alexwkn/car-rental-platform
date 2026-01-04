@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -48,21 +47,12 @@ export default function AddVehicleScreen({ navigation }) {
   }, [isEditMode, vehicule, offer]);
 
   const showDatePickerModal = () => {
-    if (Platform.OS === "android") {
-      // Sur Android, utiliser l'API native
-      setShowDatePicker(true);
-    } else {
-      // Sur iOS, afficher le picker
-      setShowDatePicker(true);
-    }
+    setShowDatePicker(true);
   };
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (event && event.type === "set" && selectedDate) {
-      setDateRetour(selectedDate);
-    } else if (selectedDate && !event) {
-      // Sur iOS, event peut être undefined
       setDateRetour(selectedDate);
     }
   };

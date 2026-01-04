@@ -143,8 +143,8 @@ export default function AccountScreen() {
       if (!res.canceled) {
         const uri = res.assets?.[0]?.uri;
         if (uri) {
-          setPhotoUri(uri); 
-          await uploadProfilePicture(uri); 
+          setPhotoUri(uri);
+          await uploadProfilePicture(uri);
         }
       }
     } catch (e) {
@@ -229,7 +229,7 @@ export default function AccountScreen() {
           <ActionRow
             icon="car-outline"
             title="Mes véhicules"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("MyVehicules")}
           />
           <ActionRow
             icon="star-outline"
