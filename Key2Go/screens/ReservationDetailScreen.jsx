@@ -111,7 +111,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
                     onPress={() => navigation.goBack()}
                     hitSlop={10}
                 >
-                    <Ionicons name="chevron-back" size={28} color={theme.colors.bg} />
+                    <Ionicons name="chevron-back" size={28} color="white" />
                 </Pressable>
                 <TopHeader title="Détails de la réservation" />
             </View>

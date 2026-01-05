@@ -22,15 +22,7 @@ import { validateRegistration } from "../utils/validator";
 import { API } from "../utils/api";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/userSlice";
-
-const Colors = {
-  primary: "#007C7C",
-  link: "#1E6DFF",
-  placeholder: "#9A9A9A",
-  border: "#BDBDBD",
-  background: "#FFFFFF",
-  text: "#222222",
-};
+import { useTheme } from "../context/ThemeContext";
 
 const REGISTER_ROUTE =
   process.env.EXPO_PUBLIC_CREATEACCOUNT_ROUTE ?? "/createAccount";
@@ -38,6 +30,7 @@ const REGISTER_ROUTE =
 const LOGIN_ROUTE = process.env.EXPO_PUBLIC_LOGIN_ROUTE ?? "/login";
 
 export default function RegistrationScreen({ navigation }) {
+  const { theme } = useTheme();
   const dispatch = useDispatch();
 
   const [form, setForm] = useState({
@@ -133,13 +126,13 @@ export default function RegistrationScreen({ navigation }) {
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background}]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -151,32 +144,32 @@ export default function RegistrationScreen({ navigation }) {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.brandContainer}>
-              <Text style={styles.brandText}>Key2Go</Text>
+              <Text style={[styles.brandText, {color: theme.colors.primary}]}>Key2Go</Text>
             </View>
 
-            <Text style={styles.title}>Créer un compte</Text>
-            <Text style={styles.subtitle}>C’est simple et rapide</Text>
+            <Text style={[styles.title, {color: theme.colors.text}]}>Créer un compte</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.subText}]}>C’est simple et rapide</Text>
 
-            <View style={styles.separator} />
+            <View style={[styles.separator, { backgroundColor: theme.colors.rowBorder}]} />
 
             <View style={styles.formContainer}>
               <View style={styles.row}>
                 <TextInput
                   placeholder="Nom"
-                  placeholderTextColor={Colors.placeholder}
+                  placeholderTextColor={theme.colors.placeholder}
                   value={form.lastName}
                   onChangeText={(v) => updateField("lastName", v)}
-                  style={[styles.input, styles.halfInput]}
+                  style={[styles.input, styles.halfInput, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                   returnKeyType="next"
                   onSubmitEditing={() => refs.firstName.current?.focus()}
                 />
                 <TextInput
                   ref={refs.firstName}
                   placeholder="Prénom"
-                  placeholderTextColor={Colors.placeholder}
+                  placeholderTextColor={theme.colors.placeholder}
                   value={form.firstName}
                   onChangeText={(v) => updateField("firstName", v)}
-                  style={[styles.input, styles.halfInput]}
+                  style={[styles.input, styles.halfInput, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                   returnKeyType="next"
                   onSubmitEditing={() => refs.email.current?.focus()}
                 />
@@ -185,10 +178,10 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={refs.email}
                 placeholder="Adresse e-mail"
-                placeholderTextColor={Colors.placeholder}
+                placeholderTextColor={theme.colors.placeholder}
                 value={form.email}
                 onChangeText={(v) => updateField("email", v)}
-                style={[styles.input, styles.inputGroupEnd]}
+                style={[styles.input, styles.inputGroupEnd, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 returnKeyType="next"
@@ -198,10 +191,10 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={refs.streetNumber}
                 placeholder="Rue et numéro"
-                placeholderTextColor={Colors.placeholder}
+                placeholderTextColor={theme.colors.placeholder}
                 value={form.streetNumber}
                 onChangeText={(v) => updateField("streetNumber", v)}
-                style={styles.input}
+                style={[styles.input, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                 returnKeyType="next"
                 onSubmitEditing={() => refs.postalCode.current?.focus()}
               />
@@ -210,10 +203,10 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   ref={refs.postalCode}
                   placeholder="Code postal"
-                  placeholderTextColor={Colors.placeholder}
+                  placeholderTextColor={theme.colors.placeholder}
                   value={form.postalCode}
                   onChangeText={(v) => updateField("postalCode", v)}
-                  style={[styles.input, styles.halfInput]}
+                  style={[styles.input, styles.halfInput, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                   keyboardType="number-pad"
                   returnKeyType="next"
                   onSubmitEditing={() => refs.city.current?.focus()}
@@ -221,10 +214,10 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   ref={refs.city}
                   placeholder="Ville"
-                  placeholderTextColor={Colors.placeholder}
+                  placeholderTextColor={theme.colors.placeholder}
                   value={form.city}
                   onChangeText={(v) => updateField("city", v)}
-                  style={[styles.input, styles.halfInput, styles.inputGroupEnd]}
+                  style={[styles.input, styles.halfInput, styles.inputGroupEnd, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                   returnKeyType="next"
                   onSubmitEditing={() => refs.password.current?.focus()}
                 />
@@ -233,10 +226,10 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={refs.password}
                 placeholder="Mot de passe"
-                placeholderTextColor={Colors.placeholder}
+                placeholderTextColor={theme.colors.placeholder}
                 value={form.password}
                 onChangeText={(v) => updateField("password", v)}
-                style={styles.input}
+                style={[styles.input, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                 secureTextEntry
                 returnKeyType="next"
                 onSubmitEditing={() => refs.confirmPassword.current?.focus()}
@@ -245,10 +238,10 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 ref={refs.confirmPassword}
                 placeholder="Confirmer votre mot de passe"
-                placeholderTextColor={Colors.placeholder}
+                placeholderTextColor={theme.colors.placeholder}
                 value={form.confirmPassword}
                 onChangeText={(v) => updateField("confirmPassword", v)}
-                style={styles.input}
+                style={[styles.input, { borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card, color: theme.colors.text}]}
                 secureTextEntry
                 returnKeyType="done"
                 onSubmitEditing={handleRegister}
@@ -257,6 +250,7 @@ export default function RegistrationScreen({ navigation }) {
               <Pressable
                 style={({ pressed }) => [
                   styles.primaryButton,
+                  {backgroundColor: theme.colors.primary},
                   pressed && { opacity: 0.85 },
                   isLoading && { opacity: 0.6 },
                 ]}
@@ -269,7 +263,7 @@ export default function RegistrationScreen({ navigation }) {
               </Pressable>
 
               <Pressable onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.loginText}>
+                <Text style={[styles.loginText, { color: theme.colors.text}]}>
                   Déjà membre ?{" "}
                   <Text style={styles.loginLink}>Connectez-vous !</Text>
                 </Text>
@@ -283,14 +277,13 @@ export default function RegistrationScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
+  safe: { flex: 1 },
   flex: { flex: 1 },
 
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.background,
   },
 
   scrollContent: {
@@ -310,13 +303,11 @@ const styles = StyleSheet.create({
   brandText: {
     fontFamily: "LexendMedium",
     fontSize: 12,
-    color: Colors.primary,
   },
 
   title: {
     fontFamily: "LexendMedium",
     fontSize: 38,
-    color: Colors.text,
     textAlign: "center",
     marginTop: 4,
   },
@@ -332,7 +323,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 380,
     height: 1,
-    backgroundColor: "#E6E6E6",
     marginTop: 16,
     marginBottom: 18,
   },
@@ -354,11 +344,8 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     fontSize: 14,
-    color: Colors.text,
     fontFamily: "LexendRegular",
     marginBottom: 12,
   },
@@ -374,14 +361,13 @@ const styles = StyleSheet.create({
     width: "72%",
     height: 52,
     borderRadius: 999,
-    backgroundColor: Colors.primary,
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
   },
   primaryButtonText: {
-    color: "#FFFFFF",
     fontFamily: "LexendMedium",
+    color: "white",
     fontSize: 16,
   },
 
@@ -390,10 +376,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "LexendRegular",
     fontSize: 15,
-    color: Colors.text,
   },
   loginLink: {
-    color: Colors.link,
+    color: "#1E6DFF",
     fontFamily: "LexendMedium",
   },
 });
