@@ -60,7 +60,7 @@ export const darkTheme = {
     discretIcon: "#999",
 
     // Couleurs boutons / switch
-    primary: "#007C7C",
+    primary: "#009595",
     switchTrackOn: "#007C7C",
     switchTrackOff: "rgba(255,255,255,0.35)",
     switchThumbOn: "#000000",

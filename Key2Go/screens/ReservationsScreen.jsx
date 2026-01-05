@@ -133,7 +133,7 @@ export default function ReservationsScreen({ navigation }) {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, , { backgroundColor: theme.colors.background }]}>
             <TopHeader title="Mes réservations" />
             <FlatList
                 data={data ? [].concat(...data) : []}

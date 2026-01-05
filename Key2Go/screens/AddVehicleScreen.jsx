@@ -15,8 +15,11 @@ import { Picker } from "@react-native-picker/picker";
 import Slider from "@react-native-community/slider";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { API } from "../utils/api";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function AddVehicleScreen({ navigation }) {
+  const { theme } = useTheme();
   const route = useRoute();
   const { vehicule, offer } = route.params || {};
   const isEditMode = !!vehicule && !!offer;
@@ -135,16 +138,16 @@ export default function AddVehicleScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.card, borderBottomColor: theme.colors.rowBorder}]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { color: theme.colors.text, backgroundColor: theme.colors.primary}]}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton]}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#007C7C" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
+        <Text style={[styles.headerTitle, { color: "white"}]}>
           {isEditMode ? "Modifier l'offre" : "Ajouter un véhicule"}
         </Text>
         <View style={styles.headerSpacer} />
@@ -154,22 +157,22 @@ export default function AddVehicleScreen({ navigation }) {
         <View style={styles.form}>
           {/* Modèle */}
           <TextInput
-            style={[styles.input, isEditMode && styles.inputDisabled]}
+            style={[styles.input, {backgroundColor: theme.colors.card, borderColor: theme.colors.rowBorder, color: theme.colors.text}, isEditMode && styles.inputDisabled]}
             placeholder="Modèle du véhicule (ex: Peugeot 208)"
             value={modele}
             onChangeText={setModele}
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.mutedText}
             editable={!isEditMode}
           />
 
           {/* Plaque d'immatriculation */}
           <TextInput
-            style={[styles.input, isEditMode && styles.inputDisabled]}
+            style={[styles.input, {backgroundColor: theme.colors.card, borderColor: theme.colors.rowBorder, color: theme.colors.text} ,isEditMode && styles.inputDisabled]}
             placeholder="Plaque d'immatriculation"
             value={plaque}
             onChangeText={setPlaque}
             autoCapitalize="characters"
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.mutedText}
             editable={!isEditMode}
           />
 
@@ -178,12 +181,13 @@ export default function AddVehicleScreen({ navigation }) {
             style={[
               styles.input,
               styles.textArea,
+              {backgroundColor: theme.colors.card, borderColor: theme.colors.rowBorder, color: theme.colors.text},
               isEditMode && styles.inputDisabled,
             ]}
             placeholder="Description du véhicule (optionnel)"
             value={description}
             onChangeText={setDescription}
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.mutedText}
             multiline
             numberOfLines={3}
             editable={!isEditMode}
@@ -191,7 +195,7 @@ export default function AddVehicleScreen({ navigation }) {
 
           {/* Niveau de carburant */}
           <View style={styles.sliderContainer}>
-            <Text style={styles.label}>Le niveau de carburant de la voiture</Text>
+            <Text style={[styles.label, {color: theme.colors.text}]}>Le niveau de carburant de la voiture</Text>
             <View style={styles.sliderRow}>
               <Slider
                 style={styles.slider}
@@ -200,22 +204,22 @@ export default function AddVehicleScreen({ navigation }) {
                 step={1}
                 value={fuelLevel}
                 onValueChange={setFuelLevel}
-                minimumTrackTintColor="#007C7C"
-                maximumTrackTintColor="#D3D3D3"
-                thumbTintColor="#007C7C"
+                minimumTrackTintColor={theme.colors.primary}
+                maximumTrackTintColor={theme.colors.rawBorder}
+                thumbTintColor={theme.colors.primary}
               />
-              <Text style={styles.sliderValue}>{fuelLevel} %</Text>
+              <Text style={[styles.sliderValue, {color: theme.colors.primary}]}>{fuelLevel} %</Text>
             </View>
           </View>
 
           {/* Date de retour */}
           <View style={styles.dateContainer}>
-            <Text style={styles.label}>Date de retour</Text>
+            <Text style={[styles.label, {color: theme.colors.text}]}>Date de retour</Text>
             <TouchableOpacity
-              style={styles.dateButton}
+              style={[styles.dateButton, {backgroundColor: theme.colors.card, borderColor: theme.colors.rowBorder}]}
               onPress={showDatePickerModal}
             >
-              <Text style={styles.dateText}>
+              <Text style={[styles.dateText, {color: theme.colors.text}]}>
                 {dateRetour.toLocaleDateString("fr-FR", {
                   day: "2-digit",
                   month: "2-digit",
@@ -224,7 +228,7 @@ export default function AddVehicleScreen({ navigation }) {
                   minute: "2-digit",
                 })}
               </Text>
-              <Ionicons name="chevron-down" size={20} color="#666" />
+              <Ionicons name="chevron-down" size={20} color={theme.colors.icon} />
             </TouchableOpacity>
           </View>
 
@@ -240,26 +244,26 @@ export default function AddVehicleScreen({ navigation }) {
 
           {/* Adresse */}
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card}]}
             placeholder="Adresse de location"
             value={adresse}
             onChangeText={setAdresse}
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.mutedText}
           />
 
           {/* Tarif */}
           <View style={styles.tarifContainer}>
-            <Text style={styles.label}>Tarif :</Text>
+            <Text style={[styles.label, {color: theme.colors.text}]}>Tarif :</Text>
             <View style={styles.tarifRow}>
               <TextInput
-                style={styles.tarifInput}
+                style={[styles.tarifInput, {color: theme.colors.text, borderColor: theme.colors.rowBorder, backgroundColor: theme.colors.card}]}
                 placeholder="Nombre"
                 value={tarif}
                 onChangeText={setTarif}
                 keyboardType="decimal-pad"
-                placeholderTextColor="#999"
+                placeholderTextColor={theme.colors.mutedText}
               />
-              <Text style={styles.tarifUnit}>€ / heure(s)</Text>
+              <Text style={[styles.tarifUnit, {color: theme.colors.subText}]}>€ / heure(s)</Text>
             </View>
           </View>
 
@@ -267,12 +271,13 @@ export default function AddVehicleScreen({ navigation }) {
           <TouchableOpacity
             style={[
               styles.submitButton,
-              loading && styles.submitButtonDisabled,
+              {backgroundColor: theme.colors.primary},
+              loading
             ]}
             onPress={handleSubmit}
             disabled={loading}
           >
-            <Text style={styles.submitButtonText}>
+            <Text style={[styles.submitButtonText, {color: theme.colors.onPrimary}]}>
               {loading
                 ? isEditMode
                   ? "Modification..."
@@ -291,16 +296,13 @@ export default function AddVehicleScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
   header: {
-    backgroundColor: "#fff",
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
   },
   backButton: {
     padding: 4,
@@ -311,7 +313,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
     flex: 1,
     textAlign: "center",
   },
@@ -322,14 +323,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   input: {
-    backgroundColor: "#fff",
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 14,
     fontSize: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
   },
   textArea: {
     height: 80,
@@ -337,8 +336,6 @@ const styles = StyleSheet.create({
     paddingTop: 14,
   },
   inputDisabled: {
-    backgroundColor: "#F0F0F0",
-    color: "#999",
   },
   pickerContainer: {
     marginBottom: 16,
@@ -346,14 +343,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 8,
   },
   pickerWrapper: {
-    backgroundColor: "#fff",
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
     overflow: "hidden",
   },
   picker: {
@@ -373,7 +367,6 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#007C7C",
     marginLeft: 12,
     minWidth: 50,
   },
@@ -381,19 +374,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   dateButton: {
-    backgroundColor: "#fff",
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   dateText: {
     fontSize: 16,
-    color: "#333",
   },
   tarifContainer: {
     marginBottom: 24,
@@ -403,22 +393,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tarifInput: {
-    backgroundColor: "#fff",
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 14,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
     flex: 1,
     marginRight: 12,
   },
   tarifUnit: {
     fontSize: 16,
-    color: "#666",
   },
   submitButton: {
-    backgroundColor: "#007C7C",
     borderRadius: 25,
     paddingVertical: 16,
     alignItems: "center",
@@ -429,11 +415,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  submitButtonDisabled: {
-    backgroundColor: "#999",
-  },
   submitButtonText: {
-    color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
   },

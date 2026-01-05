@@ -14,8 +14,12 @@ import useSWR from "swr";
 import { fetcher, API } from "../utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function MyVehiculesScreen({ navigation }) {
+    const { theme } = useTheme();
+
   const { data, error, mutate, isValidating } = useSWR(
     `${process.env.EXPO_PUBLIC_VEHICULE_ROUTE}/my`,
     fetcher
@@ -76,19 +80,19 @@ export default function MyVehiculesScreen({ navigation }) {
   // Loading
   if (!data && !error) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
+        <View style={[styles.header, {backgroundColor: theme.colors.primary}]}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Mes véhicules</Text>
+          <Text style={[styles.headerTitle, {color: theme.colors.onPrimary}]}>Mes véhicules</Text>
           <View style={styles.headerSpacer} />
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007C7C" />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -97,15 +101,15 @@ export default function MyVehiculesScreen({ navigation }) {
   // Error
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
+        <View style={[styles.header, {backgroundColor: theme.colors.primary}]}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Mes véhicules</Text>
+          <Text style={[styles.headerTitle, {color: theme.colors.onPrimary}]}>Mes véhicules</Text>
           <View style={styles.headerSpacer} />
         </View>
         <View style={styles.emptyContainer}>
@@ -119,27 +123,27 @@ export default function MyVehiculesScreen({ navigation }) {
   // Empty state
   if (data.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
+        <View style={[styles.header, {backgroundColor: theme.colors.primary}]}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Mes véhicules</Text>
+          <Text style={[styles.headerTitle, {color: theme.colors.onPrimary} ]}>Mes véhicules</Text>
           <View style={styles.headerSpacer} />
         </View>
         <View style={styles.emptyContainer}>
-          <Ionicons name="car-outline" size={60} color="#ccc" />
-          <Text style={styles.emptyText}>
+          <Ionicons name="car-outline" size={60} color={theme.colors.subText} />
+          <Text style={[styles.emptyText, {color: theme.colors.subText}]}>
             Vous n'avez pas encore de véhicules
           </Text>
           <TouchableOpacity
-            style={styles.addButtonLarge}
+            style={[styles.addButtonLarge, {color: theme.colors.primary} ]}
             onPress={handleAddVehicle}
           >
-            <Text style={styles.addButtonTextLarge}>Ajouter un véhicule</Text>
+            <Text style={[styles.addButtonTextLarge, {color: theme.colors.onPrimary} ]}>Ajouter un véhicule</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -152,33 +156,33 @@ export default function MyVehiculesScreen({ navigation }) {
     const offer = item.offer && item.offer.length > 0 ? item.offer[0] : null;
 
     return (
-      <View style={styles.card}>
+      <View style={[styles.card, {backgroundColor: theme.colors.card}]}>
         <View style={styles.cardContent}>
           {/* Image du véhicule */}
           <Image
             source={require("../assets/images/car-placeholder.png")}
-            style={styles.vehicleImage}
+            style={[styles.vehicleImage, {backgroundColor: theme.colors.rowBorder}]}
             resizeMode="cover"
           />
 
           {/* Informations du véhicule */}
           <View style={styles.vehicleInfo}>
-            <Text style={styles.model}>{item.model}</Text>
+            <Text style={[styles.model, { color: theme.colors.text}]}>{item.model}</Text>
             {offer ? (
               <>
-                <Text style={styles.availability}>Disponible en location</Text>
+                <Text style={[styles.availability, { color: theme.colors.primary}]}>Disponible en location</Text>
                 {offer.adress && (
                   <View style={styles.locationRow}>
-                    <Ionicons name="location-outline" size={14} color="#666" />
-                    <Text style={styles.location}>{offer.adress}</Text>
+                    <Ionicons name="location-outline" size={14} color={theme.colors.subText} />
+                    <Text style={[styles.location, {color: theme.colors.subText}]}>{offer.adress}</Text>
                   </View>
                 )}
                 {offer.price && (
-                  <Text style={styles.price}>{offer.price} €/h</Text>
+                  <Text style={[styles.price, {color: theme.colors.text}]}>{offer.price} €/h</Text>
                 )}
               </>
             ) : (
-              <Text style={styles.noOffer}>Aucune offre active</Text>
+              <Text style={[styles.noOffer, {color: theme.colors.subText}]}>Aucune offre active</Text>
             )}
           </View>
         </View>
@@ -208,15 +212,15 @@ export default function MyVehiculesScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      <View style={[styles.header, {backgroundColor: theme.colors.primary}]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mes véhicules</Text>
+        <Text style={[styles.headerTitle, {color: "white"}]}>Mes véhicules</Text>
         <View style={styles.headerSpacer} />
       </View>
       <FlatList
@@ -228,12 +232,12 @@ export default function MyVehiculesScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#007C7C"]}
+            colors={[theme.colors.primary]}
           />
         }
         ListFooterComponent={
-          <TouchableOpacity style={styles.addButton} onPress={handleAddVehicle}>
-            <Text style={styles.addButtonText}>Ajouter un véhicule</Text>
+          <TouchableOpacity style={[styles.addButton, {backgroundColor: theme.colors.primary}]} onPress={handleAddVehicle}>
+            <Text style={[styles.addButtonText, {color: theme.colors.onPrimary}]}>Ajouter un véhicule</Text>
           </TouchableOpacity>
         }
       />
@@ -244,10 +248,8 @@ export default function MyVehiculesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
   header: {
-    backgroundColor: "#007C7C",
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
@@ -262,7 +264,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
     flex: 1,
     textAlign: "center",
   },
@@ -281,7 +282,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 24,
     fontSize: 16,
-    color: "#666",
     textAlign: "center",
   },
   errorText: {
@@ -294,7 +294,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 12,
     marginBottom: 16,
@@ -312,7 +311,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: "#E0E0E0",
   },
   vehicleInfo: {
     flex: 1,
@@ -322,17 +320,14 @@ const styles = StyleSheet.create({
   model: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
     marginBottom: 4,
   },
   availability: {
     fontSize: 12,
-    color: "#007C7C",
     marginBottom: 4,
   },
   noOffer: {
     fontSize: 12,
-    color: "#999",
     fontStyle: "italic",
   },
   locationRow: {
@@ -342,13 +337,11 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 12,
-    color: "#666",
     marginLeft: 4,
   },
   price: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
   },
   actionButtons: {
     flexDirection: "row",
@@ -365,7 +358,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "#FF6B6B",
-    backgroundColor: "#fff",
   },
   editButtonText: {
     fontSize: 12,
@@ -383,7 +375,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "#FF6B6B",
-    backgroundColor: "#fff",
   },
   deleteButtonText: {
     fontSize: 12,
@@ -392,7 +383,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   addButton: {
-    backgroundColor: "#007C7C",
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 25,
@@ -406,19 +396,16 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   addButtonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
   addButtonLarge: {
-    backgroundColor: "#007C7C",
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 25,
     marginTop: 24,
   },
   addButtonTextLarge: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },

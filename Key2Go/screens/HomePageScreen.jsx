@@ -4,9 +4,11 @@ import useSWR from "swr";
 import { fetcher } from "../utils/api";
 import { useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTheme } from "../context/ThemeContext";
 
 
 export default function HomePageScreen({navigation}) {
+    const { theme } = useTheme();
 
     const {data, error,mutate} = useSWR(`${process.env.EXPO_PUBLIC_OFFER_ROUTE}/available`, fetcher);
 
@@ -34,47 +36,47 @@ export default function HomePageScreen({navigation}) {
             style={({pressed}) => [styles.cardPressable, pressed && styles.cardPressed]}
             onPress={() => handleOfferPress(item)}
         >
-            <View style={styles.card}>
+            <View style={[styles.card, { backgroundColor: theme.colors.card}]}>
             <View style={styles.cardContent}>
                 {item.vehicule && (
-                    <View style={styles.vehiculeHeader}>
+                    <View style={[styles.vehiculeHeader, { borderBottomColor: theme.colors.rowBorder}]}>
                         <View>
-                            <Text style={styles.vehiculeModel}>🚗 {item.vehicule.model}</Text>
+                            <Text style={[styles.vehiculeModel, { color: theme.colors.primary}]}>🚗 {item.vehicule.model}</Text>
                             {item.vehicule.description && (
-                                <Text style={styles.vehiculeDescription}>{item.vehicule.description}</Text>
+                                <Text style={[styles.vehiculeDescription ,{ color: theme.colors.subText}]}>{item.vehicule.description}</Text>
                             )}
                         </View>
-                        <Text style={styles.licencePlate}>{item.vehicule.licence_plate}</Text>
+                        <Text style={[styles.licencePlate, { color: theme.colors.mutedText}]}>{item.vehicule.licence_plate}</Text>
                     </View>
                 )}
                 
-                <Text style={styles.description}>{item.description || "Offre sans titre"}</Text>
+                <Text style={[styles.description, { color: theme.colors.text}]}>{item.description || "Offre sans titre"}</Text>
                 
                 <View style={styles.detailsRow}>
                     <View style={styles.detailItem}>
-                        <Text style={styles.label}>Prix</Text>
-                        <Text style={styles.value}>{item.price}€</Text>
+                        <Text style={[styles.label, { color: theme.colors.mutedText}]}>Prix</Text>
+                        <Text style={[styles.value, { color: theme.colors.primary}]}>{item.price}€</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <Text style={styles.label}>Carburant</Text>
-                        <Text style={styles.value}>{item.fuel_level}%</Text>
+                        <Text style={[styles.label, { color: theme.colors.mutedText}]}>Carburant</Text>
+                        <Text style={[styles.value, { color: theme.colors.primary}]}>{item.fuel_level}%</Text>
                     </View>
                 </View>
 
-                <View style={styles.datesRow}>
+                <View style={[styles.datesRow, { borderColor: theme.colors.rowBorder}]}>
                     <View style={styles.dateItem}>
-                        <Text style={styles.dateLabel}>Début</Text>
-                        <Text style={styles.dateValue}>{item.start_date}</Text>
+                        <Text style={[styles.dateLabel, { color: theme.colors.mutedText}]}>Début</Text>
+                        <Text style={[styles.dateValue, { color: theme.colors.text}]}>{item.start_date}</Text>
                     </View>
                     <View style={styles.dateItem}>
-                        <Text style={styles.dateLabel}>Fin</Text>
-                        <Text style={styles.dateValue}>{item.end_date}</Text>
+                        <Text style={[styles.dateLabel, { color: theme.colors.mutedText}]}>Fin</Text>
+                        <Text style={[styles.dateValue, { color: theme.colors.text}]}>{item.end_date}</Text>
                     </View>
                 </View>
 
                 <View style={styles.adressContainer}>
-                    <Text style={styles.label}>📍 Localisation</Text>
-                    <Text style={styles.adress}>{item.adress || "Non spécifiée"}</Text>
+                    <Text style={[styles.label, { color: theme.colors.mutedText}]}>📍 Localisation</Text>
+                    <Text style={[styles.adress, { color: theme.colors.subText}]}>{item.adress || "Non spécifiée"}</Text>
                 </View>
             </View>
             </View>
@@ -83,7 +85,7 @@ export default function HomePageScreen({navigation}) {
 
     return ( 
 
-        <View style={styles.screen}>
+        <View style={[styles.screen, { backgroundColor: theme.colors.background}]}>
             <TopHeader title="Les offres" />     
             <FlatList
                 data={data ? [].concat(...data) : []}
@@ -100,10 +102,8 @@ export default function HomePageScreen({navigation}) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
         header: {
-        backgroundColor: '#007C7C',
         paddingHorizontal: 16,
         paddingBottom: 16,
         flexDirection: 'row',
@@ -114,11 +114,9 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f5f5f5',
     },
     errorText: {
         fontSize: 16,
-        color: '#666',
     },
     listContent: {
         paddingHorizontal: 16,
@@ -132,7 +130,6 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
     card: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         marginBottom: 12,
         shadowColor: '#000',
@@ -148,7 +145,6 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#1a1a1a',
         marginBottom: 12,
     },
     detailsRow: {
@@ -162,14 +158,12 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 12,
-        color: '#666',
         marginBottom: 4,
         fontWeight: '500',
     },
     value: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#007C7C',
     },
     datesRow: {
         flexDirection: 'row',
@@ -177,7 +171,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderTopWidth: 1,
         borderBottomWidth: 1,
-        borderColor: '#e0e0e0',
         marginBottom: 12,
     },
     dateItem: {
@@ -186,20 +179,17 @@ const styles = StyleSheet.create({
     },
     dateLabel: {
         fontSize: 11,
-        color: '#999',
         marginBottom: 4,
     },
     dateValue: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#333',
     },
     adressContainer: {
         marginTop: 4,
     },
     adress: {
         fontSize: 13,
-        color: '#666',
         marginTop: 6,
         fontStyle: 'italic',
     },
@@ -209,21 +199,17 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         paddingBottom: 8,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
     },
     vehiculeModel: {
         fontSize: 15,
         fontWeight: '600',
-        color: '#007C7C',
     },
     licencePlate: {
         fontSize: 12,
-        color: '#666',
         fontWeight: '500',
     },
     vehiculeDescription: {
         fontSize: 13,
-        color: '#333',
         marginTop: 4,
     },
 });
