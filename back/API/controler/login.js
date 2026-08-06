@@ -1,5 +1,7 @@
 import {readPerson} from "../model/person.js";
 import {sign} from "../../utils/jwt.js";
+import logger from "../../utils/logger.js";
+import {TOKEN_COOKIE_NAME, tokenCookieOptions} from "../../utils/authCookie.js";
 
 /**
  * @swagger
@@ -29,23 +31,25 @@ import {sign} from "../../utils/jwt.js";
  */
 
 export const login = async (req, res) => {
- 
+
     try {
-        console.log('[LOGIN] Attempting login with email:', req.body.email);
         const rep = await readPerson(req.body.email, req.body.password);
-        console.log('[LOGIN] readPerson result:', rep);
         if(rep.id) {
-            console.log('[LOGIN] Success - status:', rep.status);
             const jwt = sign(rep, {
                 expiresIn: '1h'
             });
+            res.cookie(TOKEN_COOKIE_NAME, jwt, {
+                ...tokenCookieOptions,
+                maxAge: 60 * 60 * 1000,
+            });
+
             res.status(201).send(jwt);
         } else {
-            console.log('[LOGIN] Failed - no user found or password invalid');
-            res.sendStatus(404);
+            logger.warn(`Tentative de connexion échouée pour l'email : ${req.body.email}`);
+            res.status(401).json({ error: 'Invalid email or password' });
         }
     } catch (err) {
-        console.error('[LOGIN] Error:', err);
+        logger.error(`Erreur lors du login : ${err.message}`);
         res.sendStatus(500);
     }
 };

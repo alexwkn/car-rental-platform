@@ -16,10 +16,10 @@ auth:bearer {
 
 body:json {
   {
-    "date_of_return": "2025-12-25",
+    "date_of_return": "2027-06-15",
     "fuel_level_return": 95,
     "payment_status": "pending",
-    "offer_id": 1,
+    "offer_id": 10,
     "customer_id": 2
   }
 }
@@ -30,13 +30,13 @@ tests {
   });
   
   test("Response has order_id", function() {
-    expect(res.getBody()).to.have.property('order_id');
+    expect(res.getBody().data).to.have.property('order_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("orderId", body.order_id);
+    bru.setEnvVar("orderId", body.data.order_id);
   }
 }

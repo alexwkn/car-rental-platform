@@ -1,5 +1,6 @@
 import prisma from "../../database/databaseORM.js";
 import { ReviewValidator } from "../middleware/validator/review.js";
+import logger from "../../utils/logger.js";
 
 const formatDate = (d) => d ? new Date(d).toISOString().slice(0,10) : null;
 const isoDate = (d) => d ? new Date(d) : null;
@@ -48,7 +49,7 @@ export const getReviewById = async (req, res) => {
             res.status(404).send('Review not found');
         }
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.sendStatus(500);
     }
 };
@@ -60,13 +61,9 @@ export const getAllReviews = async (req, res) => {
                 review_id: "asc"
             }
         });
-        if (reviews.length > 0) {
-            res.status(200).json(reviews.map(formatReview));
-        } else {
-            res.status(404).send('No reviews found');
-        }
+        res.status(200).json(reviews.map(formatReview));
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };
@@ -84,36 +81,66 @@ export const getReviewsByUserId = async (req, res) => {
         });
         res.status(200).json(reviews.map(formatReview));
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };
 
 export const createReview = async (req, res) => {
     try {
-        const validatedData = await ReviewValidator.validate(req.body);
-        
+        const validatedData = req.validated;
+
         const review_date = validatedData.review_date || new Date();
 
-        const payload = {
-            ...validatedData,
-            review_date: isoDate(review_date) ?? new Date(),
-        };
+        const newReview = await prisma.$transaction(async (prisma) => {
+            const existingReviewForOrder = await prisma.review.findFirst({
+                where: { order_id: validatedData.order_id },
+            });
 
-        const newReview =  await prisma.review.create({
-            data: payload
+            if (existingReviewForOrder) {
+                throw new Error("ORDER_ALREADY_REVIEWED");
+            }
+
+            const order = await prisma.order.findUnique({
+                where: { order_id: validatedData.order_id },
+                include: { offer:
+                            { include:
+                                { vehicule: true }
+                            }},
+            });
+
+            if (!order) {
+                throw new Error("ORDER_NOT_FOUND");
+            }
+
+            const payload = {
+                rating: validatedData.rating,
+                comment: validatedData.comment,
+                review_date: isoDate(review_date) ?? new Date(),
+                order_id: validatedData.order_id,
+                customer_id: req.session.id,
+                renter_id: order.offer.vehicule.owner_id,
+            };
+
+            return prisma.review.create({ data: payload });
         });
+
         res.status(201).json({
             message: 'Review created successfully',
             data: formatReview(newReview),
         });
     } catch (err) {
-        if (err.messages) {
-            return res.status(422).json({
-                message: 'Validation error',
-                errors: err.messages,
+        if (err.message === "ORDER_ALREADY_REVIEWED") {
+            return res.status(409).json({
+                message: 'This order has already been reviewed',
             });
         }
+        if (err.message === "ORDER_NOT_FOUND") {
+            return res.status(404).json({
+                message: 'Order not found',
+            });
+        }
+        logger.error(err.message, { stack: err.stack });
         return res.status(500).json({
             message: 'Server error',
             error: err.message || err,
@@ -187,7 +214,7 @@ export const deleteReview = async (req, res) => {
             message: 'Review deleted successfully',
         });
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };

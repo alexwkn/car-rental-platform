@@ -1,0 +1,40 @@
+meta {
+  name: Create Account With Vehicule
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/createAccount/with-vehicule
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Renter Bruno Test",
+    "email": "renter.bruno{{$randomInt}}@mail.com",
+    "password": "testpass123",
+    "adress": "456 Renter Street",
+    "bank_account": "BE98765432109876",
+    "is_renter": true,
+    "vehicule": {
+      "model": "Peugeot 208",
+      "licence_plate": "BRU-{{$randomInt}}",
+      "description": "Vehicule created together with the account"
+    }
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Response has profile and a linked vehicule", function() {
+    const body = res.getBody();
+    expect(body.data.profile).to.have.property('profile_id');
+    expect(body.data.profile.vehicule).to.be.an('array').with.lengthOf(1);
+    expect(body.data.profile.vehicule[0]).to.have.property('vehicule_id');
+  });
+}

@@ -1,6 +1,8 @@
 import Router from 'express';
 import { getAllFavorites, getFavoriteById, createFavorite, deleteFavorite,updateFavorite } from '../controler/favorite.js';
 import { manager } from '../middleware/auth/mustBe.js';
+import { validate } from '../middleware/validator/validate.js';
+import { FavoriteValidator } from '../middleware/validator/favorite.js';
 
 const router = Router();
 /**
@@ -106,7 +108,7 @@ router.get('/:id', manager, getFavoriteById);
  *       500:
  *         description: Server error
  */
-router.post('/', manager, createFavorite);
+router.post('/', manager, validate(FavoriteValidator), createFavorite);
 /**
  * @swagger
  * /favorite/{id}:

@@ -6,9 +6,12 @@ import{default as reviewRouter} from './review.js';
 import{default as vehiculeRouter} from './vehicule.js';
 import{default as offerRouter} from './offer.js';
 import{default as favoriteRouter} from './favorite.js';
-import { login } from '../controler/login.js';
-import {createAccount} from '../controler/createAccount.js';
+import{default as loginRouter} from './login.js';
+import{default as createAccountRouter} from './createAccount.js';
+import{default as logoutRouter} from './logout.js';
+import{default as meRouter} from './me.js';
 import { checkJWT } from '../middleware/auth/checkJWT.js';
+import logger from '../../utils/logger.js';
 
 const router = Router();
 
@@ -19,11 +22,13 @@ router.use('/reviews', checkJWT, reviewRouter);
 router.use('/vehicules', checkJWT, vehiculeRouter);
 router.use('/offers', checkJWT, offerRouter);
 router.use('/favorite', checkJWT, favoriteRouter);
-router.post('/login', login);
-router.post('/createAccount', createAccount);
+router.use('/login', loginRouter);
+router.use('/createAccount', createAccountRouter);
+router.use('/logout', logoutRouter);
+router.use('/me', checkJWT, meRouter);
 
 router.use((req, res) => {
-    console.error(`Bad URL: ${req.path}`);
+    logger.warn(`Mauvaise URL demandée : ${req.path}`);
     return res.status(404).send("Not Found");
 });
 

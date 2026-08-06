@@ -9,6 +9,9 @@ import {
   updateOwnOffer,
 } from "../controler/offer.js";
 import { manager } from "../middleware/auth/mustBe.js";
+import { isOwnOffer } from "../middleware/auth/isOwner.js";
+import { validate } from "../middleware/validator/validate.js";
+import { OfferValidator } from "../middleware/validator/offer.js";
 
 const router = Router();
 
@@ -144,7 +147,7 @@ router.get("/:id", manager, getOfferById);
  *       500:
  *         description: Server error
  */
-router.post("/", manager, createOffer);
+router.post("/", manager, validate(OfferValidator), createOffer);
 /**
  * @swagger
  * /offers/{id}:
@@ -220,7 +223,7 @@ router.patch("/:id", manager, updateOffer);
  *       404:
  *         description: Offer not found
  */
-router.put("/my/:id", updateOwnOffer);
+router.put("/my/:id", isOwnOffer, updateOwnOffer);
 /**
  * @swagger
  * /offers/{id}:

@@ -1,5 +1,5 @@
 import Router from 'express';
-import { createAccount } from '../controler/createAccount.js';
+import { createAccount, createAccountWithVehicule } from '../controler/createAccount.js';
 
 /**
  * @swagger
@@ -40,5 +40,31 @@ import { createAccount } from '../controler/createAccount.js';
 
 const router = Router();
 router.post('/', createAccount);
+
+/**
+ * @swagger
+ * /createAccount/with-vehicule:
+ *   post:
+ *     summary: Create a new user profile together with a first vehicule
+ *     description: |
+ *       Même chose que /createAccount, mais crée aussi un premier véhicule pour ce
+ *       compte dans la même écriture (nested write Prisma) — pratique pour un
+ *       renter qui s'inscrit avec un véhicule déjà en main.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateAccountWithVehiculeSchema'
+ *     responses:
+ *       201:
+ *         description: Account and vehicule created successfully
+ *       422:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.post('/with-vehicule', createAccountWithVehicule);
 
 export default router;

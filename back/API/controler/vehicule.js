@@ -1,5 +1,6 @@
 import prisma from "../../database/databaseORM.js";
 import { VehiculeValidator } from "../middleware/validator/vehicule.js";
+import logger from "../../utils/logger.js";
 
 /**
  * @swagger
@@ -33,7 +34,7 @@ export const getVehiculeById = async (req, res) => {
       res.status(404).send("Vehicule not found");
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.sendStatus(500);
   }
 };
@@ -44,29 +45,24 @@ export const getAllVehicules = async (req, res) => {
         vehicule_id: "asc",
       },
     });
-    if (vehicules.length > 0) {
-      res.status(200).json(vehicules);
-    } else {
-      res.status(404).send("No vehicules found");
-    }
+    res.status(200).json(vehicules);
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
 
 export const createVehicule = async (req, res) => {
   try {
-    const validatedData = await VehiculeValidator.validate(req.body);
     const newVehicule = await prisma.vehicule.create({
-      data: validatedData,
+      data: req.validated,
     });
     res.status(201).json({
       message: "Vehicule created successfully",
       data: newVehicule,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
@@ -81,24 +77,24 @@ export const createVehiculeWithOffer = async (req, res) => {
       owner_id: userId,
     });
 
-    const result = await prisma.$transaction(async (prisma) => {
-      const newVehicule = await prisma.vehicule.create({
-        data: validatedVehicule,
-      });
 
-      const newOffer = await prisma.offer.create({
-        data: {
-          start_date: new Date(offer.start_date),
-          end_date: new Date(offer.end_date),
-          fuel_level: parseFloat(offer.fuel_level),
-          adress: offer.adress,
-          price: parseFloat(offer.price),
-          description: offer.description || null,
-          vehicule_id: newVehicule.vehicule_id,
+    const result = await prisma.vehicule.create({
+      data: {
+        ...validatedVehicule,
+        offer: {
+          create: [{
+            start_date: new Date(offer.start_date),
+            end_date: new Date(offer.end_date),
+            fuel_level: parseFloat(offer.fuel_level),
+            adress: offer.adress,
+            price: parseFloat(offer.price),
+            description: offer.description || null,
+          }],
         },
-      });
-
-      return { vehicule: newVehicule, offer: newOffer };
+      },
+      include: {
+        offer: true,
+      },
     });
 
     res.status(201).json({
@@ -106,7 +102,7 @@ export const createVehiculeWithOffer = async (req, res) => {
       data: result,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     if (err.messages) {
       return res.status(422).json({
         message: "Validation error",
@@ -177,41 +173,22 @@ export const deleteVehicule = async (req, res) => {
     });
     res.status(200).json({ message: "Vehicule deleted successfully" });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
 
 export const deleteOwnVehicule = async (req, res) => {
   try {
-    const userId = req.session.id;
-    const vehiculeId = parseInt(req.params.id);
-
-    const existingVehicule = await prisma.vehicule.findUnique({
-      where: {
-        vehicule_id: vehiculeId,
-      },
-    });
-
-    if (!existingVehicule) {
-      return res.status(404).json({ message: "Vehicule not found" });
-    }
-
-    if (existingVehicule.owner_id !== userId) {
-      return res
-        .status(403)
-        .json({ message: "You can only delete your own vehicles" });
-    }
-
     await prisma.vehicule.delete({
       where: {
-        vehicule_id: vehiculeId,
+        vehicule_id: req.resource.vehicule_id,
       },
     });
 
     res.status(200).json({ message: "Vehicule deleted successfully" });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -234,7 +211,7 @@ export const getUserVehicules = async (req, res) => {
 
     res.status(200).json(vehicules);
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };

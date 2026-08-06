@@ -32,13 +32,13 @@ tests {
   });
   
   test("Response has offer_id", function() {
-    expect(res.getBody()).to.have.property('offer_id');
+    expect(res.getBody().data).to.have.property('offer_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("offerId", body.offer_id);
+    bru.setEnvVar("offerId", body.data.offer_id);
   }
 }

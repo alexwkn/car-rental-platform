@@ -11,10 +11,10 @@ get {
 }
 
 tests {
-  test("Status code is 401", function() {
-    expect(res.getStatus()).to.equal(401);
+  test("Access denied (401 no session, or 403 if a cookie from a previous test in this run is still attached)", function() {
+    expect(res.getStatus()).to.be.oneOf([401, 403]);
   });
-  
+
   test("Access denied without token", function() {
     const body = res.getBody();
     expect(body).to.not.be.empty;

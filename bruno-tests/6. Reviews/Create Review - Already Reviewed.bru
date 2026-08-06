@@ -1,0 +1,31 @@
+meta {
+  name: Create Review - Already Reviewed
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/reviews
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "rating": 5,
+    "comment": "Trying to review the same order twice",
+    "customer_id": 5,
+    "renter_id": 3,
+    "order_id": 2
+  }
+}
+
+tests {
+  test("Status code is 409 (order already reviewed)", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+}

@@ -1,5 +1,6 @@
 import prisma from "../../database/databaseORM.js";
 import { OfferValidator } from "../middleware/validator/offer.js";
+import logger from "../../utils/logger.js";
 
 const formatDate = (d) => (d ? new Date(d).toISOString().slice(0, 10) : null);
 const formatOffer = (o) => ({
@@ -58,7 +59,7 @@ export const getOfferById = async (req, res) => {
       res.status(404).send("Offer not found");
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.sendStatus(500);
   }
 };
@@ -70,13 +71,9 @@ export const getAllOffers = async (req, res) => {
         offer_id: "asc",
       },
     });
-    if (offers.length > 0) {
-      res.status(200).json(offers.map(formatOffer));
-    } else {
-      res.status(404).send("No offers found");
-    }
+    res.status(200).json(offers.map(formatOffer));
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
@@ -119,13 +116,13 @@ export const getAvailableOffers = async (req, res) => {
       res.status(200).json([]);
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
 export const createOffer = async (req, res) => {
   try {
-    const validatedData = await OfferValidator.validate(req.body);
+    const validatedData = req.validated;
     const payload = {
       start_date: new Date(validatedData.start_date),
       end_date: new Date(validatedData.end_date),
@@ -143,12 +140,7 @@ export const createOffer = async (req, res) => {
       data: formatOffer(newOffer),
     });
   } catch (err) {
-    if (err.messages) {
-      return res.status(422).json({
-        message: "Validation error",
-        errors: err.messages,
-      });
-    }
+    logger.error(err.message, { stack: err.stack });
     return res.status(500).json({
       message: "Server error",
       error: err.message || err,
@@ -223,36 +215,14 @@ export const deleteOffer = async (req, res) => {
       message: "Offer deleted successfully",
     });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
 
 export const updateOwnOffer = async (req, res) => {
   try {
-    const userId = req.session.id;
-    if (!userId) {
-      return res.status(401).json({ message: "Non authentifié" });
-    }
-
-    const existingOffer = await prisma.offer.findUnique({
-      where: {
-        offer_id: parseInt(req.params.id),
-      },
-      include: {
-        vehicule: true,
-      },
-    });
-
-    if (!existingOffer) {
-      return res.status(404).send("Offer not found");
-    }
-
-    if (existingOffer.vehicule.owner_id !== userId) {
-      return res
-        .status(403)
-        .json({ message: "Non autorisé à modifier cette offre" });
-    }
+    const existingOffer = req.resource;
 
     const bodyToValidate = {
       start_date: req.body.start_date ?? existingOffer.start_date,

@@ -14,6 +14,10 @@ const options = {
             }
         },
 
+        servers: [
+            { url: "/api/v1" }
+        ],
+
         components: {
             securitySchemes: {
                 bearerAuth: {

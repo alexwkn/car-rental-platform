@@ -10,6 +10,9 @@ import {
   deleteOwnVehicule,
 } from "../controler/vehicule.js";
 import { manager } from "../middleware/auth/mustBe.js";
+import { isOwnVehicule } from "../middleware/auth/isOwner.js";
+import { validate } from "../middleware/validator/validate.js";
+import { VehiculeValidator } from "../middleware/validator/vehicule.js";
 
 const router = Router();
 
@@ -225,7 +228,7 @@ router.get("/:id", manager, getVehiculeById);
  *       500:
  *         description: Server error
  */
-router.post("/", manager, createVehicule);
+router.post("/", manager, validate(VehiculeValidator), createVehicule);
 /**
  * @swagger
  * /vehicules/{id}:
@@ -330,6 +333,6 @@ router.delete("/:id", manager, deleteVehicule);
  *       500:
  *         description: Server error
  */
-router.delete("/my/:id", deleteOwnVehicule);
+router.delete("/my/:id", isOwnVehicule, deleteOwnVehicule);
 
 export default router;

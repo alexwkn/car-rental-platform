@@ -1,6 +1,8 @@
 import Router from 'express';
 import{getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, getCurrentOrders, getOrderHistory, completeOrder } from '../controler/order.js';
 import { manager } from '../middleware/auth/mustBe.js';
+import { validate } from '../middleware/validator/validate.js';
+import { OrderValidator } from '../middleware/validator/order.js';
 
 const router = Router();
 /**
@@ -200,7 +202,7 @@ router.get('/:id', manager, getOrderById);
  *       500:
  *         description: Server error
  */
-router.post('/', createOrder);
+router.post('/', validate(OrderValidator), createOrder);
 /**
  * @swagger
  * /orders/{id}:

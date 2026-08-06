@@ -1,6 +1,8 @@
 import Router from 'express';
 import { getAllReviews, getReviewsByUserId, getReviewById, createReview, updateReview, deleteReview } from '../controler/review.js';
 import { manager } from '../middleware/auth/mustBe.js';
+import { validate } from '../middleware/validator/validate.js';
+import { ReviewValidator } from '../middleware/validator/review.js';
 
 const router = Router();
 
@@ -106,7 +108,7 @@ router.get('/:id', manager, getReviewById);
  *       500:
  *         description: Server error
  */
-router.post('/', createReview); 
+router.post('/', validate(ReviewValidator), createReview);
 /**
  * @swagger
  * /reviews/{id}:

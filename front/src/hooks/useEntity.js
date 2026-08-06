@@ -1,38 +1,36 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
+
+const PAGE_SIZE = 10;
+
+// Filtre une liste d'entités sur une recherche texte (cherche dans toutes les valeurs)
+function filterEntities(entities, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return entities;
+  return entities.filter((item) =>
+    JSON.stringify(item).toLowerCase().includes(q)
+  );
+}
+
+// Découpe une liste déjà filtrée pour ne garder que la page demandée
+function paginateEntities(entities, page) {
+  const start = (page - 1) * PAGE_SIZE;
+  return entities.slice(start, start + PAGE_SIZE);
+}
 
 export default function useEntity(controller) {
-  const PAGE_SIZE = 10;
-
-  const [rawData, setRawData] = useState([]);
+  const [allEntities, setAllEntities] = useState([]);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [isServerPaginated, setIsServerPaginated] = useState(false);
-  const [serverTotalPages, setServerTotalPages] = useState(1);
-
+  // Recharge la liste complète depuis l'API
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-
     try {
-      const result = await controller.getAll(page, query);
-
-      if (Array.isArray(result)) {
-        setRawData(result);
-        setIsServerPaginated(false);
-        setServerTotalPages(1);
-      }
-      else if (result && Array.isArray(result.items)) {
-        setRawData(result.items);
-        setIsServerPaginated(true);
-        setServerTotalPages(result.totalPages ?? 1);
-      } else {
-        setRawData([]);
-        setIsServerPaginated(false);
-        setServerTotalPages(1);
-      }
+      const result = await controller.getAll();
+      setAllEntities(Array.isArray(result) ? result : []);
     } catch (err) {
       setError(err);
     } finally {
@@ -42,69 +40,23 @@ export default function useEntity(controller) {
 
   useEffect(() => {
     fetchData();
-  }, [query]);
+  }, []);
 
-  useEffect(() => {
-    if (isServerPaginated) {
-      fetchData();
-    }
-  }, [page, isServerPaginated]);
-
+  // Changer la recherche revient toujours à la page 1
   const handleSetQuery = useCallback((value) => {
-  setPage(1);
-  setQuery(value ?? "");
-}, []);
+    setQuery(value ?? "");
+    setPage(1);
+  }, []);
 
-  const filteredData = useMemo(() => {
-    if (isServerPaginated) return rawData;
+  const filtered = filterEntities(allEntities, query);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const data = paginateEntities(filtered, safePage);
 
-    const q = query.trim().toLowerCase();
-    if (!q) return rawData;
-
-    return rawData.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(q)
-    );
-  }, [rawData, query, isServerPaginated]);
-
-  const totalPages = useMemo(() => {
-    if (isServerPaginated) return serverTotalPages;
-    return Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
-  }, [filteredData.length, isServerPaginated, serverTotalPages]);
-
-  const data = useMemo(() => {
-    if (isServerPaginated) return filteredData;
-
-    const start = (page - 1) * PAGE_SIZE;
-    return filteredData.slice(start, start + PAGE_SIZE);
-  }, [filteredData, page, isServerPaginated]);
-
-  useEffect(() => {
-    if (!isServerPaginated && page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages, isServerPaginated]);
-
-  const addEntity = async (entity) => {
+  // Petit utilitaire pour éviter de répéter le try/catch + refetch 3 fois
+  const runAndRefetch = async (action) => {
     try {
-      await controller.add(entity);
-      await fetchData();
-    } catch (err) {
-      setError(err);
-    }
-  };
-
-  const updateEntity = async (entity) => {
-    try {
-      await controller.update(entity);
-      await fetchData();
-    } catch (err) {
-      setError(err);
-    }
-  };
-
-  const deleteEntity = async (id) => {
-    try {
-      await controller.remove(id);
+      await action();
       await fetchData();
     } catch (err) {
       setError(err);
@@ -112,14 +64,15 @@ export default function useEntity(controller) {
   };
 
   return {
-    data,             
-    totalPages,      
-    page,
+    data,
+    totalPages,
+    page: safePage,
     setPage,
     setQuery: handleSetQuery,
-    addEntity,
-    updateEntity,
-    deleteEntity,
+    addEntity: (entity) => runAndRefetch(() => controller.add(entity)),
+    updateEntity: (entity) => runAndRefetch(() => controller.update(entity)),
+    deleteEntity: (id) => runAndRefetch(() => controller.remove(id)),
+    refetch: fetchData,
     loading,
     error,
   };

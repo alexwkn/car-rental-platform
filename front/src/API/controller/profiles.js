@@ -1,14 +1,13 @@
 import apiClient from "../http";
 import API_ROUTES from "../apiRoutes.js";
+import { toApiError } from "../apiError.js";
 
 const getAllProfiles = async () => {
   try {
     const { data } = await apiClient.get(API_ROUTES.PROFILE_ROUTE);
     return data;
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue, réessayez ultérieurement: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 
@@ -17,9 +16,7 @@ const getProfileById = async (id) => {
     const { data } = await apiClient.get(`${API_ROUTES.PROFILE_ROUTE}/${id}`);
     return data;
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue, réessayez ultérieurement: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 const updateProfile = async (updatedProfile) => {
@@ -33,9 +30,7 @@ const updateProfile = async (updatedProfile) => {
     );
     return data;
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue, réessayez ultérieurement: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 
@@ -43,9 +38,7 @@ const deleteProfile = async (id) => {
   try {
     await apiClient.delete(`${API_ROUTES.PROFILE_ROUTE}/${id}`);
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue, réessayez ultérieurement: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 
@@ -58,9 +51,7 @@ const addProfile = async (profile) => {
     );
     return data;
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue, réessayez ultérieurement: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 
@@ -80,9 +71,7 @@ const uploadProfilePicture = async (profileId, imageFile) => {
     );
     return data;
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue lors de l'upload de l'image: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 
@@ -93,9 +82,7 @@ const deleteProfilePicture = async (profileId) => {
     );
     return data;
   } catch (e) {
-    throw new Error(
-      "Une erreur est survenue lors de la suppression de l'image: " + e.message
-    );
+    throw toApiError(e);
   }
 };
 

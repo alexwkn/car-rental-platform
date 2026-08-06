@@ -1,5 +1,6 @@
 import prisma from "../../database/databaseORM.js";
 import { FavoriteValidator } from "../middleware/validator/favorite.js";
+import logger from "../../utils/logger.js";
 
 /**
  * @swagger
@@ -30,7 +31,7 @@ export const getFavoriteById = async (req, res) => {
             res.status(404).send('Favorite not found');
         }
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.sendStatus(500);
     }
 };  
@@ -42,34 +43,29 @@ export const getAllFavorites = async (req, res) => {
                 favorite_id: "asc"
             }
         });
-        if (favorites.length > 0) {
-            res.status(200).json(favorites);
-        } else {
-            res.status(404).send('No favorites found');
-        }   
+        res.status(200).json(favorites);
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };
 
 export const createFavorite = async (req, res) => {
     try {
-        const validatedData = await FavoriteValidator.validate(req.body);
         const newFavorite = await prisma.favorite.create({
-            data: validatedData
+            data: req.validated
         });
         res.status(201).json({
             message: 'Favorite created successfully',
             data: newFavorite,
         });
     } catch (err) {
-    if (err.messages) {
-        return res.status(422).json({
-            message: 'Validation error',
-            errors: err.messages,
+    if (err.code === 'P2002') {
+        return res.status(409).json({
+            message: 'This vehicule is already in your favorites',
         });
     }
+    logger.error(err.message, { stack: err.stack });
     return res.status(500).json({
       message: 'Server error',
       error: err.message || err,

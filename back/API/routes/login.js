@@ -9,10 +9,9 @@ const router = Router();
  *   post:
  *     summary: Authenticate a user and return a JWT token
  *     description: |
- *       This endpoint allows a **client** or **manager** to log in.  
- *       - Client passwords are hashed and compared  
- *       - Manager passwords are stored as plain text (per your initialization script)  
- *       
+ *       This endpoint allows a **client** or **manager** to log in.
+ *       - Both client and manager passwords are hashed (argon2) and compared
+ *
  *       Returns a **JWT token** valid for 1 hour.
  *     tags: [Authentication]
  *     requestBody:
@@ -28,7 +27,7 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
- *       404:
+ *       401:
  *         description: Invalid email or password
  *       500:
  *         description: Server error

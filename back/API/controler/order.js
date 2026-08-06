@@ -1,5 +1,6 @@
 import prisma from "../../database/databaseORM.js";
 import { OrderValidator } from "../middleware/validator/order.js";
+import logger from "../../utils/logger.js";
 
 const formatDate = (d) => d ? new Date(d).toISOString().slice(0,10) : null;
 const isoDate = (d) => d ? new Date(d) : null;
@@ -52,7 +53,7 @@ export const getOrderById = async (req, res) => {
             res.status(404).send('Order not found');
         }
     }catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.sendStatus(500);
     }
 };
@@ -65,13 +66,9 @@ export const getAllOrders = async (req, res) => {
         }
     });
 
-    if (orders.length > 0) {
-            res.status(200).json(orders.map(formatOrder));
-    } else {
-        res.status(404).send('No orders found');
-    }
+    res.status(200).json(orders.map(formatOrder));
     } catch (err) {
-        console.error(err);
+        logger.error(err.message, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };
@@ -80,33 +77,50 @@ export const getAllOrders = async (req, res) => {
 
 export const createOrder = async (req, res) => {
     try {
-        const validatedData = await OrderValidator.validate(req.body);
+        const validatedData = req.validated;
 
         const order_date = validatedData.order_date ? isoDate(validatedData.order_date) : new Date();
+        const date_of_return = isoDate(validatedData.date_of_return);
+
+        if (date_of_return <= order_date) {
+            return res.status(422).json({
+                message: 'Validation error',
+                errors: [{ message: 'date_of_return must be after order_date' }],
+            });
+        }
 
         const payload = {
             order_date: order_date,
-            date_of_return: isoDate(validatedData.date_of_return), 
+            date_of_return: date_of_return,
             fuel_level_return: validatedData.fuel_level_return,
             payment_status: validatedData.payment_status,
             offer_id: validatedData.offer_id,
-            customer_id: validatedData.customer_id,
+            customer_id: req.session.id,
         };
 
-        const newOrder = await prisma.order.create({
-            data: payload,
+        const newOrder = await prisma.$transaction(async (prisma) => {
+            const existingOrderForOffer = await prisma.order.findFirst({
+                where: { offer_id: payload.offer_id },
+            });
+
+            if (existingOrderForOffer) {
+                throw new Error("OFFER_ALREADY_BOOKED");
+            }
+
+            return prisma.order.create({ data: payload });
         });
+
         res.status(201).json({
         message: 'Order created successfully',
         data: formatOrder(newOrder),
         });
     } catch (err) {
-        if (err.messages) {
-            return res.status(422).json({
-                message: 'Validation error',
-                errors: err.messages,
+        if (err.message === "OFFER_ALREADY_BOOKED") {
+            return res.status(409).json({
+                message: 'This offer is already booked',
             });
         }
+        logger.error(err.message, { stack: err.stack });
         return res.status(500).json({
             message: 'Server error',
             error: err.message || err,
@@ -166,7 +180,6 @@ export const updateOrder = async (req, res) => {
 export const deleteOrder = async (req, res) => {
         try {
         const orderId = parseInt(req.params.id);
-        console.log('[deleteOrder] Deleting order:', orderId);
 
         // vérifier que la commande existe
         const existingOrder = await prisma.order.findUnique({
@@ -174,7 +187,6 @@ export const deleteOrder = async (req, res) => {
         });
 
         if (!existingOrder) {
-            console.log('[deleteOrder] Order not found:', orderId);
             return res.status(404).json({ message: 'Order not found' });
         }
 
@@ -183,14 +195,12 @@ export const deleteOrder = async (req, res) => {
             where: { order_id: orderId },
         });
 
-        console.log('[deleteOrder] Order deleted successfully:', orderId);
-
         return res.status(200).json({
             message: 'Order deleted successfully',
             data: deletedOrder,
         });
     } catch (err) {
-        console.error('[deleteOrder] Error:', err);
+        logger.error(`[deleteOrder] ${err.message}`, { stack: err.stack });
         return res.status(500).json({
             message: 'Server error',
             error: err.message || err,
@@ -202,8 +212,7 @@ export const deleteOrder = async (req, res) => {
 export const getCurrentOrders = async (req, res) => {
     try {
         const userId = req.session.id; // ID de l'utilisateur depuis le JWT
-        console.log('[getCurrentOrders] User ID from session:', userId);
-        
+
         const orders = await prisma.order.findMany({
             where: {
                 customer_id: userId,
@@ -221,15 +230,13 @@ export const getCurrentOrders = async (req, res) => {
             }
         });
 
-        console.log('[getCurrentOrders] Found orders:', orders.length);
-
         if (orders.length > 0) {
             res.status(200).json(orders.map(formatOrder));
         } else {
-            res.status(200).json([]); 
+            res.status(200).json([]);
         }
     } catch (err) {
-        console.error('[getCurrentOrders] Error:', err);
+        logger.error(`[getCurrentOrders] ${err.message}`, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };
@@ -238,30 +245,27 @@ export const getCurrentOrders = async (req, res) => {
 export const getOrderHistory = async (req, res) => {
     try {
         const userId = req.session.id; // ID de l'utilisateur depuis le JWT
-        console.log('[getOrderHistory] User ID from session:', userId);
-        
+
         const orders = await prisma.order.findMany({
             where: {
                 customer_id: userId,
-                payment_status: 'completed' 
+                payment_status: 'completed'
             },
             include: {
-                offer: true 
+                offer: true
             },
             orderBy: {
                 date_of_return: 'desc'
             }
         });
 
-        console.log('[getOrderHistory] Found orders:', orders.length);
-
         if (orders.length > 0) {
             res.status(200).json(orders.map(formatOrder));
         } else {
-            res.status(200).json([]); 
+            res.status(200).json([]);
         }
     } catch (err) {
-        console.error('[getOrderHistory] Error:', err);
+        logger.error(`[getOrderHistory] ${err.message}`, { stack: err.stack });
         res.status(500).send('Server error');
     }
 };
@@ -270,8 +274,6 @@ export const completeOrder = async (req, res) => {
     try {
         const orderId = parseInt(req.params.id);
         const { fuel_level_return, date_of_return } = req.body;
-
-        console.log(`[completeOrder] Completing order ${orderId}`, { fuel_level_return, date_of_return });
 
         const existingOrder = await prisma.order.findUnique({
             where: { order_id: orderId }
@@ -293,14 +295,12 @@ export const completeOrder = async (req, res) => {
             }
         });
 
-        console.log(`[completeOrder] Order completed successfully`);
-
         return res.status(200).json({
             message: 'Order completed successfully',
             data: formatOrder(completedOrder)
         });
     } catch (err) {
-        console.error('[completeOrder] Error:', err);
+        logger.error(`[completeOrder] ${err.message}`, { stack: err.stack });
         return res.status(500).json({
             message: 'Server error',
             error: err.message || err

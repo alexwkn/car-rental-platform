@@ -7,6 +7,7 @@ function EntityForm({ isOpen, onClose, title, fields, initialData, onSubmit }) {
 
   useEffect(() => {
     if (isOpen) {
+      // on transforme la liste d'objet  en un objet {name: value}
       const base = fields.reduce((acc, field) => {
         let value = initialData?.[field.name] ?? "";
 
@@ -26,6 +27,7 @@ function EntityForm({ isOpen, onClose, title, fields, initialData, onSubmit }) {
 
   if (!isOpen) return null;
 
+  // Gestion des changements dans le formulaire
   const handleChange = (e, field) => {
     const { name, value, checked, type } = e.target;
 
@@ -56,9 +58,26 @@ function EntityForm({ isOpen, onClose, title, fields, initialData, onSubmit }) {
                   id={field.name}
                   name={field.name}
                   type="checkbox"
-                  checked={!!formData[field.name]}
+                  checked={formData[field.name]}
                   onChange={(e) => handleChange(e, field)}
                 />
+              ) : field.type === "select" ? (
+                <select
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name] ?? ""}
+                  onChange={(e) => handleChange(e, field)}
+                  required={field.required ?? true}
+                >
+                  <option value="" disabled>
+                    -- Choisir --
+                  </option>
+                  {field.options?.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   id={field.name}
@@ -69,6 +88,9 @@ function EntityForm({ isOpen, onClose, title, fields, initialData, onSubmit }) {
                   required={field.required ?? true}
                   minLength={field.minLength}
                   maxLength={field.maxLength}
+                  min={field.min}
+                  max={field.max}
+                  step={field.step}
                 />
               )}
             </div>
@@ -96,6 +118,12 @@ EntityForm.propTypes = {
       label: PropTypes.string.isRequired,
       type: PropTypes.string,
       required: PropTypes.bool,
+      options: PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+          label: PropTypes.string.isRequired,
+        })
+      ),
     })
   ).isRequired,
   initialData: PropTypes.object,

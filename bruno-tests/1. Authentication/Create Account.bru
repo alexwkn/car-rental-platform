@@ -25,16 +25,16 @@ tests {
   test("Status code is 201", function() {
     expect(res.getStatus()).to.equal(201);
   });
-  
+
   test("Response has profile_id", function() {
-    expect(res.getBody()).to.have.property('profile_id');
+    expect(res.getBody().data.profile).to.have.property('profile_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("profileId", body.profile_id);
-    console.log("Profile created with ID:", body.profile_id);
+    bru.setEnvVar("profileId", body.data.profile.profile_id);
+    console.log("Profile created with ID:", body.data.profile.profile_id);
   }
 }

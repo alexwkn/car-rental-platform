@@ -106,7 +106,7 @@ function ProfileTable() {
 
   const handlePictureUpdated = () => {
     // Recharger les données pour afficher la nouvelle image
-    hook.setQuery("");
+    hook.refetch();
     handleCloseUploadModal();
   };
 

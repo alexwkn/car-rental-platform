@@ -4,7 +4,7 @@ meta {
   seq: 4
 }
 
-put {
+patch {
   url: {{baseUrl}}/profiles/{{profileId}}
   body: json
   auth: bearer
@@ -30,7 +30,7 @@ tests {
   });
   
   test("Profile was updated", function() {
-    const profile = res.getBody();
+    const profile = res.getBody().data;
     expect(profile.name).to.equal("Updated Name");
   });
 }

@@ -18,20 +18,20 @@ body:json {
 }
 
 tests {
-  test("Status code is 200", function() {
-    expect(res.getStatus()).to.equal(200);
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
   });
-  
-  test("Response has token", function() {
-    expect(res.getBody()).to.have.property('token');
+
+  test("Response body is a non-empty JWT string", function() {
+    expect(res.getBody()).to.be.a('string').and.not.empty;
   });
 }
 
 script:post-response {
-  const body = res.getBody();
-  if (body && body.token) {
-    bru.setVar("token", body.token);
-    console.log("✅ Token saved to environment:", body.token.substring(0, 20) + "...");
+  const token = res.getBody();
+  if (res.getStatus() === 201 && token) {
+    bru.setVar("token", token);
+    console.log("✅ Token saved to environment:", token.substring(0, 20) + "...");
   } else {
     console.log("❌ No token in response");
   }

@@ -30,13 +30,13 @@ tests {
   });
   
   test("Response has review_id", function() {
-    expect(res.getBody()).to.have.property('review_id');
+    expect(res.getBody().data).to.have.property('review_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("reviewId", body.review_id);
+    bru.setEnvVar("reviewId", body.data.review_id);
   }
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import SearchBar from "../SearchBar";
-import TableData from "../DataTable";
+import DataTable from "../DataTable";
 import Pagination from "../Pagination";
 import EntityForm from "./EntityForm";
 import EntityDeleteModal from "./EntityDeleteModal";
@@ -48,11 +48,11 @@ function EntityTable({ title, fields, columns, hook, idField }) {
     setIsDeleteOpen(true);
   };
 
-  const handleSubmitForm = async (values) => {
+  const handleSubmitForm = async (formData) => {
     if (editingItem && editingItem[idField]) {
-      await updateEntity({ ...editingItem, ...values });
+      await updateEntity({ ...editingItem, ...formData });
     } else {
-      await addEntity(values);
+      await addEntity(formData);
     }
     setIsFormOpen(false);
     setEditingItem(null);
@@ -80,7 +80,7 @@ function EntityTable({ title, fields, columns, hook, idField }) {
         {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
 
         <div className="table-container">
-          <TableData
+          <DataTable
             columns={columns}
             data={rows}
             onEdit={handleEdit}

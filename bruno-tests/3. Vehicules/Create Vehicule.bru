@@ -29,13 +29,13 @@ tests {
   });
   
   test("Response has vehicule_id", function() {
-    expect(res.getBody()).to.have.property('vehicule_id');
+    expect(res.getBody().data).to.have.property('vehicule_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("vehiculeId", body.vehicule_id);
+    bru.setEnvVar("vehiculeId", body.data.vehicule_id);
   }
 }

@@ -1,47 +1,19 @@
-import editIcon from "../assets/edit.svg";
-import deleteIcon from "../assets/cancel_white.svg";
-import "../styles/dataTable.css";
 import PropTypes from "prop-types";
+import TableHeader from "./TableHeader";
+import TableBody from "./TableBody";
+import "../styles/dataTable.css";
 
-function TableData({ columns, data, onEdit, onDelete }) {
+// Tableau générique
+function DataTable({ columns, data, onEdit, onDelete }) {
   return (
     <table className="data-table">
-      <thead>
-        <tr>
-          {columns.map((col) => (
-            <th key={col.key}>{col.label}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row) => (
-          <tr key={row.id}>
-            {columns.map((col) => (
-              <td key={col.key}>
-                {col.key === "edit" ? (
-                  <div className="actions-cell">
-                    <button onClick={() => onEdit(row)}>
-                      <img src={editIcon} alt="Edit" />
-                    </button>
-                    <button onClick={() => onDelete(row.id)}>
-                      <img src={deleteIcon} alt="Delete" className="icon" />
-                    </button>
-                  </div>
-                ) : col.render ? (
-                  col.render(row[col.key], row)
-                ) : (
-                  String(row[col.key] ?? "")
-                )}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
+      <TableHeader columns={columns} />
+      <TableBody columns={columns} data={data} onEdit={onEdit} onDelete={onDelete} />
     </table>
   );
 }
 
-TableData.propTypes = {
+DataTable.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -53,4 +25,4 @@ TableData.propTypes = {
   onDelete: PropTypes.func.isRequired,
 };
 
-export default TableData;
+export default DataTable;

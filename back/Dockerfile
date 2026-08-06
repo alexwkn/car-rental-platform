@@ -15,4 +15,4 @@ COPY --from=deps /app/prisma ./prisma
 COPY . .
 RUN npm prune --omit=dev
 EXPOSE 3001
-CMD ["node", "server.js"]
+CMD ["node", "entrypoint.js"]

@@ -3,6 +3,7 @@ import { ProfileValidator } from "../middleware/validator/profile.js";
 import { saveImage, deleteImage } from "../../utils/imageManager.js";
 import { hash } from "../../utils/hash.js";
 import * as uuid from "uuid";
+import logger from "../../utils/logger.js";
 
 /**
  * @swagger
@@ -42,7 +43,7 @@ export const getProfileById = async (req, res) => {
       res.status(404).send("Profile not found");
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
@@ -54,13 +55,9 @@ export const getAllProfiles = async (req, res) => {
       },
     });
 
-    if (profiles.length > 0) {
-      res.status(200).json(profiles);
-    } else {
-      res.status(404).send("No profiles found");
-    }
+    res.status(200).json(profiles);
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
@@ -159,7 +156,7 @@ export const updateProfile = async (req, res) => {
         errors: err.messages,
       });
     }
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
@@ -178,10 +175,7 @@ export const deleteProfile = async (req, res) => {
       try {
         await deleteImage(profile.profile_picture);
       } catch (err) {
-        console.warn(
-          "Error occurred while deleting the profile image:",
-          err.message
-        );
+        logger.warn(`Error occurred while deleting the profile image: ${err.message}`);
       }
     }
 
@@ -196,7 +190,7 @@ export const deleteProfile = async (req, res) => {
       data: deletedProfile,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     res.status(500).send("Server error");
   }
 };
@@ -226,10 +220,7 @@ export const uploadProfileImage = async (req, res) => {
       try {
         await deleteImage(existingProfile.profile_picture);
       } catch (err) {
-        console.warn(
-          "Error occurred while deleting the old image:",
-          err.message
-        );
+        logger.warn(`Error occurred while deleting the old image: ${err.message}`);
       }
     }
 
@@ -244,7 +235,7 @@ export const uploadProfileImage = async (req, res) => {
       data: updatedProfile,
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e.message, { stack: e.stack });
     return res.status(500).json({
       error: "An error occurred while uploading the image",
       details: e.message,
@@ -274,10 +265,7 @@ export const deleteProfileImage = async (req, res) => {
     try {
       await deleteImage(profile.profile_picture);
     } catch (err) {
-      console.warn(
-        "Error occurred while deleting the image from disk:",
-        err.message
-      );
+      logger.warn(`Error occurred while deleting the image from disk: ${err.message}`);
     }
 
     const updatedProfile = await prisma.profile.update({
@@ -291,7 +279,7 @@ export const deleteProfileImage = async (req, res) => {
       data: updatedProfile,
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e.message, { stack: e.stack });
     return res.status(500).json({
       error: "An error occurred while deleting the image.",
       details: e.message,
@@ -314,7 +302,7 @@ export const deleteMe = async (req, res) => {
       try {
         await deleteImage(profile.profile_picture);
       } catch (err) {
-        console.warn("Error deleting profile image:", err.message);
+        logger.warn(`Error deleting profile image: ${err.message}`);
       }
     }
 
@@ -324,7 +312,7 @@ export const deleteMe = async (req, res) => {
 
     return res.status(204).send();
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -348,7 +336,7 @@ export const changeMyPassword = async (req, res) => {
 
     return res.status(200).json({ message: "Mot de passe mis à jour" });
   } catch (err) {
-    console.error(err);
+    logger.error(err.message, { stack: err.stack });
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -356,7 +344,7 @@ export const changeMyPassword = async (req, res) => {
 const toPublicUrl = (req, path) => {
   if (!path) return null;
   const base = `${req.protocol}://${req.get("host")}`;
-  return `${base}/upload/${path}`;
+  return `${base}/api/v1/upload/${path}`;
 };
 
 export const getMyProfile = async (req, res) => {
@@ -378,7 +366,7 @@ export const getMyProfile = async (req, res) => {
       },
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e.message, { stack: e.stack });
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -419,7 +407,7 @@ export const uploadMyProfileImage = async (req, res) => {
       },
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e.message, { stack: e.stack });
     return res.status(500).json({ message: "Server error", error: e.message });
   }
 };
@@ -450,7 +438,7 @@ export const deleteMyProfileImage = async (req, res) => {
       data: { ...updated, profile_picture_url: null },
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e.message, { stack: e.stack });
     return res.status(500).json({ message: "Server error" });
   }
 };

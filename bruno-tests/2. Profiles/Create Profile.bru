@@ -31,13 +31,13 @@ tests {
   });
   
   test("Response has profile_id", function() {
-    expect(res.getBody()).to.have.property('profile_id');
+    expect(res.getBody().data).to.have.property('profile_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("profileId", body.profile_id);
+    bru.setEnvVar("profileId", body.data.profile_id);
   }
 }

@@ -5,9 +5,8 @@ Key2Go API - Bruno Test Collection
 ### 1. Authentication (Obligatoire en premier)
 
 Exécuter **"Login - Admin"** pour obtenir le token JWT.
-Le token doit ensuite être copié collé dans la variable token dans le fichier Local.bru du code.
-
-Chemin : locationVoiture\bruno-test\environements\Local.bru
+Le script post-réponse de cette requête sauvegarde automatiquement le token dans
+la variable `token` — pas besoin de le copier-coller à la main.
 
 Les autres variables sont incrémentés avec des ID valides déjà enregistrés dans la base de données.
 
@@ -41,7 +40,7 @@ Tests de sécurité (token invalide, pas de token).
 
 # Environnements
 
-baseUrl: http://localhost:3001
+baseUrl: http://localhost:3001/api/v1
 
 # Variables d'environnement
 

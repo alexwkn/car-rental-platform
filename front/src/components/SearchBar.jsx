@@ -17,20 +17,17 @@ export default function SearchBar({
   debounce = 0,
 }) {
   const [query, setQuery] = useState("");
-  const [history, setHistory] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(-1);
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isGlobal && debounce > 0) {
-      const timer = setTimeout(() => {
-        onSearch?.(query);
-      }, debounce);
-      return () => clearTimeout(timer);
-    } else if (!isGlobal) {
+    if (isGlobal) return;
+
+    const timer = setTimeout(() => {
       onSearch?.(query);
-    }
+    }, debounce);
+
+    return () => clearTimeout(timer);
   }, [query, debounce, isGlobal, onSearch]);
 
   const handleSubmit = () => {
@@ -41,10 +38,6 @@ export default function SearchBar({
       setErrorMsg("Veuillez entrer un mot-clé.");
       return;
     }
-
-    const newHistory = [...history.slice(0, currentIndex + 1), trimmed];
-    setHistory(newHistory);
-    setCurrentIndex(newHistory.length - 1);
 
     const normalized = trimmed.toLowerCase();
 

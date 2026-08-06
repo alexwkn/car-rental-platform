@@ -1,20 +1,25 @@
 import {verify} from "../../../utils/jwt.js";
+import logger from "../../../utils/logger.js";
+import {TOKEN_COOKIE_NAME} from "../../../utils/authCookie.js";
 
 export const checkJWT = async (req, res, next) => {
     const authorize = req.get('authorization');
-    console.log('[JWT CHECK] Authorization header:', authorize);
-    if(authorize?.includes('Bearer')){
-        const jwtEncoded = authorize.split(' ')[1];
-        try {
-            req.session = verify(jwtEncoded);
-            console.log('[JWT CHECK] Token verified:', req.session);
-            next();
-        } catch (e){
-            console.log('[JWT CHECK] Token verification failed:', e.message);
-            res.status(401).send(e.message);
-        }
-    } else {
-        console.log('[JWT CHECK] No Bearer token found');
-        res.status(401).send('No jwt');
+    //mobile
+    const jwtFromHeader = authorize?.includes('Bearer') ? authorize.split(' ')[1] : null;
+    //web
+    const jwtFromCookie = req.cookies?.[TOKEN_COOKIE_NAME] ?? null;
+    const jwtEncoded = jwtFromHeader ?? jwtFromCookie;
+
+    if (!jwtEncoded) {
+        logger.warn(`Tentative d'accès à ${req.originalUrl} sans token JWT`);
+        return res.status(401).send('No jwt');
+    }
+
+    try {
+        req.session = verify(jwtEncoded);
+        next();
+    } catch (e) {
+        logger.warn(`Tentative d'identification invalide (JWT rejeté) : ${e.message}`);
+        res.status(401).send(e.message);
     }
 };

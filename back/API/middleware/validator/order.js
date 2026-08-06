@@ -45,9 +45,7 @@ const OrderSchema = vine
     .date({ formats: ['yyyy-MM-dd','iso8601'] })       
     .optional(), 
   date_of_return: vine
-    .date({ formats: ['yyyy-MM-dd','iso8601'] })
-    .afterField('order_date'),        // date_of_return > order_date 
-
+    .date({ formats: ['yyyy-MM-dd','iso8601'] }),
   fuel_level_return: vine
     .number()
     .decimal([0,2])                       

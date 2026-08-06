@@ -1,0 +1,31 @@
+meta {
+  name: Create Order - Already Booked
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "date_of_return": "2027-06-15",
+    "fuel_level_return": 95,
+    "payment_status": "pending",
+    "offer_id": 1,
+    "customer_id": 2
+  }
+}
+
+tests {
+  test("Status code is 409 (offer already booked)", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+}

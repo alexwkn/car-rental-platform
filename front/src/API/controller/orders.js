@@ -1,14 +1,13 @@
 import apiClient from "../http";
 import API_ROUTES from "../apiRoutes.js";
+import { toApiError } from "../apiError.js";
 
 const getAllOrders = async () => {
     try {
         const { data } = await apiClient.get(API_ROUTES.ORDER_ROUTE);
         return data;
     } catch (e) {
-        throw new Error(
-            "Une erreur est survenue, réessayez ultérieurement: " + e.message
-        );
+        throw toApiError(e);
     }
 };
 const getOrderById = async (id) => {
@@ -16,10 +15,8 @@ const getOrderById = async (id) => {
         const { data } = await apiClient.get(`${API_ROUTES.ORDER_ROUTE}/${id}`);
         return data;
     } catch (e) {
-        throw new Error(
-            "Une erreur est survenue, réessayez ultérieurement: " + e.message
-        );
-    }   
+        throw toApiError(e);
+    }
 };
 
 const addOrder = async (order) => {
@@ -29,9 +26,7 @@ const addOrder = async (order) => {
         const { data } = await apiClient.post(`${API_ROUTES.ORDER_ROUTE}`, order);
         return data;
     } catch (e) {
-        throw new Error(
-            "Une erreur est survenue, réessayez ultérieurement: " + e.message
-        );
+        throw toApiError(e);
     }
 };
 
@@ -47,9 +42,7 @@ const updateOrder = async (updatedOrder) => {
         );
         return data;
     } catch (e) {
-        throw new Error(
-            "Une erreur est survenue, réessayez ultérieurement: " + e.message
-        );
+        throw toApiError(e);
     }
 };
 
@@ -57,9 +50,7 @@ const deleteOrder = async (id) => {
     try {
         await apiClient.delete(`${API_ROUTES.ORDER_ROUTE}/${id}`);
     } catch (e) {
-        throw new Error(
-            "Une erreur est survenue, réessayez ultérieurement: " + e.message
-        );
+        throw toApiError(e);
     }
 };
 export { getAllOrders, getOrderById, addOrder, updateOrder, deleteOrder };

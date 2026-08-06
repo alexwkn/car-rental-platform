@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import requestLogin from "../API/controller/login.js";
 import apiClient from "../API/http.js";
+import API_ROUTES from "../API/apiRoutes.js";
 
 const AuthContext = createContext();
 
@@ -8,52 +9,37 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Chargement initial
   useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem("user");
-
-      if (savedUser) {
-        const parsedUser = JSON.parse(savedUser);
-
-        if (parsedUser && parsedUser.jwt) {
-          setUser(parsedUser);
-          apiClient.defaults.headers.Authorization = `Bearer ${parsedUser.jwt}`;
-        }
+    const restoreSession = async () => {
+      try {
+        // est-ce que user déjà connecté
+        const { data } = await apiClient.get(API_ROUTES.ME_ROUTE);
+        setUser(data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Erreur stockage user :", err);
-      localStorage.removeItem("user");
-    } finally {
-      setLoading(false);
-    }
+    };
+    restoreSession();
   }, []);
 
-
   const login = async ({ email, password }) => {
-    try {
-      const jwt = await requestLogin(email, password);
-      const loggedUser = { email, jwt };
-
-      setUser(loggedUser);
-      localStorage.setItem("user", JSON.stringify(loggedUser));
-
-      apiClient.defaults.headers.Authorization = `Bearer ${jwt}`;
-    } catch (e) {
-      console.error("Login error:", e);
-      throw e;
-    }
+    await requestLogin(email, password);
+    const { data } = await apiClient.get(API_ROUTES.ME_ROUTE);
+    setUser(data);
   };
 
-
-  const logout = () => {
-    setUser(null);
-    delete apiClient.defaults.headers.Authorization;
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      await apiClient.post(API_ROUTES.LOGOUT_ROUTE);
+    } finally {
+      setUser(null);
+    }
   };
 
   if (loading) {
-    return null; 
+    return null;
   }
 
   return (
@@ -70,5 +56,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-export default AuthProvider;

@@ -1,7 +1,9 @@
 import {ProfileValidator} from "../middleware/validator/profile.js";
+import {VehiculeValidator} from "../middleware/validator/vehicule.js";
 import {hash} from "../../utils/hash.js";
 import {sign} from "../../utils/jwt.js";
 import prisma from "../../database/databaseORM.js";
+import {TOKEN_COOKIE_NAME, tokenCookieOptions} from "../../utils/authCookie.js";
 
 /**
  * @swagger
@@ -81,8 +83,6 @@ export const createAccount = async (req, res) => {
             profile_picture
         });
 
-        console.log('createAccount - validatedData:', validatedData);
-
         //Hacher le mot de passe
         const hashedPassword = await hash(validatedData.password);
 
@@ -101,8 +101,126 @@ export const createAccount = async (req, res) => {
         },
         { expiresIn: '1h' }
     );
+        res.cookie(TOKEN_COOKIE_NAME, token, {
+            ...tokenCookieOptions,
+            maxAge: 60 * 60 * 1000,
+        });
+
         res.status(201).json({
             message: 'Account created successfully',
+            data: {
+                profile: newProfile,
+                token: token
+            }
+        });
+    } catch (err) {
+        if (err.messages) {
+            return res.status(422).json({
+                message: 'Validation error',
+                errors: err.messages,
+            });
+        }
+        return res.status(500).json({
+            message: 'Server error',
+            error: err.message || err,
+        });
+    }
+};
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateAccountWithVehiculeSchema:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *         - is_renter
+ *         - vehicule
+ *       properties:
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *         adress:
+ *           type: string
+ *         bank_account:
+ *           type: string
+ *         is_renter:
+ *           type: boolean
+ *         profile_picture:
+ *           type: string
+ *         vehicule:
+ *           type: object
+ *           required:
+ *             - model
+ *             - licence_plate
+ *           properties:
+ *             model:
+ *               type: string
+ *               example: "Peugeot 208"
+ *             licence_plate:
+ *               type: string
+ *               example: "1-ABC-234"
+ *             description:
+ *               type: string
+ *               example: "Véhicule propre, entretien OK"
+ */
+
+
+export const createAccountWithVehicule = async (req, res) => {
+    try {
+        const {name, email, password, adress, bank_account, is_renter, profile_picture, vehicule} = req.body;
+
+        const validatedData = await ProfileValidator.validate({
+            name,
+            email,
+            password,
+            adress,
+            bank_account,
+            is_renter,
+            profile_picture
+        });
+
+        const validatedVehicule = await VehiculeValidator.validate({
+            ...vehicule,
+            owner_id: 1, // pour validation vine
+        });
+        const { owner_id, ...vehiculeFields } = validatedVehicule;
+
+        const hashedPassword = await hash(validatedData.password);
+
+        const newProfile = await prisma.profile.create({
+            data: {
+                ...validatedData,
+                password: hashedPassword,
+                vehicule: {
+                    create: [vehiculeFields],
+                },
+            },
+            include: {
+                vehicule: true,
+            },
+        });
+
+        const token = sign({
+                id: newProfile.profile_id,
+                email: newProfile.email,
+                status: newProfile.is_renter ? "renter" : "customer",
+        },
+        { expiresIn: '1h' }
+    );
+        res.cookie(TOKEN_COOKIE_NAME, token, {
+            ...tokenCookieOptions,
+            maxAge: 60 * 60 * 1000,
+        });
+
+        res.status(201).json({
+            message: 'Account and vehicule created successfully',
             data: {
                 profile: newProfile,
                 token: token

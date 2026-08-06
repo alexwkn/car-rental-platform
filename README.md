@@ -12,7 +12,7 @@ Le fichier `.env` doit être présent à la racine du projet
 
 ## Installation et démarrage
 
-### 1. Démarrer l'application avec Docker
+### Démarrer l'application avec Docker
 
 Ouvrez un terminal PowerShell dans le dossier racine du projet et exécutez :
 
@@ -20,34 +20,19 @@ Ouvrez un terminal PowerShell dans le dossier racine du projet et exécutez :
 docker compose up --build -d
 
 
-Cette commande va :
-- Construire les images Docker pour le backend, le frontend et mobile
+Cette commande unique va :
+- Construire les images Docker pour le backend, le frontend et le mobile
 - Créer un conteneur PostgreSQL pour la base de données
+- Initialiser automatiquement la base avec les données de test au premier démarrage
 - Démarrer tous les services en arrière-plan
 
-
-
-### 2. Initialiser la base de données
-
-Une fois les conteneurs démarrés, initialisez la base de données avec les données de test :
-
-
-docker compose exec back node scripts/JS/initDB.js
-
-
-Vous devriez voir :
-
-done
-pool closed
-
-
-### 3. Accéder à l'application
+### Accéder à l'application
 
 L'application est maintenant accessible :
 
 - **Frontend** : [http://localhost:8080](http://localhost:8080)
-- **Backend API** : [http://localhost:3001](http://localhost:3001)
--**Mobile** : Via expo
+- **Backend API** : [http://localhost:3001/api/v1](http://localhost:3001/api/v1)
+- **Mobile** : Via expo
 
 ### Comptes de test
 

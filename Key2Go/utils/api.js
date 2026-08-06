@@ -3,15 +3,17 @@ import { Platform } from 'react-native';
 
 // Resolve baseURL for different environments (Android emulator vs iOS vs device)
 const envBase = process.env.EXPO_PUBLIC_BASE_API_ROUTE;
+const ensureApiV1 = (url) => url.replace(/\/+$/, '').replace(/\/api\/v1$/, '') + '/api/v1';
+
 const resolvedBaseURL = (() => {
     // Android emulator cannot reach localhost: use 10.0.2.2
     if (Platform.OS === 'android') {
         if (!envBase || /localhost/i.test(envBase)) {
-            return 'http://10.0.2.2:3001';
+            return 'http://10.0.2.2:3001/api/v1';
         }
-        return envBase;
+        return ensureApiV1(envBase);
     }
-
+    return ensureApiV1(envBase || 'http://localhost:3001');
 })();
 
 export const API = axios.create({

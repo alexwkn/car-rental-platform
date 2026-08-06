@@ -17,7 +17,7 @@ auth:bearer {
 body:json {
   {
     "profile_id": 2,
-    "vehicule_id": 3
+    "vehicule_id": 7
   }
 }
 
@@ -27,13 +27,13 @@ tests {
   });
   
   test("Response has favorite_id", function() {
-    expect(res.getBody()).to.have.property('favorite_id');
+    expect(res.getBody().data).to.have.property('favorite_id');
   });
 }
 
 script:post-response {
   if (res.getStatus() === 201) {
     const body = res.getBody();
-    bru.setEnvVar("favoriteId", body.favorite_id);
+    bru.setEnvVar("favoriteId", body.data.favorite_id);
   }
 }
