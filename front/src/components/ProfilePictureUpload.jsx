@@ -5,6 +5,7 @@ import {
   getProfilePictureUrl,
 } from "../API/controller/profiles";
 import "../styles/profilePicture.css";
+import PropTypes from "prop-types";
 
 function ProfilePictureUpload({ profileId, currentPicture, onPictureUpdated }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -201,6 +202,13 @@ function ProfilePictureUpload({ profileId, currentPicture, onPictureUpdated }) {
       </div>
     </div>
   );
+
+  ProfilePictureUpload.propTypes = {
+    profileId: PropTypes.number.isRequired,
+    currentPicture: PropTypes.string,
+    onPictureUpload: PropTypes.func,
+  }
+  
 }
 
 export default ProfilePictureUpload;
