@@ -1,6 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { ReviewValidator } from "../middleware/validator/review.js";
 import logger from "../../utils/logger.js";
+import { LIST_LIMIT } from "../../utils/limit.js";
 
 const formatDate = (d) => d ? new Date(d).toISOString().slice(0,10) : null;
 const isoDate = (d) => d ? new Date(d) : null;
@@ -57,9 +58,10 @@ export const getReviewById = async (req, res) => {
 export const getAllReviews = async (req, res) => {
     try {
         const reviews = await prisma.review.findMany({
-            orderBy: {  
+            orderBy: {
                 review_id: "asc"
-            }
+            },
+            take: LIST_LIMIT,
         });
         res.status(200).json(reviews.map(formatReview));
     } catch (err) {

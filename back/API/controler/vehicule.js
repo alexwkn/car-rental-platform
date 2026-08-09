@@ -1,6 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { VehiculeValidator } from "../middleware/validator/vehicule.js";
 import logger from "../../utils/logger.js";
+import { LIST_LIMIT } from "../../utils/limit.js";
 
 /**
  * @swagger
@@ -44,6 +45,7 @@ export const getAllVehicules = async (req, res) => {
       orderBy: {
         vehicule_id: "asc",
       },
+      take: LIST_LIMIT,
     });
     res.status(200).json(vehicules);
   } catch (err) {

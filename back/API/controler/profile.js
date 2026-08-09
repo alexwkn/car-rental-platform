@@ -4,6 +4,7 @@ import { saveImage, deleteImage } from "../../utils/imageManager.js";
 import { hash } from "../../utils/hash.js";
 import * as uuid from "uuid";
 import logger from "../../utils/logger.js";
+import { LIST_LIMIT } from "../../utils/limit.js";
 
 /**
  * @swagger
@@ -53,6 +54,7 @@ export const getAllProfiles = async (req, res) => {
       orderBy: {
         profile_id: "asc",
       },
+      take: LIST_LIMIT,
     });
 
     res.status(200).json(profiles);

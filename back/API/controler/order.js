@@ -1,6 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { OrderValidator } from "../middleware/validator/order.js";
 import logger from "../../utils/logger.js";
+import { LIST_LIMIT } from "../../utils/limit.js";
 
 const formatDate = (d) => d ? new Date(d).toISOString().slice(0,10) : null;
 const isoDate = (d) => d ? new Date(d) : null;
@@ -63,7 +64,8 @@ export const getAllOrders = async (req, res) => {
         const orders = await prisma.order.findMany({
         orderBy:{
             order_id:"asc"
-        }
+        },
+        take: LIST_LIMIT,
     });
 
     res.status(200).json(orders.map(formatOrder));

@@ -1,6 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { OfferValidator } from "../middleware/validator/offer.js";
 import logger from "../../utils/logger.js";
+import { LIST_LIMIT } from "../../utils/limit.js";
 
 const formatDate = (d) => (d ? new Date(d).toISOString().slice(0, 10) : null);
 const formatOffer = (o) => ({
@@ -70,6 +71,7 @@ export const getAllOffers = async (req, res) => {
       orderBy: {
         offer_id: "asc",
       },
+      take: LIST_LIMIT,
     });
     res.status(200).json(offers.map(formatOffer));
   } catch (err) {

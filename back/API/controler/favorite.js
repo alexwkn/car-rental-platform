@@ -1,6 +1,7 @@
 import prisma from "../../database/databaseORM.js";
 import { FavoriteValidator } from "../middleware/validator/favorite.js";
 import logger from "../../utils/logger.js";
+import { LIST_LIMIT } from "../../utils/limit.js";
 
 /**
  * @swagger
@@ -41,7 +42,8 @@ export const getAllFavorites = async (req, res) => {
         const favorites = await prisma.favorite.findMany({
             orderBy: {
                 favorite_id: "asc"
-            }
+            },
+            take: LIST_LIMIT,
         });
         res.status(200).json(favorites);
     } catch (err) {
