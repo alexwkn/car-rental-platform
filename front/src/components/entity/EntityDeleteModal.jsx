@@ -27,9 +27,9 @@ function EntityDeleteModal({
 }
 
 EntityDeleteModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onConfirm: PropTypes.func,
-  onCancel: PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
   message: PropTypes.string,
 };
 
