@@ -22,5 +22,5 @@ export default function BackOfficeLayout({ children }) {
 }
 
 BackOfficeLayout.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };
