@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
+import Proptypes from "prop-types";
 import requestLogin from "../API/controller/login.js";
 import apiClient from "../API/http.js";
 import API_ROUTES from "../API/apiRoutes.js";
@@ -48,6 +49,10 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+AuthProvider.propTypes =  {
+  children: Proptypes.node.isRequired,
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
