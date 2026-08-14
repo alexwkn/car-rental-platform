@@ -5,6 +5,7 @@ import { useColorScheme } from "react-native";
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+  // useColorScheme() : Retrieves the theme currently in use on the Android/iOS system
   const systemScheme = useColorScheme();
   const [isDark, setIsDark] = useState(systemScheme === "dark");
 
