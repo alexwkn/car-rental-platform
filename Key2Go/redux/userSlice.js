@@ -54,10 +54,14 @@ export const login = ({ token, userInfo }) => async (dispatch) => {
     // Save user details
     await AsyncStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
   } catch (error) {
-    console.error(
-      "Failed to save session :",
-      error
-    );
+    console.error("Failed to save session :", error);
+
+    // Rollback if saving the session fails
+    setAuthToken(null);
+    dispatch(clearUser());
+
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await AsyncStorage.removeItem(USER_INFO_KEY);
   }
 };
 
