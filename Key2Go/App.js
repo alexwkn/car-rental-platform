@@ -13,7 +13,7 @@ import store from "./redux/store";
 import { getUserFromStorage } from "./redux/userSlice";
 import { ThemeProvider } from "./context/ThemeContext";
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync(); // Prevents Expo from automatically hiding the splash screen; the app will decide when to hide it
 
 const Stack = createNativeStackNavigator();
 
