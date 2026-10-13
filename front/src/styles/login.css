@@ -1,0 +1,121 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #f6f1fa 0%, #ffffff 60%);
+  font-family: "Inter", sans-serif;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid #ece6f1;
+  border-radius: 16px;
+  padding: 40px 32px 32px;
+  box-shadow: 0 8px 30px rgba(90, 86, 86, 0.08);
+  box-sizing: border-box;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-badge {
+  display: inline-block;
+  background-color: #dcc9ec;
+  color: #3f3b3b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 60px;
+  margin-bottom: 14px;
+}
+
+.login-header h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.login-header p {
+  margin: 0;
+  font-size: 13px;
+  color: #b0b0b0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #5a5656;
+}
+
+.login-field input {
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 60px;
+  background-color: #f4eefa;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.login-field input::placeholder {
+  color: #b0b0b0;
+}
+
+.login-field input:focus {
+  border-color: #b99bd6;
+  background-color: #fff;
+}
+
+.login-error {
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background-color: #fdecec;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.login-button {
+  margin-top: 6px;
+  padding: 11px 16px;
+  border: none;
+  border-radius: 60px;
+  background-color: #dcc9ec;
+  color: #3f3b3b;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: #cdb3e3;
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
