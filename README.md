@@ -57,6 +57,8 @@ Pour lancer uniquement l'API et le back-office (sans le mobile) :
 docker compose up --build db back front
 ```
 
+Pour arrêter : `Ctrl+C` puis `docker compose down` (ajouter `-v` pour supprimer aussi la base et repartir des données de test).
+
 ## Accès
 
 | Service | URL |
@@ -86,29 +88,6 @@ Ces comptes sont créés automatiquement par le script d'initialisation (donnée
 4. Lancer les autres requêtes ou toute la collection (**Run**).
 
 Plus de détails dans [`bruno-tests/README.md`](bruno-tests/README.md).
-
-## Lancer sans Docker (développement)
-
-PostgreSQL doit tourner localement et `DB_HOST` / `DATABASE_URL` doivent pointer vers `localhost`.
-
-```bash
-# API
-cd back
-npm install
-npx prisma generate
-npm run initDB   # crée les tables et insère les données de test
-npm run dev      # http://localhost:3001
-
-# Back-office
-cd front
-npm install
-npm run dev      # http://localhost:5173
-
-# Mobile
-cd Key2Go
-npm install
-npx expo start
-```
 
 ## Structure du projet
 
